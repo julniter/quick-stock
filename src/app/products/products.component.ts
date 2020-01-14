@@ -17,7 +17,8 @@ export class ProductsComponent {
           { title: 'Stock Control', cols: 4, rows: 1, routePath: [] },
           { title: 'Product Categories', cols: 4, rows: 1, routePath: ['./categories'] },
           { title: 'Suppliers', cols: 4, rows: 1, routePath: ['./suppliers'] },
-          { title: 'Brands', cols: 4, rows: 1, routePath: ['./brands'] }
+          { title: 'Brands', cols: 4, rows: 1, routePath: ['./brands'] },
+          { title: 'Variants', cols: 4, rows: 1, routePath: ['./variants'] }
         ];
       }
 
@@ -26,7 +27,8 @@ export class ProductsComponent {
         { title: 'Stock Control', cols: 1, rows: 1, routePath: [] },
         { title: 'Product Categories', cols: 1, rows: 1, routePath: ['./categories'] },
         { title: 'Suppliers', cols: 1, rows: 1, routePath: ['./suppliers'] },
-        { title: 'Brands', cols: 1, rows: 1, routePath: ['./brands'] }
+        { title: 'Brands', cols: 1, rows: 1, routePath: ['./brands'] },
+        { title: 'Variants', cols: 1, rows: 1, routePath: ['./variants'] }
       ];
     })
   );

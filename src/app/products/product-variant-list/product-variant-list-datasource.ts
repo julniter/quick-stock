@@ -5,17 +5,14 @@ import { Observable, of as observableOf } from 'rxjs';
 import { FirebaseMetaData } from 'src/app/firebase.meta';
 import { SpinnerService } from 'src/app/shared/spinner.service';
 
-export interface Product {
+
+export interface ProductVariant {
   name: string;
-  brand: string;
-  category: string;
-  type: string;
-  description: string;
 }
 
 // TODO: Replace this with your own data model type
-export interface ProductListItem extends FirebaseMetaData {
-  product: Product;
+export interface ProductVariantListItem extends FirebaseMetaData {
+  productVariant: ProductVariant;
 }
 
 /**
@@ -23,8 +20,8 @@ export interface ProductListItem extends FirebaseMetaData {
  * encapsulate all logic for fetching and manipulating the displayed data
  * (including sorting, pagination, and filtering).
  */
-export class ProductListDataSource extends DataSource<ProductListItem> {
-  data: ProductListItem[] = [];
+export class ProductVariantListDataSource extends DataSource<ProductVariantListItem> {
+  data: ProductVariantListItem[] = [];
   paginator: MatPaginator;
   sort: MatSort;
 
@@ -37,7 +34,7 @@ export class ProductListDataSource extends DataSource<ProductListItem> {
    * the returned stream emits new items.
    * @returns A stream of the items to be rendered.
    */
-  connect(): Observable<ProductListItem[]> {
+  connect(): Observable<ProductVariantListItem[]> {
     // Combine everything that affects the rendered data into one update
     // stream for the data-table to consume.
     const dataMutations = [
@@ -64,7 +61,7 @@ export class ProductListDataSource extends DataSource<ProductListItem> {
    * Paginate the data (client-side). If you're using server-side pagination,
    * this would be replaced by requesting the appropriate data from the server.
    */
-  private getPagedData(data: ProductListItem[]) {
+  private getPagedData(data: ProductVariantListItem[]) {
     const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
     return data.splice(startIndex, this.paginator.pageSize);
   }
@@ -73,7 +70,7 @@ export class ProductListDataSource extends DataSource<ProductListItem> {
    * Sort the data (client-side). If you're using server-side sorting,
    * this would be replaced by requesting the appropriate data from the server.
    */
-  private getSortedData(data: ProductListItem[]) {
+  private getSortedData(data: ProductVariantListItem[]) {
     if (!this.sort.active || this.sort.direction === '') {
       return data;
     }
@@ -81,14 +78,8 @@ export class ProductListDataSource extends DataSource<ProductListItem> {
     return data.sort((a, b) => {
       const isAsc = this.sort.direction === 'asc';
       switch (this.sort.active) {
-        case 'name':
-          return compare(
-            a.product.name,
-            b.product.name,
-            isAsc
-          );
-        default:
-          return 0;
+        case 'name': return compare(a.productVariant.name, b.productVariant.name, isAsc);
+        default: return 0;
       }
     });
   }

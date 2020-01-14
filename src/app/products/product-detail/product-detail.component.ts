@@ -1,24 +1,26 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { ProductListItem } from '../product-list/product-list-datasource';
+import { Router } from '@angular/router';
+import { ProductBrandsService } from 'src/app/product-brands.service';
+import { SpinnerService } from 'src/app/shared/spinner.service';
+import * as firebase from 'firebase';
 
 @Component({
   selector: 'app-product-detail',
   templateUrl: './product-detail.component.html',
   styleUrls: ['./product-detail.component.css']
 })
-export class ProductDetailComponent {
-  addressForm = this.fb.group({
-    company: null,
-    firstName: [null, Validators.required],
-    lastName: [null, Validators.required],
-    address: [null, Validators.required],
-    address2: null,
-    city: [null, Validators.required],
-    state: [null, Validators.required],
-    postalCode: [null, Validators.compose([
-      Validators.required, Validators.minLength(5), Validators.maxLength(5)])
-    ],
-    shipping: ['free', Validators.required]
+export class ProductDetailComponent implements OnInit {
+  isNew = false;
+  spinnerName = 'ProductDetailComponent';
+  productItem: ProductListItem;
+  productForm = this.fb.group({
+    name: [null, Validators.required],
+    brand: [null, Validators.required],
+    type: [null, Validators.required],
+    category: [null, Validators.required],
+    description: [null, Validators.required],
   });
 
   hasUnitNumber = false;
@@ -85,9 +87,63 @@ export class ProductDetailComponent {
     {name: 'Wyoming', abbreviation: 'WY'}
   ];
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private $db: ProductBrandsService,
+    private spinner: SpinnerService) {}
 
-  onSubmit() {
-    alert('Thanks!');
-  }
+    ngOnInit() {
+      this.productItem = window.history.state;
+
+      if (this.productItem.id === undefined && this.router.url !== '/products/new') {
+        this.back();
+      }
+
+      if (this.productItem.product === undefined) {
+        const ref = this.$db.ref().ref.doc();
+        this.productItem = {
+          id: ref.id,
+          isActive: true,
+          isDeleted: true,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          product: {
+            name: '',
+            brand: '',
+            category: '',
+            type: '',
+            description: ''
+          }
+        }
+        this.isNew = true;
+      }
+
+      this.productForm.setValue(this.productItem.product);
+    }
+
+    onSubmit() {
+      if (!this.productForm.valid) { return; }
+
+      this.spinner.show(this.spinnerName);
+      this.productItem.product = this.productForm.value;
+
+      const errorFn = error => {
+        console.log(error);
+      };
+
+      const finallyFn = () => {
+        this.spinner.hide(this.spinnerName);
+        this.back();
+      };
+
+      if (this.isNew) {
+        this.$db.ref().doc(this.productItem.id).set(this.productItem).catch(errorFn).finally(finallyFn);
+      } else {
+        this.$db.ref().doc(this.productItem.id).update(this.productItem).catch(errorFn).finally(finallyFn);
+      }
+    }
+
+    back() {
+      this.router.navigate(['products']);
+    }
 }

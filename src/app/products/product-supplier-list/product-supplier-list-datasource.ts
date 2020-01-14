@@ -3,7 +3,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { Observable, of as observableOf } from 'rxjs';
 import { FirebaseMetaData } from 'src/app/firebase.meta';
-import { SpinnerService } from 'src/app/shared/spinner.service';
+import { SpinnerService } from '../../shared/spinner.service';
 
 export interface ProductSupplier {
   company: string;

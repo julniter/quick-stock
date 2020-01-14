@@ -14,6 +14,8 @@ import { ProductBrandListComponent } from './product-brand-list/product-brand-li
 import { ProductBrandDetailComponent } from './product-brand-detail/product-brand-detail.component';
 import { ProductSupplierListComponent } from './product-supplier-list/product-supplier-list.component';
 import { ProductSupplierDetailComponent } from './product-supplier-detail/product-supplier-detail.component';
+import { ProductVariantListComponent } from './product-variant-list/product-variant-list.component';
+import { ProductVariantDetailComponent } from './product-variant-detail/product-variant-detail.component';
 
 
 @NgModule({
@@ -26,7 +28,9 @@ import { ProductSupplierDetailComponent } from './product-supplier-detail/produc
     ProductBrandListComponent,
     ProductBrandDetailComponent,
     ProductSupplierListComponent,
-    ProductSupplierDetailComponent
+    ProductSupplierDetailComponent,
+    ProductVariantListComponent,
+    ProductVariantDetailComponent
   ],
   imports: [
     CommonModule,
