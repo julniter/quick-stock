@@ -10,6 +10,8 @@ import { PricingListComponent } from './pricing-list/pricing-list.component';
 import { PricingDetailComponent } from './pricing-detail/pricing-detail.component';
 import { OutletListComponent } from './outlet-list/outlet-list.component';
 import { OutletDetailComponent } from './outlet-detail/outlet-detail.component';
+import { WarehouseListComponent } from './warehouse-list/warehouse-list.component';
+import { WarehouseDetailComponent } from './warehouse-detail/warehouse-detail.component';
 
 
 @NgModule({
@@ -18,7 +20,9 @@ import { OutletDetailComponent } from './outlet-detail/outlet-detail.component';
     PricingListComponent,
     PricingDetailComponent,
     OutletListComponent,
-    OutletDetailComponent
+    OutletDetailComponent,
+    WarehouseListComponent,
+    WarehouseDetailComponent
   ],
   imports: [
     CommonModule,
