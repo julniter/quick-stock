@@ -6,10 +6,20 @@ import { SetupComponent } from './setup.component';
 import { SharedModule } from '../shared/shared.module';
 import { MaterialModule } from '../material/material.module';
 import { ReactiveFormsModule } from '@angular/forms';
+import { PricingListComponent } from './pricing-list/pricing-list.component';
+import { PricingDetailComponent } from './pricing-detail/pricing-detail.component';
+import { OutletListComponent } from './outlet-list/outlet-list.component';
+import { OutletDetailComponent } from './outlet-detail/outlet-detail.component';
 
 
 @NgModule({
-  declarations: [SetupComponent],
+  declarations: [
+    SetupComponent,
+    PricingListComponent,
+    PricingDetailComponent,
+    OutletListComponent,
+    OutletDetailComponent
+  ],
   imports: [
     CommonModule,
     SetupRoutingModule,

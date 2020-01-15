@@ -20,7 +20,7 @@ export class ProductSupplierListComponent implements AfterViewInit, OnInit, OnDe
   dataSource: ProductSupplierListDataSource;
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-  displayedColumns = ['company', 'contactName', 'emailAddress', 'mobile'];
+  displayedColumns = ['company', 'contactName', 'emailAddress', 'mobile', 'actions'];
   destroy$: Subject<void> = new Subject();
 
   constructor(private $db: ProductSuppliersService, private spinner: SpinnerService, private router: Router) {}

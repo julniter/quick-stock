@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators, FormArray } from '@angular/forms';
 import { ProductListItem } from '../product-list/product-list-datasource';
 import { Router } from '@angular/router';
 import { ProductBrandsService } from 'src/app/product-brands.service';
@@ -21,6 +21,10 @@ export class ProductDetailComponent implements OnInit {
     type: [null, Validators.required],
     category: [null, Validators.required],
     description: [null, Validators.required],
+    variants: this.fb.array([this.fb.group({
+      variant: [null, Validators.required],
+      variantValues: [null, Validators.required]
+    })])
   });
 
   hasUnitNumber = false;
@@ -112,13 +116,39 @@ export class ProductDetailComponent implements OnInit {
             brand: '',
             category: '',
             type: '',
-            description: ''
+            description: '',
+            variants: [{ variant: '', variantValues: '' }]
           }
         }
         this.isNew = true;
+      } else {
+        const inputCount = this.productItem.product.variants.length - 1;
+        if (inputCount) {
+          for (let index = 1; index <= inputCount; index++) {
+            this.createItem(
+              this.productItem.product.variants[index].variant,
+              this.productItem.product.variants[index].variantValues
+            );
+          }
+        }
       }
 
       this.productForm.setValue(this.productItem.product);
+    }
+
+    get variants() {
+      return this.productForm.get('variants') as FormArray;
+    }
+
+    createItem(name = null, values = null) {
+      this.variants.push(this.fb.group({
+        variant: [name, Validators.required],
+        variantValues: [values, Validators.required]
+      }));
+    }
+
+    removeItem(index) {
+      this.variants.removeAt(index);
     }
 
     onSubmit() {
@@ -144,6 +174,6 @@ export class ProductDetailComponent implements OnInit {
     }
 
     back() {
-      this.router.navigate(['products']);
+      this.router.navigate(['products/list']);
     }
 }

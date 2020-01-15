@@ -17,21 +17,6 @@
       <div class="row">
         <div class="col">
           <mat-form-field class="full-width">
-            <mat-select placeholder="Brand" formControlName="brand">
-              <mat-option *ngFor="let state of states" [value]="state.abbreviation">
-                {{ state.name }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="productForm.controls['brand'].hasError('required')">
-              Brand is <strong>required</strong>
-            </mat-error>
-          </mat-form-field>
-        </div>
-        <div class="col"></div>
-      </div>
-      <div class="row">
-        <div class="col">
-          <mat-form-field class="full-width">
             <mat-select placeholder="Category" formControlName="category">
               <mat-option *ngFor="let state of states" [value]="state.abbreviation">
                 {{ state.name }}
@@ -41,8 +26,6 @@
               Category is <strong>required</strong>
             </mat-error>
           </mat-form-field>
-        </div>
-        <div class="col">
           <mat-form-field class="full-width">
             <mat-select placeholder="Type" formControlName="type">
               <mat-option *ngFor="let state of states" [value]="state.abbreviation">
@@ -53,16 +36,64 @@
               Type is <strong>required</strong>
             </mat-error>
           </mat-form-field>
+          <mat-form-field class="full-width">
+            <mat-select placeholder="Brand" formControlName="brand">
+              <mat-option *ngFor="let state of states" [value]="state.abbreviation">
+                {{ state.name }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="productForm.controls['brand'].hasError('required')">
+              Brand is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
         </div>
-      </div>
-      <div class="row">
         <div class="col">
           <mat-form-field class="full-width">
-            <textarea matInput placeholder="Description" formControlName="description" rows="3"></textarea>
+            <textarea matInput placeholder="Description" formControlName="description" rows="9"></textarea>
             <mat-error *ngIf="productForm.controls['description'].hasError('required')">
               Description is <strong>required</strong>
             </mat-error>
           </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <button mat-button type="button" (click)="createItem()">
+            <i class="fa fa-plus-square"></i> Add Product Variant(s)
+          </button>
+        </div>
+      </div>
+      <div *ngFor="let type of productForm.get('variants').controls; let i = index;">
+        <div formArrayName="variants">
+          <div [formGroupName]="i">
+            <div class="row">
+              <div class="col">
+                <button mat-button type="button" (click)="removeItem(i)" *ngIf="variants.controls.length > 1">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </div>
+              <div class="col">
+                <mat-form-field class="full-width">
+                  <mat-select placeholder="Variant" formControlName="variant">
+                    <mat-option *ngFor="let state of states" [value]="state.abbreviation">
+                      {{ state.name }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="productForm.get('variants').controls[i].get('variant').hasError('required')">
+                    Variant is <strong>required</strong>
+                  </mat-error>
+                </mat-form-field>
+              </div>
+              <div class="col">
+                <mat-form-field class="full-width">
+                  <input matInput placeholder="Values seperated by comma (,)" formControlName="variantValues">
+                  <mat-error *ngIf="productForm.get('variants').controls[i].get('variantValues').hasError('required')">
+                    Variant Value is <strong>required</strong>
+                  </mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </mat-card-content>

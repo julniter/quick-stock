@@ -13,16 +13,14 @@ export class SetupComponent {
     map(({ matches }) => {
       if (matches) {
         return [
-          { title: 'Outlets', cols: 4, rows: 1 },
-          { title: 'Discounts', cols: 4, rows: 1 },
-          { title: 'Tax', cols: 4, rows: 1 }
+          { title: 'Outlets', cols: 4, rows: 1, routePath: ['./outlets']  },
+          { title: 'Pricing', cols: 4, rows: 1, routePath: ['./pricings']  }
         ];
       }
 
       return [
-        { title: 'Outlets', cols: 1, rows: 1 },
-        { title: 'Discounts', cols: 1, rows: 1 },
-        { title: 'Tax', cols: 1, rows: 1 }
+        { title: 'Outlets', cols: 1, rows: 1, routePath: ['./outlets']  },
+        { title: 'Pricing', cols: 1, rows: 1, routePath: ['./pricings']  }
       ];
     })
   );

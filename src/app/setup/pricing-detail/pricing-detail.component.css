@@ -2,6 +2,10 @@
   width: 100%;
 }
 
+.max-half-width {
+  max-width: 50%;
+}
+
 .shipping-card {
   min-width: 120px;
   margin: 20px auto;
@@ -27,5 +31,5 @@
 }
 
 .fa {
-  vertical-align: baseline !important;
+  vertical-align: baseline;
 }

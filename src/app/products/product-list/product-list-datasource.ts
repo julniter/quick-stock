@@ -4,12 +4,19 @@ import { MatSort } from '@angular/material/sort';
 import { Observable, of as observableOf } from 'rxjs';
 import { FirebaseMetaData } from 'src/app/firebase.meta';
 import { SpinnerService } from 'src/app/shared/spinner.service';
+import { ProductVariant } from '../product-variant-list/product-variant-list-datasource';
+
+export interface ProductVariantSelection {
+  variant: string;
+  variantValues: string;
+}
 
 export interface Product {
   name: string;
   brand: string;
   category: string;
   type: string;
+  variants: ProductVariantSelection[];
   description: string;
 }
 

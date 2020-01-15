@@ -8,6 +8,9 @@
         <div class="col">
           <mat-form-field class="full-width">
             <input matInput placeholder="Name" formControlName="name">
+            <mat-error *ngIf="productCategoryForm.controls['name'].hasError('required')">
+              Name <strong>required</strong>
+            </mat-error>
           </mat-form-field>
         </div>
       </div>
@@ -26,6 +29,9 @@
           <mat-form-field class="max-half-width" formArrayName="types">
             <div [formGroupName]="i">
               <input matInput placeholder="Name" formControlName="name">
+              <mat-error *ngIf="productCategoryForm.get('types').controls[i].get('name').hasError('required')">
+                Name <strong>required</strong>
+              </mat-error>
             </div>
           </mat-form-field>
         </div>

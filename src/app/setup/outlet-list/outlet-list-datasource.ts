@@ -5,12 +5,8 @@ import { Observable, of as observableOf } from 'rxjs';
 import { FirebaseMetaData } from 'src/app/firebase.meta';
 import { SpinnerService } from '../../shared/spinner.service';
 
-export interface Customer {
-  company: string;
-  firstName: string;
-  lastName: string;
-  emailAddress: string;
-  mobile: string;
+export interface Outlet {
+  name: string;
   address: string;
   address2: string;
   city: string;
@@ -19,8 +15,8 @@ export interface Customer {
 }
 
 // TODO: Replace this with your own data model type
-export interface CustomerListItem extends FirebaseMetaData {
-  customer: Customer;
+export interface OutletListItem extends FirebaseMetaData {
+  outlet: Outlet;
 }
 
 /**
@@ -28,8 +24,8 @@ export interface CustomerListItem extends FirebaseMetaData {
  * encapsulate all logic for fetching and manipulating the displayed data
  * (including sorting, pagination, and filtering).
  */
-export class CustomerListDataSource extends DataSource<CustomerListItem> {
-  data: CustomerListItem[] = [];
+export class OutletListDataSource extends DataSource<OutletListItem> {
+  data: OutletListItem[] = [];
   paginator: MatPaginator;
   sort: MatSort;
 
@@ -42,7 +38,7 @@ export class CustomerListDataSource extends DataSource<CustomerListItem> {
    * the returned stream emits new items.
    * @returns A stream of the items to be rendered.
    */
-  connect(): Observable<CustomerListItem[]> {
+  connect(): Observable<OutletListItem[]> {
     // Combine everything that affects the rendered data into one update
     // stream for the data-table to consume.
     const dataMutations = [
@@ -69,7 +65,7 @@ export class CustomerListDataSource extends DataSource<CustomerListItem> {
    * Paginate the data (client-side). If you're using server-side pagination,
    * this would be replaced by requesting the appropriate data from the server.
    */
-  private getPagedData(data: CustomerListItem[]) {
+  private getPagedData(data: OutletListItem[]) {
     const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
     return data.splice(startIndex, this.paginator.pageSize);
   }
@@ -78,7 +74,7 @@ export class CustomerListDataSource extends DataSource<CustomerListItem> {
    * Sort the data (client-side). If you're using server-side sorting,
    * this would be replaced by requesting the appropriate data from the server.
    */
-  private getSortedData(data: CustomerListItem[]) {
+  private getSortedData(data: OutletListItem[]) {
     if (!this.sort.active || this.sort.direction === '') {
       return data;
     }
@@ -86,28 +82,22 @@ export class CustomerListDataSource extends DataSource<CustomerListItem> {
     return data.sort((a, b) => {
       const isAsc = this.sort.direction === 'asc';
       switch (this.sort.active) {
-        case 'company':
+        case 'name':
           return compare(
-            a.customer.company,
-            b.customer.company,
+            a.outlet.name,
+            b.outlet.name,
             isAsc
           );
-        case 'contactName':
+        case 'city':
           return compare(
-            a.customer.firstName + ' ' + a.customer.lastName,
-            b.customer.firstName + ' ' + b.customer.lastName,
+            a.outlet.city,
+            b.outlet.city,
             isAsc
           );
-        case 'emailAddress':
+        case 'province':
           return compare(
-            a.customer.emailAddress,
-            b.customer.emailAddress,
-            isAsc
-          );
-        case 'mobile':
-          return compare(
-            a.customer.mobile,
-            b.customer.mobile,
+            a.outlet.province,
+            b.outlet.province,
             isAsc
           );
         default:

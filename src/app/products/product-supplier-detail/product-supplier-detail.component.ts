@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ProductSupplierListItem } from '../product-supplier-list/product-supplier-list-datasource';
 import { Router } from '@angular/router';
-import { ProductBrandsService } from 'src/app/product-brands.service';
+import { ProductSuppliersService } from 'src/app/product-suppliers.service';
 import { SpinnerService } from 'src/app/shared/spinner.service';
 import * as firebase from 'firebase';
 
@@ -97,7 +97,7 @@ export class ProductSupplierDetailComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private $db: ProductBrandsService,
+    private $db: ProductSuppliersService,
     private spinner: SpinnerService) {}
 
     ngOnInit() {

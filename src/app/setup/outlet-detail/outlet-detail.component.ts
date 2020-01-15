@@ -1,26 +1,22 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { CustomerListItem } from '../customer-list/customer-list-datasource';
+import { OutletListItem } from '../outlet-list/outlet-list-datasource';
 import { Router } from '@angular/router';
-import { CustomersService } from 'src/app/customers.service';
+import { OutletsService } from 'src/app/setup-outlets.service';
 import { SpinnerService } from 'src/app/shared/spinner.service';
 import * as firebase from 'firebase';
 
 @Component({
-  selector: 'app-customer-detail',
-  templateUrl: './customer-detail.component.html',
-  styleUrls: ['./customer-detail.component.css']
+  selector: 'app-outlet-detail',
+  templateUrl: './outlet-detail.component.html',
+  styleUrls: ['./outlet-detail.component.css']
 })
-export class CustomerDetailComponent implements OnInit {
+export class OutletDetailComponent implements OnInit {
   isNew = false;
-  spinnerName = 'CustomerDetailComponent';
-  customerItem: CustomerListItem;
-  customerForm = this.fb.group({
-    company: [null, Validators.required],
-    firstName: [null, Validators.required],
-    lastName: [null, Validators.required],
-    emailAddress: [null, Validators.required],
-    mobile: [null, Validators.required],
+  spinnerName = 'OutletDetailComponent';
+  outletItem: OutletListItem;
+  outletForm = this.fb.group({
+    name: [null, Validators.required],
     address: [null, Validators.required],
     address2: null,
     city: [null, Validators.required],
@@ -97,29 +93,25 @@ export class CustomerDetailComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private $db: CustomersService,
+    private $db: OutletsService,
     private spinner: SpinnerService) {}
 
     ngOnInit() {
-      this.customerItem = window.history.state;
+      this.outletItem = window.history.state;
 
-      if (this.customerItem.id === undefined && this.router.url !== '/customers/new') {
+      if (this.outletItem.id === undefined && this.router.url !== '/setup/outlets/new') {
         this.back();
       }
 
-      if (this.customerItem.customer === undefined) {
+      if (this.outletItem.outlet === undefined) {
         const ref = this.$db.ref().ref.doc();
-        this.customerItem = {
+        this.outletItem = {
           id: ref.id,
           isActive: true,
           isDeleted: true,
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-          customer: {
-            company: '',
-            firstName: '',
-            lastName: '',
-            emailAddress: '',
-            mobile: '',
+          outlet: {
+            name: '',
             address: '',
             address2: '',
             city: '',
@@ -130,14 +122,14 @@ export class CustomerDetailComponent implements OnInit {
         this.isNew = true;
       }
 
-      this.customerForm.setValue(this.customerItem.customer);
+      this.outletForm.setValue(this.outletItem.outlet);
     }
 
     onSubmit() {
-      if (!this.customerForm.valid) { return; }
+      if (!this.outletForm.valid) { return; }
 
       this.spinner.show(this.spinnerName);
-      this.customerItem.customer = this.customerForm.value;
+      this.outletItem.outlet = this.outletForm.value;
 
       const errorFn = error => {
         console.log(error);
@@ -149,13 +141,13 @@ export class CustomerDetailComponent implements OnInit {
       };
 
       if (this.isNew) {
-        this.$db.ref().doc(this.customerItem.id).set(this.customerItem).catch(errorFn).finally(finallyFn);
+        this.$db.ref().doc(this.outletItem.id).set(this.outletItem).catch(errorFn).finally(finallyFn);
       } else {
-        this.$db.ref().doc(this.customerItem.id).update(this.customerItem).catch(errorFn).finally(finallyFn);
+        this.$db.ref().doc(this.outletItem.id).update(this.outletItem).catch(errorFn).finally(finallyFn);
       }
     }
 
     back() {
-      this.router.navigate(['customers/list']);
+      this.router.navigate(['setup/outlets']);
     }
 }
