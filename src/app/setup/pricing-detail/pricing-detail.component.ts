@@ -39,7 +39,7 @@ export class PricingDetailComponent implements OnInit {
       this.pricingItem = {
         id: ref.id,
         isActive: true,
-        isDeleted: true,
+        isDeleted: false,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         pricing: {
           name: '',

@@ -1,0 +1,132 @@
+<form [formGroup]="jobOrderForm" novalidate (ngSubmit)="onSubmit()">
+  <ngx-spinner [name]="spinnerName"></ngx-spinner>
+  <mat-card class="shipping-card">
+    <mat-card-header>
+      <mat-card-title>Job Order Detail</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="row">
+        <div class="col">
+          <mat-form-field class="full-width">
+            <mat-select placeholder="Type" formControlName="type">
+              <mat-option *ngFor="let state of states" [value]="state.abbreviation">
+                {{ state.name }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="jobOrderForm.controls['type'].hasError('required')">
+              Type is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col">
+          <mat-form-field class="full-width">
+            <mat-select placeholder="Customer" formControlName="customerId">
+              <mat-option *ngFor="let state of states" [value]="state.abbreviation">
+                {{ state.name }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="jobOrderForm.controls['customerId'].hasError('required')">
+              Customer is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <mat-form-field class="full-width">
+            <mat-select placeholder="Supplier" formControlName="supplierId">
+              <mat-option *ngFor="let state of states" [value]="state.abbreviation">
+                {{ state.name }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="jobOrderForm.controls['supplierId'].hasError('required')">
+              Supplier is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col">
+          <mat-form-field class="full-width">
+            <mat-select placeholder="Warehouse" formControlName="warehouseId">
+              <mat-option *ngFor="let state of states" [value]="state.abbreviation">
+                {{ state.name }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="jobOrderForm.controls['warehouseId'].hasError('required')">
+              Warehouse is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <mat-form-field class="full-width">
+            <mat-select placeholder="Product" formControlName="productId">
+              <mat-option *ngFor="let state of states" [value]="state.abbreviation">
+                {{ state.name }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="jobOrderForm.controls['productId'].hasError('required')">
+              Product is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+      <div *ngIf="jobOrderForm.get('productId').value !== null && jobOrderForm.get('productId').value !== undefined">
+        <div *ngIf="jobOrderForm.get('productVariations').controls.length">
+          <div *ngFor="let type of jobOrderForm.get('productVariations').controls; let i = index;">
+            <div formArrayName="variations">
+              <div [formGroupName]="i">
+                <div class="row">
+                  <div class="col">
+                    <mat-form-field class="full-width">
+                      <input matInput placeholder="Variation Name" formControlName="name">
+                      <mat-error *ngIf="jobOrderForm.get('productVariations').controls[i].get('name').hasError('required')">
+                        Variation Name is <strong>required</strong>
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                  <div class="col">
+                    <mat-form-field class="full-width">
+                      <input matInput placeholder="SKU" formControlName="sku">
+                      <mat-error *ngIf="jobOrderForm.get('productVariations').controls[i].get('sku').hasError('required')">
+                        SKU is <strong>required</strong>
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                  <div class="col">
+                    <mat-form-field class="full-width">
+                      <input matInput placeholder="Code" formControlName="code">
+                      <mat-error *ngIf="jobOrderForm.get('productVariations').controls[i].get('code').hasError('required')">
+                        Code is <strong>required</strong>
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                  <div class="col">
+                    <mat-form-field class="full-width">
+                      <input matInput placeholder="Price" formControlName="price">
+                      <mat-error *ngIf="jobOrderForm.get('productVariations').controls[i].get('price').hasError('required')">
+                        Price is <strong>required</strong>
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                  <div class="col">
+                    <mat-form-field class="full-width">
+                      <input matInput placeholder="Target Count" formControlName="targetCount">
+                      <mat-error *ngIf="jobOrderForm.get('productVariations').controls[i].get('targetCount').hasError('required')">
+                        Target Count is <strong>required</strong>
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button color="secondary" type="button" (click)="back()">Cancel</button>
+      <button mat-raised-button color="primary" type="submit">Submit</button>
+    </mat-card-actions>
+  </mat-card>
+</form>

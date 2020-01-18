@@ -112,7 +112,7 @@ export class CustomerDetailComponent implements OnInit {
         this.customerItem = {
           id: ref.id,
           isActive: true,
-          isDeleted: true,
+          isDeleted: false,
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
           customer: {
             company: '',

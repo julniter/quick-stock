@@ -111,7 +111,7 @@ export class WarehouseDetailComponent implements OnInit {
         this.warehouseItem = {
           id: ref.id,
           isActive: true,
-          isDeleted: true,
+          isDeleted: false,
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
           warehouse: {
             name: '',

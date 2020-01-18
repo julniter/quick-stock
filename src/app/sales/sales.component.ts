@@ -19,7 +19,7 @@ export class SalesComponent {
       }
 
       return [
-        { title: 'Job Orders', cols: 1, rows: 1, routePath: ['./starting-inventory'] },
+        { title: 'Job Orders', cols: 1, rows: 1, routePath: ['./job-orders'] },
         { title: 'Outlet Sales', cols: 1, rows: 1, routePath: ['./outlet-sales'] },
       ];
     })

@@ -42,7 +42,7 @@ export class HomeComponent implements OnInit {
       ? rawUrl
           .substring(1)
           .split('/')
-          .map(t => decodeURIComponent(new TitleCasePipe().transform(t.trim())))
+          .map(t => decodeURIComponent(new TitleCasePipe().transform(t.trim().replace('-', ' '))))
           .join(' / ')
       : this.default;
     this.displayArrow = this.crumbs.indexOf('/') !== -1;

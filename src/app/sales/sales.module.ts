@@ -6,10 +6,16 @@ import { SalesComponent } from './sales.component';
 import { SharedModule } from '../shared/shared.module';
 import { MaterialModule } from '../material/material.module';
 import { ReactiveFormsModule } from '@angular/forms';
+import { JobOrderListComponent } from './job-order-list/job-order-list.component';
+import { JobOrderDetailComponent } from './job-order-detail/job-order-detail.component';
 
 
 @NgModule({
-  declarations: [SalesComponent],
+  declarations: [
+    SalesComponent,
+    JobOrderListComponent,
+    JobOrderDetailComponent
+  ],
   imports: [
     CommonModule,
     SalesRoutingModule,

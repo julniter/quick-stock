@@ -37,7 +37,7 @@ export class ProductVariantDetailComponent implements OnInit {
       this.productVariantItem = {
         id: ref.id,
         isActive: true,
-        isDeleted: true,
+        isDeleted: false,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         productVariant: {
           name: ''

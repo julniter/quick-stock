@@ -40,7 +40,7 @@ export class EmployeeDetailComponent implements OnInit {
       this.employeeItem = {
         id: ref.id,
         isActive: true,
-        isDeleted: true,
+        isDeleted: false,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         employee: {
           firstName: '',

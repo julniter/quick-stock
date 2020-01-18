@@ -1,30 +1,35 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { OutletListItem } from '../outlet-list/outlet-list-datasource';
+import { JobOrderListItem, JobOrderStatus, JobOrderType } from '../job-order-list/job-order-list-datasource';
 import { Router } from '@angular/router';
-import { OutletsService } from 'src/app/setup-outlets.service';
+import { JobOrdersService } from 'src/app/sales-job-orders,service';
 import { SpinnerService } from 'src/app/shared/spinner.service';
 import * as firebase from 'firebase';
 import { PageMode } from 'src/app/firebase.meta';
 
 @Component({
-  selector: 'app-outlet-detail',
-  templateUrl: './outlet-detail.component.html',
-  styleUrls: ['./outlet-detail.component.css']
+  selector: 'app-job-order-detail',
+  templateUrl: './job-order-detail.component.html',
+  styleUrls: ['./job-order-detail.component.css']
 })
-export class OutletDetailComponent implements OnInit {
-  spinnerName = 'OutletDetailComponent';
+export class JobOrderDetailComponent implements OnInit {
+  spinnerName = 'JobOrderDetailComponent';
   pageMode = PageMode.New;
-  outletItem: OutletListItem;
-  outletForm = this.fb.group({
-    name: [null, Validators.required],
-    address: [null, Validators.required],
-    address2: null,
-    city: [null, Validators.required],
-    province: [null, Validators.required],
-    postalCode: [null, Validators.compose([
-      Validators.required, Validators.minLength(5), Validators.maxLength(5)])
-    ]
+  jobOrderItem: JobOrderListItem;
+  jobOrderForm = this.fb.group({
+    type: [null, Validators.required],
+    customerId : [null],
+    warehouseId: [null, Validators.required],
+    supplierId: [null, Validators.required],
+    productId: [null, Validators.required],
+    status: [null, Validators.required],
+    productVariations: this.fb.array([this.fb.group({
+      name: [null, Validators.required],
+      sku: [null, Validators.required],
+      code: [null, Validators.required],
+      price: [null, Validators.required],
+      targetCount: [null, Validators.required]
+    })])
   });
 
   hasUnitNumber = false;
@@ -94,48 +99,59 @@ export class OutletDetailComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private $db: OutletsService,
+    private $db: JobOrdersService,
     private spinner: SpinnerService) {}
 
     ngOnInit() {
-      this.outletItem = window.history.state.item;
+      this.jobOrderItem = window.history.state.item;
       this.pageMode = window.history.state.pageMode !== undefined ? window.history.state.pageMode : this.pageMode;
 
-      if (this.outletItem === undefined && this.router.url !== '/setup/outlets/new') {
+      if (this.jobOrderItem === undefined && this.router.url !== '/sales/job-orders/new') {
         this.back();
       }
 
-      if (this.outletItem === undefined) {
+      if (this.jobOrderItem === undefined) {
         const ref = this.$db.ref().ref.doc();
-        this.outletItem = {
+        this.jobOrderItem = {
           id: ref.id,
           isActive: true,
           isDeleted: false,
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-          outlet: {
-            name: '',
-            address: '',
-            address2: '',
-            city: '',
-            province: '',
-            postalCode: null
+          warehouse: null,
+          supplier: null,
+          product: null,
+          customer: null,
+          jobOrder: {
+            type: JobOrderType.External,
+            status: JobOrderStatus.Pending,
+            customerId: null,
+            supplierId: null,
+            warehouseId: null,
+            productId: null,
+            productVariations: [{
+              name: '',
+              price: 0,
+              sku: '',
+              code: '',
+              targetCount: 0
+            }]
           }
         }
       } else {
         if (this.pageMode === PageMode.Copy) {
           const ref = this.$db.ref().ref.doc();
-          this.outletItem.id = ref.id;
+          this.jobOrderItem.id = ref.id;
         }
       }
 
-      this.outletForm.setValue(this.outletItem.outlet);
+      this.jobOrderForm.setValue(this.jobOrderItem.jobOrder);
     }
 
     onSubmit() {
-      if (!this.outletForm.valid) { return; }
+      if (!this.jobOrderForm.valid) { return; }
 
       this.spinner.show(this.spinnerName);
-      this.outletItem.outlet = this.outletForm.value;
+      this.jobOrderItem.jobOrder = this.jobOrderForm.value;
 
       const errorFn = error => {
         console.log(error);
@@ -146,14 +162,20 @@ export class OutletDetailComponent implements OnInit {
         this.back();
       };
 
+      //pre-proces data here
+      // get supplier by id from suppliers
+      // get warehouse by id from warehouses
+      // get customer by id from customers
+      // get product by id from products
+
       if (this.pageMode === PageMode.New || this.pageMode === PageMode.Copy) {
-        this.$db.ref().doc(this.outletItem.id).set(this.outletItem).catch(errorFn).finally(finallyFn);
+        this.$db.ref().doc(this.jobOrderItem.id).set(this.jobOrderItem).catch(errorFn).finally(finallyFn);
       } else {
-        this.$db.ref().doc(this.outletItem.id).update(this.outletItem).catch(errorFn).finally(finallyFn);
+        this.$db.ref().doc(this.jobOrderItem.id).update(this.jobOrderItem).catch(errorFn).finally(finallyFn);
       }
     }
 
     back() {
-      this.router.navigate(['setup/outlets']);
+      this.router.navigate(['sales/job-orders']);
     }
 }

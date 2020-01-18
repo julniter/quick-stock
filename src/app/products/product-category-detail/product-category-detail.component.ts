@@ -40,7 +40,7 @@ export class ProductCategoryDetailComponent implements OnInit {
       this.productCategoryItem = {
         id: ref.id,
         isActive: true,
-        isDeleted: true,
+        isDeleted: false,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         productCategory: {
           name: '',

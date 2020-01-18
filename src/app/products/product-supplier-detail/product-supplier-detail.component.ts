@@ -112,7 +112,7 @@ export class ProductSupplierDetailComponent implements OnInit {
         this.productSupplierItem = {
           id: ref.id,
           isActive: true,
-          isDeleted: true,
+          isDeleted: false,
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
           productSupplier: {
             company: '',

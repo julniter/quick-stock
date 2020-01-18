@@ -37,7 +37,7 @@ export class ProductBrandDetailComponent implements OnInit {
       this.productBrandItem = {
         id: ref.id,
         isActive: true,
-        isDeleted: true,
+        isDeleted: false,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         productBrand: {
           name: ''
