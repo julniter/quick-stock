@@ -7,26 +7,35 @@ import { Subject } from 'rxjs';
 import { SpinnerService } from 'src/app/shared/spinner.service';
 import { Router } from '@angular/router';
 import { WarehousesService } from 'src/app/setup-warehouses.services';
+import { PageMode } from 'src/app/firebase.meta';
 
 @Component({
   selector: 'app-warehouse-list',
   templateUrl: './warehouse-list.component.html',
   styleUrls: ['./warehouse-list.component.css']
 })
-export class WarehouseListComponent implements AfterViewInit, OnInit, OnDestroy {
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
-  @ViewChild(MatTable, {static: false}) table: MatTable<WarehouseListItem>;
+export class WarehouseListComponent
+  implements AfterViewInit, OnInit, OnDestroy {
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
+  @ViewChild(MatTable, { static: false }) table: MatTable<WarehouseListItem>;
   dataSource: WarehouseListDataSource;
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
   displayedColumns = ['name', 'city', 'province', 'actions'];
   destroy$: Subject<void> = new Subject();
 
-  constructor(private $db: WarehousesService, private spinner: SpinnerService, private router: Router) {}
+  constructor(
+    private $db: WarehousesService,
+    private spinner: SpinnerService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
-    this.dataSource = new WarehouseListDataSource(this.$db.ref().valueChanges(), this.spinner);
+    this.dataSource = new WarehouseListDataSource(
+      this.$db.ref().valueChanges(),
+      this.spinner
+    );
   }
 
   ngAfterViewInit() {
@@ -40,6 +49,16 @@ export class WarehouseListComponent implements AfterViewInit, OnInit, OnDestroy 
   }
 
   view(warehouseItem: WarehouseListItem) {
-    this.router.navigate(['setup/warehouses/', warehouseItem.warehouse.name, 'details'], { state: warehouseItem });
+    this.router.navigate(
+      ['setup/warehouses/', warehouseItem.warehouse.name, 'details'],
+      { state: { item: warehouseItem, pageMode: PageMode.Edit } }
+    );
+  }
+
+  copy(warehouseItem: WarehouseListItem) {
+    this.router.navigate(
+      ['setup/warehouses/', warehouseItem.warehouse.name, 'copy'],
+      { state: { item: warehouseItem, pageMode: PageMode.Copy } }
+    );
   }
 }

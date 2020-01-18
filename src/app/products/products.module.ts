@@ -8,7 +8,7 @@ import { MaterialModule } from '../material/material.module';
 import { ProductDetailComponent } from './product-detail/product-detail.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ProductListComponent } from './product-list/product-list.component';
-import { ProductCategoryListComponent } from './product-category-list/product-categories-list.component';
+import { ProductCategoryListComponent } from './product-category-list/product-category-list.component';
 import { ProductCategoryDetailComponent } from './product-category-detail/product-category-detail.component';
 import { ProductBrandListComponent } from './product-brand-list/product-brand-list.component';
 import { ProductBrandDetailComponent } from './product-brand-detail/product-brand-detail.component';

@@ -7,6 +7,7 @@ import { Subject } from 'rxjs';
 import { SpinnerService } from 'src/app/shared/spinner.service';
 import { Router } from '@angular/router';
 import { OutletsService } from 'src/app/setup-outlets.service';
+import { PageMode } from 'src/app/firebase.meta';
 
 @Component({
   selector: 'app-outlet-list',
@@ -40,6 +41,10 @@ export class OutletListComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   view(outletItem: OutletListItem) {
-    this.router.navigate(['setup/outlets/', outletItem.outlet.name, 'details'], { state: outletItem });
+    this.router.navigate(['setup/outlets/', outletItem.outlet.name, 'details'], { state: {item: outletItem, pageMode: PageMode.Edit} });
+  }
+
+  copy(outletItem: OutletListItem) {
+    this.router.navigate(['setup/outlets/', outletItem.outlet.name, 'copy'], { state: {item: outletItem, pageMode: PageMode.Copy} });
   }
 }

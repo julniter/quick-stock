@@ -1,4 +1,5 @@
 <form [formGroup]="warehouseForm" novalidate (ngSubmit)="onSubmit()">
+  <ngx-spinner [name]="spinnerName"></ngx-spinner>
   <mat-card class="shipping-card">
     <mat-card-header>
       <mat-card-title>Warehouse Detail</mat-card-title>

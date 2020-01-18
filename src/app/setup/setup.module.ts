@@ -12,6 +12,8 @@ import { OutletListComponent } from './outlet-list/outlet-list.component';
 import { OutletDetailComponent } from './outlet-detail/outlet-detail.component';
 import { WarehouseListComponent } from './warehouse-list/warehouse-list.component';
 import { WarehouseDetailComponent } from './warehouse-detail/warehouse-detail.component';
+import { EmployeeListComponent } from './employee-list/employee-list.component';
+import { EmployeeDetailComponent } from './employee-detail/employee-detail.component';
 
 
 @NgModule({
@@ -22,7 +24,9 @@ import { WarehouseDetailComponent } from './warehouse-detail/warehouse-detail.co
     OutletListComponent,
     OutletDetailComponent,
     WarehouseListComponent,
-    WarehouseDetailComponent
+    WarehouseDetailComponent,
+    EmployeeListComponent,
+    EmployeeDetailComponent
   ],
   imports: [
     CommonModule,

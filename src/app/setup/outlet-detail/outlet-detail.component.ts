@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { OutletsService } from 'src/app/setup-outlets.service';
 import { SpinnerService } from 'src/app/shared/spinner.service';
 import * as firebase from 'firebase';
+import { PageMode } from 'src/app/firebase.meta';
 
 @Component({
   selector: 'app-outlet-detail',
@@ -14,6 +15,7 @@ import * as firebase from 'firebase';
 export class OutletDetailComponent implements OnInit {
   isNew = false;
   spinnerName = 'OutletDetailComponent';
+  pageMode = PageMode.New;
   outletItem: OutletListItem;
   outletForm = this.fb.group({
     name: [null, Validators.required],
@@ -97,7 +99,8 @@ export class OutletDetailComponent implements OnInit {
     private spinner: SpinnerService) {}
 
     ngOnInit() {
-      this.outletItem = window.history.state;
+      this.outletItem = window.history.state.item;
+      this.pageMode = window.history.state.pageMode !== undefined ? window.history.state.pageMode : this.pageMode;
 
       if (this.outletItem.id === undefined && this.router.url !== '/setup/outlets/new') {
         this.back();
@@ -120,6 +123,11 @@ export class OutletDetailComponent implements OnInit {
           }
         }
         this.isNew = true;
+      } else {
+        if (this.pageMode === PageMode.Copy) {
+          const ref = this.$db.ref().ref.doc();
+          this.outletItem.id = ref.id;
+        }
       }
 
       this.outletForm.setValue(this.outletItem.outlet);
@@ -140,7 +148,7 @@ export class OutletDetailComponent implements OnInit {
         this.back();
       };
 
-      if (this.isNew) {
+      if (this.pageMode === PageMode.New || this.pageMode === PageMode.Copy) {
         this.$db.ref().doc(this.outletItem.id).set(this.outletItem).catch(errorFn).finally(finallyFn);
       } else {
         this.$db.ref().doc(this.outletItem.id).update(this.outletItem).catch(errorFn).finally(finallyFn);

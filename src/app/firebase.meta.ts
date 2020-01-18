@@ -4,3 +4,9 @@ export interface FirebaseMetaData {
   isDeleted: boolean;
   createdAt: any;
 }
+
+export enum PageMode {
+  New,
+  Edit,
+  Copy
+}

@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { WarehousesService } from 'src/app/setup-warehouses.services';
 import { SpinnerService } from 'src/app/shared/spinner.service';
 import * as firebase from 'firebase';
+import { PageMode } from 'src/app/firebase.meta';
 
 @Component({
   selector: 'app-warehouse-detail',
@@ -14,6 +15,7 @@ import * as firebase from 'firebase';
 export class WarehouseDetailComponent implements OnInit {
   isNew = false;
   spinnerName = 'WarehouseDetailComponent';
+  pageMode = PageMode.New;
   warehouseItem: WarehouseListItem;
   warehouseForm = this.fb.group({
     name: [null, Validators.required],
@@ -97,7 +99,8 @@ export class WarehouseDetailComponent implements OnInit {
     private spinner: SpinnerService) {}
 
     ngOnInit() {
-      this.warehouseItem = window.history.state;
+      this.warehouseItem = window.history.state.item;
+      this.pageMode = window.history.state.pageMode !== undefined ? window.history.state.pageMode : this.pageMode;
 
       if (this.warehouseItem.id === undefined && this.router.url !== '/setup/warehouses/new') {
         this.back();
@@ -120,6 +123,11 @@ export class WarehouseDetailComponent implements OnInit {
           }
         }
         this.isNew = true;
+      } else {
+        if (this.pageMode === PageMode.Copy) {
+          const ref = this.$db.ref().ref.doc();
+          this.warehouseItem.id = ref.id;
+        }
       }
 
       this.warehouseForm.setValue(this.warehouseItem.warehouse);
@@ -140,7 +148,7 @@ export class WarehouseDetailComponent implements OnInit {
         this.back();
       };
 
-      if (this.isNew) {
+      if (this.pageMode === PageMode.New || this.pageMode === PageMode.Copy) {
         this.$db.ref().doc(this.warehouseItem.id).set(this.warehouseItem).catch(errorFn).finally(finallyFn);
       } else {
         this.$db.ref().doc(this.warehouseItem.id).update(this.warehouseItem).catch(errorFn).finally(finallyFn);

@@ -10,25 +10,25 @@
     <!-- Company Column -->
     <ng-container matColumnDef="company">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Company</th>
-      <td mat-cell *matCellDef="let row">{{row.productBrand.company}}</td>
+      <td mat-cell *matCellDef="let row">{{row.productSupplier.company}}</td>
     </ng-container>
 
     <!-- FirstName Column -->
     <ng-container matColumnDef="contactName">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Contact Name</th>
-      <td mat-cell *matCellDef="let row">{{row.productBrand.firstName + " " + row.productBrand.lastName}}</td>
+      <td mat-cell *matCellDef="let row">{{row.productSupplier.firstName + " " + row.productSupplier.lastName}}</td>
     </ng-container>
 
     <!-- Email Column -->
     <ng-container matColumnDef="emailAddress">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Email Address</th>
-      <td mat-cell *matCellDef="let row">{{row.productBrand.emailAddress}}</td>
+      <td mat-cell *matCellDef="let row">{{row.productSupplier.emailAddress}}</td>
     </ng-container>
 
     <!-- Mobile Column -->
     <ng-container matColumnDef="mobile">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Mobile</th>
-      <td mat-cell *matCellDef="let row">{{row.productBrand.mobile}}</td>
+      <td mat-cell *matCellDef="let row">{{row.productSupplier.mobile}}</td>
     </ng-container>
 
     <!-- Actions Column -->

@@ -1,0 +1,52 @@
+<!-- <ngx-auth-firebaseui-register alreadyHaveAccountText="" loginButtonText=""></ngx-auth-firebaseui-register> -->
+
+<form [formGroup]="employeeForm" novalidate (ngSubmit)="onSubmit()">
+  <mat-card class="shipping-card">
+    <mat-card-header>
+      <mat-card-title>Employee Detail</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="row">
+        <div class="col">
+          <mat-form-field class="full-width">
+            <input matInput placeholder="First Name" formControlName="firstName">
+            <mat-error *ngIf="employeeForm.controls['firstName'].hasError('required')">
+              First Name is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col">
+          <mat-form-field class="full-width">
+            <input matInput placeholder="Last Name" formControlName="lastName">
+            <mat-error *ngIf="employeeForm.controls['lastName'].hasError('required')">
+              Last Name is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <mat-form-field class="full-width">
+            <input matInput placeholder="Email Address" formControlName="emailAddress">
+            <mat-error *ngIf="employeeForm.controls['emailAddress'].hasError('required')">
+              Email Address is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col">
+          <mat-form-field class="full-width">
+            <input matInput placeholder="Password" formControlName="password" type="password">
+            <mat-error *ngIf="employeeForm.controls['password'].hasError('required')">
+              Password is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button color="secondary" type="button" (click)="back()">Cancel</button>
+      <button mat-raised-button color="primary" type="submit">Submit</button>
+    </mat-card-actions>
+  </mat-card>
+  <ngx-spinner [name]="spinnerName"></ngx-spinner>
+</form>

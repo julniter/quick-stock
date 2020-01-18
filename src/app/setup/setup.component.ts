@@ -15,14 +15,16 @@ export class SetupComponent {
         return [
           { title: 'Warehouses', cols: 4, rows: 1, routePath: ['./warehouses']  },
           { title: 'Outlets', cols: 4, rows: 1, routePath: ['./outlets']  },
-          { title: 'Pricing', cols: 4, rows: 1, routePath: ['./pricings']  }
+          { title: 'Pricing', cols: 4, rows: 1, routePath: ['./pricings']  },
+          { title: 'Employees', cols: 4, rows: 1, routePath: ['./employees']  }
         ];
       }
 
       return [
         { title: 'Warehouses', cols: 1, rows: 1, routePath: ['./warehouses']  },
         { title: 'Outlets', cols: 1, rows: 1, routePath: ['./outlets']  },
-        { title: 'Pricing', cols: 1, rows: 1, routePath: ['./pricings']  }
+        { title: 'Pricing', cols: 1, rows: 1, routePath: ['./pricings']  },
+        { title: 'Employees', cols: 1, rows: 1, routePath: ['./employees']  }
       ];
     })
   );

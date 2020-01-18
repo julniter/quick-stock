@@ -40,6 +40,6 @@ export class ProductSupplierListComponent implements AfterViewInit, OnInit, OnDe
   }
 
   view(productSupplierItem: ProductSupplierListItem) {
-    this.router.navigate(['products/brands/', productSupplierItem.productSupplier.company, 'details'], { state: productSupplierItem });
+    this.router.navigate(['products/suppliers/', productSupplierItem.productSupplier.company, 'details'], { state: productSupplierItem });
   }
 }

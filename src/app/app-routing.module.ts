@@ -23,6 +23,14 @@ const routes: Routes = [
     path: 'reports',
     loadChildren: () => import('./reports/reports.module').then(m => m.ReportsModule)
   },
+  {
+    path: 'stock-control',
+    loadChildren: () => import('./stock-control/stock-control.module').then(m => m.StockControlModule)
+  },
+  {
+    path: 'sales',
+    loadChildren: () => import('./sales/sales.module').then(m => m.SalesModule)
+  },
   { path: 'dashboard', component: DashboardComponent },
   { path: '', pathMatch: 'full', redirectTo: 'auth/login' }
 ];

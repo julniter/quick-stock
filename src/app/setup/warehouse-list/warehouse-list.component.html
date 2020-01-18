@@ -10,19 +10,19 @@
     <!-- Company Column -->
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
-      <td mat-cell *matCellDef="let row">{{row.outlet.name}}</td>
+      <td mat-cell *matCellDef="let row">{{row.warehouse.name}}</td>
     </ng-container>
 
     <!-- City Column -->
     <ng-container matColumnDef="city">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>City</th>
-      <td mat-cell *matCellDef="let row">{{row.outlet.city}}</td>
+      <td mat-cell *matCellDef="let row">{{row.warehouse.city}}</td>
     </ng-container>
 
     <!-- Province Column -->
     <ng-container matColumnDef="province">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Province</th>
-      <td mat-cell *matCellDef="let row">{{row.outlet.province}}</td>
+      <td mat-cell *matCellDef="let row">{{row.warehouse.province}}</td>
     </ng-container>
 
     <!-- Actions Column -->
@@ -30,6 +30,8 @@
       <th mat-header-cell *matHeaderCellDef>Actions</th>
       <td mat-cell *matCellDef="let row">
         <button mat-raised-button color="primary" type="button" (click)="view(row)"><i class="fa fa-edit"></i> Edit</button>
+        &nbsp;
+        <button mat-raised-button color="primary" type="button" (click)="copy(row)"><i class="fa fa-copy"></i> Copy</button>
       </td>
     </ng-container>
 

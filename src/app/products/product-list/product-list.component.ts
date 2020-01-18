@@ -20,7 +20,7 @@ export class ProductListComponent implements AfterViewInit, OnInit, OnDestroy {
   dataSource: ProductListDataSource;
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-  displayedColumns = ['name'];
+  displayedColumns = ['name', 'brand', 'type', 'actions'];
   destroy$: Subject<void> = new Subject();
 
   constructor(private $db: ProductsService, private spinner: SpinnerService, private router: Router) {}

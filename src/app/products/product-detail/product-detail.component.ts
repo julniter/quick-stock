@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators, FormArray } from '@angular/forms';
-import { ProductListItem } from '../product-list/product-list-datasource';
+import { ProductListItem, ProductVariation, ProductVariantSelection } from '../product-list/product-list-datasource';
 import { Router } from '@angular/router';
-import { ProductBrandsService } from 'src/app/product-brands.service';
+import { ProductsService } from 'src/app/products.service';
 import { SpinnerService } from 'src/app/shared/spinner.service';
 import * as firebase from 'firebase';
+import { TitleCasePipe } from '@angular/common';
 
 @Component({
   selector: 'app-product-detail',
@@ -24,6 +25,12 @@ export class ProductDetailComponent implements OnInit {
     variants: this.fb.array([this.fb.group({
       variant: [null, Validators.required],
       variantValues: [null, Validators.required]
+    })]),
+    variations: this.fb.array([this.fb.group({
+      name: [null, Validators.required],
+      sku: [null, Validators.required],
+      code: [null, Validators.required],
+      price: [null, Validators.required]
     })])
   });
 
@@ -94,7 +101,7 @@ export class ProductDetailComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private $db: ProductBrandsService,
+    private $db: ProductsService,
     private spinner: SpinnerService) {}
 
     ngOnInit() {
@@ -117,7 +124,8 @@ export class ProductDetailComponent implements OnInit {
             category: '',
             type: '',
             description: '',
-            variants: [{ variant: '', variantValues: '' }]
+            variants: [{ variant: '', variantValues: '' }],
+            variations: [{ name: '', price: 0, sku: '', code: '' }]
           }
         }
         this.isNew = true;
@@ -133,11 +141,19 @@ export class ProductDetailComponent implements OnInit {
         }
       }
 
+      this.variants.valueChanges.subscribe(v => {
+        this.createVariations(v);
+      });
+
       this.productForm.setValue(this.productItem.product);
     }
 
     get variants() {
       return this.productForm.get('variants') as FormArray;
+    }
+
+    get variations() {
+      return this.productForm.get('variations') as FormArray;
     }
 
     createItem(name = null, values = null) {
@@ -149,6 +165,51 @@ export class ProductDetailComponent implements OnInit {
 
     removeItem(index) {
       this.variants.removeAt(index);
+    }
+
+    createVariations(variants: ProductVariantSelection[]) {
+      const productName = new TitleCasePipe().transform(this.productForm.get('name').value.trim());
+
+      const tempVariationsValues = variants.map(vs => {
+        if (vs.variantValues === null) { return []; }
+        return vs.variantValues.split(',').map(vv => new TitleCasePipe().transform(vv.trim()));
+      });
+
+      this.variations.controls = [];
+      this.createPermutation(tempVariationsValues).map(variation => {
+        if (variation) {
+          this.variations.push(this.fb.group({
+            name: [{value: [productName, variation].join(' '), disabled: true }, Validators.required],
+            sku: [null, Validators.required],
+            code: [null, Validators.required],
+            price: [null, Validators.required]
+          }));
+        }
+      });
+
+    }
+
+    createPermutation(variationValues: string[][]): string[] {
+      let tempPerp = [];
+      variationValues.map((t, i) => {
+        if (variationValues.length === 1) { tempPerp = variationValues[i]; }
+        else if (i === variationValues.length - 1) { return; }
+        else if (i === 0 ) { tempPerp = this.permutate(t, variationValues[i + 1]); }
+        else { tempPerp = this.permutate(tempPerp, variationValues[i + 1]); }
+      });
+      return tempPerp;
+    }
+
+    permutate(a1, a2) {
+      let temp = a1.slice().fill('', 0, a1.length);
+
+      temp = temp.map((v, i) => {
+        return a2.slice().map(a => {
+          return [new TitleCasePipe().transform(a1[i].trim()), new TitleCasePipe().transform(a.trim())].join(' ');
+        });
+      }).flat();
+
+      return temp;
     }
 
     onSubmit() {

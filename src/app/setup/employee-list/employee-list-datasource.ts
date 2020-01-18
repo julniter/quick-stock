@@ -4,32 +4,19 @@ import { MatSort } from '@angular/material/sort';
 import { Observable, of as observableOf } from 'rxjs';
 import { FirebaseMetaData } from 'src/app/firebase.meta';
 import { SpinnerService } from 'src/app/shared/spinner.service';
+import { Outlet } from '../outlet-list/outlet-list-datasource';
 
-export interface ProductVariation {
-  name: string;
-  price: number;
-  sku: string;
-  code: string;
-}
 
-export interface ProductVariantSelection {
-  variant: string;
-  variantValues: string;
-}
-
-export interface Product {
-  name: string;
-  brand: string;
-  category: string;
-  type: string;
-  variants: ProductVariantSelection[];
-  variations: ProductVariation[];
-  description: string;
+export interface Employee {
+  firstName: string;
+  lastName: string;
+  emailAddress: string;
+  password: string;
 }
 
 // TODO: Replace this with your own data model type
-export interface ProductListItem extends FirebaseMetaData {
-  product: Product;
+export interface EmployeeListItem extends FirebaseMetaData {
+  employee: Employee;
 }
 
 /**
@@ -37,8 +24,8 @@ export interface ProductListItem extends FirebaseMetaData {
  * encapsulate all logic for fetching and manipulating the displayed data
  * (including sorting, pagination, and filtering).
  */
-export class ProductListDataSource extends DataSource<ProductListItem> {
-  data: ProductListItem[] = [];
+export class EmployeeListDataSource extends DataSource<EmployeeListItem> {
+  data: EmployeeListItem[] = [];
   paginator: MatPaginator;
   sort: MatSort;
 
@@ -51,7 +38,7 @@ export class ProductListDataSource extends DataSource<ProductListItem> {
    * the returned stream emits new items.
    * @returns A stream of the items to be rendered.
    */
-  connect(): Observable<ProductListItem[]> {
+  connect(): Observable<EmployeeListItem[]> {
     // Combine everything that affects the rendered data into one update
     // stream for the data-table to consume.
     const dataMutations = [
@@ -78,7 +65,7 @@ export class ProductListDataSource extends DataSource<ProductListItem> {
    * Paginate the data (client-side). If you're using server-side pagination,
    * this would be replaced by requesting the appropriate data from the server.
    */
-  private getPagedData(data: ProductListItem[]) {
+  private getPagedData(data: EmployeeListItem[]) {
     const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
     return data.splice(startIndex, this.paginator.pageSize);
   }
@@ -87,7 +74,7 @@ export class ProductListDataSource extends DataSource<ProductListItem> {
    * Sort the data (client-side). If you're using server-side sorting,
    * this would be replaced by requesting the appropriate data from the server.
    */
-  private getSortedData(data: ProductListItem[]) {
+  private getSortedData(data: EmployeeListItem[]) {
     if (!this.sort.active || this.sort.direction === '') {
       return data;
     }
@@ -97,20 +84,14 @@ export class ProductListDataSource extends DataSource<ProductListItem> {
       switch (this.sort.active) {
         case 'name':
           return compare(
-            a.product.name,
-            b.product.name,
+            a.employee.firstName + ' ' + a.employee.lastName,
+            b.employee.firstName + ' ' + b.employee.lastName,
             isAsc
           );
-        case 'brand':
+        case 'emailAddress':
           return compare(
-            a.product.brand,
-            b.product.brand,
-            isAsc
-          );
-        case 'type':
-          return compare(
-            a.product.type,
-            b.product.type,
+            a.employee.emailAddress,
+            b.employee.emailAddress,
             isAsc
           );
         default:
