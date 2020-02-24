@@ -9,6 +9,23 @@ import { ProductListItem, ProductVariation } from 'src/app/products/product-list
 import { ProductSupplierListItem } from 'src/app/products/product-supplier-list/product-supplier-list-datasource';
 import { WarehouseListItem } from 'src/app/setup/warehouse-list/warehouse-list-datasource';
 
+export function getJobOrderTypes() {
+  return [
+    JobOrderType[JobOrderType.Internal],
+    JobOrderType[JobOrderType.External]
+  ];
+}
+
+export function getJobOrderStatus() {
+  return [
+    JobOrderStatus.Pending,
+    JobOrderStatus.InProgress,
+    JobOrderStatus.Received,
+    JobOrderStatus.Delivered,
+    JobOrderStatus.Cancelled
+  ];
+}
+
 export enum JobOrderType {
   Internal,
   External
@@ -30,7 +47,6 @@ export interface JobOrderProductVariation extends ProductVariation {
 
 export interface JobOrder {
   type: JobOrderType;
-  status: JobOrderStatus;
   productId: string;
   productVariations: JobOrderProductVariation[];
   warehouseId: string;
@@ -45,6 +61,7 @@ export interface JobOrderListItem extends FirebaseMetaData {
   warehouse: WarehouseListItem;
   supplier: ProductSupplierListItem;
   product: ProductListItem;
+  status: JobOrderStatus;
 }
 
 /**
@@ -142,8 +159,8 @@ export class JobOrderListDataSource extends DataSource<JobOrderListItem> {
           );
         case 'status':
           return compare(
-            a.jobOrder.status,
-            b.jobOrder.status,
+            a.status,
+            b.status,
             isAsc
           );
         default:

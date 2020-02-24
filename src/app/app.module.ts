@@ -11,7 +11,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent,
+    HomeComponent
   ],
   imports: [
     CoreModule,
@@ -22,6 +22,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
     DashboardModule
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  exports: []
 })
 export class AppModule { }

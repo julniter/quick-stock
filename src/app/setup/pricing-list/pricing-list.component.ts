@@ -40,6 +40,6 @@ export class PricingListComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   view(pricingItem: PricingListItem) {
-    this.router.navigate(['pricings/', pricingItem.pricing.name, 'details'], { state: pricingItem });
+    this.router.navigate(['setup/pricings/', pricingItem.pricing.name, 'details'], { state: pricingItem });
   }
 }

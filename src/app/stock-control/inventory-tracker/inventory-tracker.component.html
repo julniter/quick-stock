@@ -1,0 +1,9 @@
+<mat-tab-group>
+  <mat-tab label="Outlet">
+    <app-outlet-inventory-tracker-form [outletItems]="outletItems"></app-outlet-inventory-tracker-form>
+  </mat-tab>
+  <mat-tab label="Warehouse">
+    <app-warehouse-inventory-tracker-form [warehouseItems]="warehouseItems"></app-warehouse-inventory-tracker-form>
+  </mat-tab>
+</mat-tab-group>
+<ngx-spinner [name]="spinnerName"></ngx-spinner>

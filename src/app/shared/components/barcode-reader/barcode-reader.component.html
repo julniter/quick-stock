@@ -1,0 +1,26 @@
+<div class="barcode-reader">
+  <ngx-spinner [name]="spinnerName"></ngx-spinner>
+  <!-- <webcam
+  *ngIf="showWebcam"
+  [height]="250"
+  [width]="300"
+  [trigger]="triggerObservable"
+  (imageCapture)="handleImage($event)"
+  [allowCameraSwitch]="allowCameraSwitch"
+  [switchCamera]="nextWebcamObservable"
+  [videoOptions]="videoOptions"
+  [imageQuality]="1"
+  (cameraSwitched)="cameraWasSwitched($event)"
+  (initError)="handleInitError($event)"
+  ></webcam> -->
+  <div id="yourElement"><br clear="all"></div>
+  <div>
+    <mat-error *ngIf="scanError">
+      Scan failed. Please try again.
+    </mat-error>
+    <!-- <button type="button" mat-raised-button color="accent" alt="Scan Barcode" (click)="triggerSnapshot()"><i class="fas fa-camera"></i></button>&nbsp; -->
+    <button type="button" mat-raised-button color="accent" alt="Start" (click)="startScanning()" [disabled]="isScanning"><i class="fas fa-play"></i></button>&nbsp;
+    <button type="button" mat-raised-button color="accent" alt="Stop" (click)="stopScanning()" [disabled]="!isScanning"><i class="fas fa-stop"></i></button>&nbsp;
+    <button type="button" mat-raised-button alt="Switch Camera" (click)="showNextWebcam(true)" [disabled]="!multipleWebcamsAvailable"><i class="fas fa-sync"></i></button>
+  </div>
+</div>

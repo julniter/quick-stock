@@ -13,12 +13,12 @@ export class CustomersComponent {
     map(({ matches }) => {
       if (matches) {
         return [
-          { title: 'Customer List', cols: 4, rows: 1, routePath: ['./list']  }
+          { title: 'Customer List', cols: 4, rows: 1, routePath: ['./list'], icon: 'fa-users'  }
         ];
       }
 
       return [
-        { title: 'Customer List', cols: 1, rows: 1, routePath: ['./list']  }
+        { title: 'Customer List', cols: 1, rows: 1, routePath: ['./list'], icon: 'fa-users'  }
       ];
     })
   );

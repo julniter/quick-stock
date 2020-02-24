@@ -2,7 +2,7 @@ import { AfterViewInit, Component, OnInit, ViewChild, OnDestroy } from '@angular
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTable } from '@angular/material/table';
-import { JobOrderListDataSource, JobOrderListItem } from './job-order-list-datasource';
+import { JobOrderListDataSource, JobOrderListItem, JobOrderStatus, getJobOrderStatus } from './job-order-list-datasource';
 import { Subject } from 'rxjs';
 import { SpinnerService } from 'src/app/shared/spinner.service';
 import { Router } from '@angular/router';
@@ -25,6 +25,8 @@ export class JobOrderListComponent
   displayedColumns = ['id', 'supplier', 'product', 'warehouse', 'type', 'status', 'actions'];
   destroy$: Subject<void> = new Subject();
 
+  jobOrderStatus: any;
+
   constructor(
     private $db: JobOrdersService,
     private spinner: SpinnerService,
@@ -32,6 +34,8 @@ export class JobOrderListComponent
   ) {}
 
   ngOnInit() {
+    this.jobOrderStatus = JobOrderStatus;
+
     this.dataSource = new JobOrderListDataSource(
       this.$db.ref().valueChanges(),
       this.spinner
@@ -48,16 +52,23 @@ export class JobOrderListComponent
     this.destroy$.next();
   }
 
+  edit(jobOrderItem: JobOrderListItem) {
+    this.router.navigate(
+      ['sales/job-orders/', jobOrderItem.id, 'details'],
+      { state: { item: jobOrderItem, pageMode: PageMode.Edit } }
+    );
+  }
+
   view(jobOrderItem: JobOrderListItem) {
     this.router.navigate(
-      ['sales/jobOrders/', jobOrderItem.id, 'details'],
-      { state: { item: jobOrderItem, pageMode: PageMode.Edit } }
+      ['sales/job-orders/', jobOrderItem.id, 'details'],
+      { state: { item: jobOrderItem, pageMode: PageMode.View } }
     );
   }
 
   copy(jobOrderItem: JobOrderListItem) {
     this.router.navigate(
-      ['sales/jobOrders/', jobOrderItem.id, 'copy'],
+      ['sales/job-orders/', jobOrderItem.id, 'copy'],
       { state: { item: jobOrderItem, pageMode: PageMode.Copy } }
     );
   }

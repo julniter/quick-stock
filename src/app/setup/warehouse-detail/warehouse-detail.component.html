@@ -51,8 +51,8 @@
         <div class="col">
           <mat-form-field class="full-width">
             <mat-select placeholder="Province" formControlName="province">
-              <mat-option *ngFor="let state of states" [value]="state.abbreviation">
-                {{ state.name }}
+              <mat-option *ngFor="let province of provinces" [value]="province">
+                {{ province }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="warehouseForm.controls['province'].hasError('required')">

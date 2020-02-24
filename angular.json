@@ -29,7 +29,9 @@
               "node_modules/material-design-icons/iconfont/material-icons.css",
               "node_modules/@fortawesome/fontawesome-free/css/all.min.css"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/javascript-barcode-reader/dist/javascript-barcode-reader.min.js"
+            ]
           },
           "configurations": {
             "production": {

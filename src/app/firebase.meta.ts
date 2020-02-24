@@ -8,5 +8,6 @@ export interface FirebaseMetaData {
 export enum PageMode {
   New,
   Edit,
-  Copy
+  Copy,
+  View
 }

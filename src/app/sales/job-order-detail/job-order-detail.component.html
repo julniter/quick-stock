@@ -1,5 +1,5 @@
-<form [formGroup]="jobOrderForm" novalidate (ngSubmit)="onSubmit()">
-  <ngx-spinner [name]="spinnerName"></ngx-spinner>
+<ngx-spinner [name]="spinnerName"></ngx-spinner>
+<form [formGroup]="jobOrderForm" novalidate (ngSubmit)="onSubmit()" *ngIf="customerItems.length && productItems.length && supplierItems.length && warehouseItems.length">
   <mat-card class="shipping-card">
     <mat-card-header>
       <mat-card-title>Job Order Detail</mat-card-title>
@@ -9,8 +9,8 @@
         <div class="col">
           <mat-form-field class="full-width">
             <mat-select placeholder="Type" formControlName="type">
-              <mat-option *ngFor="let state of states" [value]="state.abbreviation">
-                {{ state.name }}
+              <mat-option *ngFor="let jobOrderTypeItem of jobOrderTypeItems" [value]="jobOrderTypeItem">
+                {{ jobOrderTypeItem }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="jobOrderForm.controls['type'].hasError('required')">
@@ -20,9 +20,9 @@
         </div>
         <div class="col">
           <mat-form-field class="full-width">
-            <mat-select placeholder="Customer" formControlName="customerId">
-              <mat-option *ngFor="let state of states" [value]="state.abbreviation">
-                {{ state.name }}
+            <mat-select placeholder="Customer" formControlName="customerId" (selectionChange)="setCustomerFormControlState($event)">
+              <mat-option *ngFor="let customerItem of customerItems" [value]="customerItem.id">
+                {{ customerItem.customer.company }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="jobOrderForm.controls['customerId'].hasError('required')">
@@ -35,8 +35,8 @@
         <div class="col">
           <mat-form-field class="full-width">
             <mat-select placeholder="Supplier" formControlName="supplierId">
-              <mat-option *ngFor="let state of states" [value]="state.abbreviation">
-                {{ state.name }}
+              <mat-option *ngFor="let supplierItem of supplierItems" [value]="supplierItem.id">
+                {{ supplierItem.productSupplier.company }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="jobOrderForm.controls['supplierId'].hasError('required')">
@@ -47,8 +47,8 @@
         <div class="col">
           <mat-form-field class="full-width">
             <mat-select placeholder="Warehouse" formControlName="warehouseId">
-              <mat-option *ngFor="let state of states" [value]="state.abbreviation">
-                {{ state.name }}
+              <mat-option *ngFor="let warehouseItem of warehouseItems" [value]="warehouseItem.id">
+                {{ warehouseItem.warehouse.name }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="jobOrderForm.controls['warehouseId'].hasError('required')">
@@ -60,9 +60,9 @@
       <div class="row">
         <div class="col">
           <mat-form-field class="full-width">
-            <mat-select placeholder="Product" formControlName="productId">
-              <mat-option *ngFor="let state of states" [value]="state.abbreviation">
-                {{ state.name }}
+            <mat-select placeholder="Product" formControlName="productId" (selectionChange)="setProductVariationFormControls($event)">
+              <mat-option *ngFor="let productItem of productItems" [value]="productItem.id">
+                {{ productItem.product.name }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="jobOrderForm.controls['productId'].hasError('required')">
@@ -74,7 +74,7 @@
       <div *ngIf="jobOrderForm.get('productId').value !== null && jobOrderForm.get('productId').value !== undefined">
         <div *ngIf="jobOrderForm.get('productVariations').controls.length">
           <div *ngFor="let type of jobOrderForm.get('productVariations').controls; let i = index;">
-            <div formArrayName="variations">
+            <div formArrayName="productVariations">
               <div [formGroupName]="i">
                 <div class="row">
                   <div class="col">
@@ -126,7 +126,7 @@
     </mat-card-content>
     <mat-card-actions>
       <button mat-raised-button color="secondary" type="button" (click)="back()">Cancel</button>
-      <button mat-raised-button color="primary" type="submit">Submit</button>
+      <button mat-raised-button color="primary" type="submit" *ngIf="pageMode !== pageModes.View">Submit</button>
     </mat-card-actions>
   </mat-card>
 </form>

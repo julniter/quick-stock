@@ -13,14 +13,14 @@ export class SalesComponent {
     map(({ matches }) => {
       if (matches) {
         return [
-          { title: 'Job Orders', cols: 4, rows: 1, routePath: ['./job-orders'] },
-          { title: 'Outlet Sales', cols: 4, rows: 1, routePath: ['./outlet-sales'] },
+          { title: 'Job Orders', cols: 4, rows: 1, routePath: ['./job-orders'], icon: 'fa-clipboard' },
+          { title: 'Outlet Sales', cols: 4, rows: 1, routePath: ['./outlet-sales'], icon: 'fa-chart-line' },
         ];
       }
 
       return [
-        { title: 'Job Orders', cols: 1, rows: 1, routePath: ['./job-orders'] },
-        { title: 'Outlet Sales', cols: 1, rows: 1, routePath: ['./outlet-sales'] },
+        { title: 'Job Orders', cols: 1, rows: 1, routePath: ['./job-orders'], icon: 'fa-clipboard' },
+        { title: 'Outlet Sales', cols: 1, rows: 1, routePath: ['./outlet-sales'], icon: 'fa-chart-line' },
       ];
     })
   );

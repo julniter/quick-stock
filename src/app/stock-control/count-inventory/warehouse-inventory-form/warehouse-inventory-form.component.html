@@ -1,0 +1,118 @@
+<form [formGroup]="warehouseInventoryForm" novalidate (ngSubmit)="onSubmit()">
+  <mat-card class="shipping-card">
+    <mat-card-header>
+      <mat-card-title>Warehouse Inventory</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="row">
+        <div class="col">
+          <mat-form-field class="full-width">
+            <mat-select placeholder="Warehouse" formControlName="warehouseId">
+              <mat-option *ngFor="let warehouseItem of warehouseItems" [value]="warehouseItem.id">
+                {{ warehouseItem.warehouse.name }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="warehouseInventoryForm.controls['warehouseId'].hasError('required')">
+              Warehouse is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col">
+          <mat-form-field class="full-width max-three-quarter-width">
+            <mat-select placeholder="Select Product" (selectionChange)="setSelectedProduct($event)">
+              <mat-option *ngFor="let productItem of productItems" [value]="productItem">
+                {{ productItem.product.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <button mat-button type="button" (click)="addProduct()">
+            <i class="fa fa-plus"></i>&nbsp;Add Product
+          </button>
+        </div>
+      </div>
+      <div *ngIf="products.controls.length">
+        <div *ngFor="let type of products.controls; let i = index;">
+          <div class="row" formArrayName="products">
+            <div class="col" [formGroupName]="i">
+              <mat-accordion>
+                <mat-expansion-panel>
+                  <mat-expansion-panel-header>
+                    <mat-panel-title>
+                      {{ getProductName(i) | titlecase }}
+                    </mat-panel-title>
+                    <mat-panel-description>
+                      {{ getProductVariationCount(i) }} Variant(s)
+                    </mat-panel-description>
+                  </mat-expansion-panel-header>
+
+                  <button mat-button type="button" (click)="removeProduct(i)">
+                    <i class="fa fa-trash-alt"></i> Remove Product
+                  </button>
+                  <mat-form-field class="full-width max-quarter-width">
+                    <input matInput placeholder="Product Re-Order Point" formControlName="reOrderPoint">
+                  </mat-form-field>
+                  <mat-card>
+                    <mat-card-content>
+                      <div *ngFor="let type of getProductVariations(i).controls; let x = index;">
+                        <div formArrayName="productVariations">
+                          <div class="row" [formGroupName]="x">
+                            <div class="col">
+                              <mat-form-field class="full-width">
+                                <input matInput placeholder="Variation Name" formControlName="name">
+                                <mat-error *ngIf="getProductVariations(i).controls[x].get('name').hasError('required')">
+                                  Variation Name is <strong>required</strong>
+                                </mat-error>
+                              </mat-form-field>
+                            </div>
+                            <div class="col">
+                              <mat-form-field class="full-width">
+                                <input matInput placeholder="SKU" formControlName="sku">
+                                <mat-error *ngIf="getProductVariations(i).controls[x].get('sku').hasError('required')">
+                                  SKU is <strong>required</strong>
+                                </mat-error>
+                              </mat-form-field>
+                            </div>
+                            <div class="col">
+                              <mat-form-field class="full-width">
+                                <input matInput placeholder="Code" formControlName="code">
+                                <mat-error *ngIf="getProductVariations(i).controls[x].get('code').hasError('required')">
+                                  Code is <strong>required</strong>
+                                </mat-error>
+                              </mat-form-field>
+                            </div>
+                            <div class="col">
+                              <mat-form-field class="full-width">
+                                <input matInput placeholder="Price" formControlName="price">
+                                <mat-error *ngIf="getProductVariations(i).controls[x].get('price').hasError('required')">
+                                  Price is <strong>required</strong>
+                                </mat-error>
+                              </mat-form-field>
+                            </div>
+                            <div class="col">
+                              <mat-form-field class="full-width">
+                                <input matInput placeholder="Count" formControlName="count">
+                                <mat-error *ngIf="getProductVariations(i).controls[x].get('count').hasError('required')">
+                                  Count is <strong>required</strong>
+                                </mat-error>
+                              </mat-form-field>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </mat-card-content>
+                  </mat-card>
+
+                </mat-expansion-panel>
+              </mat-accordion>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button color="secondary" type="button" (click)="back()">Cancel</button>
+      <button mat-raised-button color="primary" type="submit">Submit</button>
+    </mat-card-actions>
+  </mat-card>
+  <ngx-spinner [name]="spinnerName"></ngx-spinner>
+</form>

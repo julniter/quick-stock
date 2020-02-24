@@ -47,7 +47,7 @@ export class HomeComponent implements OnInit {
       : this.default;
     this.displayArrow = this.crumbs.indexOf('/') !== -1;
     if (this.displayArrow) {
-      this.parentLink = '/' + this.crumbs.split(' / ')[0].toLowerCase();
+      this.parentLink = '/' + this.crumbs.split(' / ')[0].toLowerCase().replace(' ', '-');
     }
   }
 }

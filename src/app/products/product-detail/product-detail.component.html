@@ -1,4 +1,5 @@
-<form [formGroup]="productForm" novalidate (ngSubmit)="onSubmit()">
+<ngx-spinner [name]="spinnerName"></ngx-spinner>
+<form [formGroup]="productForm" novalidate (ngSubmit)="onSubmit()" *ngIf="brandItems.length && variantItems.length && categoryItems.length">
   <mat-card class="shipping-card">
     <mat-card-header>
       <mat-card-title>Product Detail</mat-card-title>
@@ -18,8 +19,8 @@
         <div class="col">
           <mat-form-field class="full-width">
             <mat-select placeholder="Category" formControlName="category">
-              <mat-option *ngFor="let state of states" [value]="state.abbreviation">
-                {{ state.name }}
+              <mat-option *ngFor="let categoryItem of categoryItems" [value]="categoryItem.productCategory.name">
+                {{ categoryItem.productCategory.name }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="productForm.controls['category'].hasError('required')">
@@ -28,8 +29,8 @@
           </mat-form-field>
           <mat-form-field class="full-width">
             <mat-select placeholder="Type" formControlName="type">
-              <mat-option *ngFor="let state of states" [value]="state.abbreviation">
-                {{ state.name }}
+              <mat-option *ngFor="let type of getTypes()" [value]="type.name">
+                {{ type.name }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="productForm.controls['type'].hasError('required')">
@@ -38,8 +39,8 @@
           </mat-form-field>
           <mat-form-field class="full-width">
             <mat-select placeholder="Brand" formControlName="brand">
-              <mat-option *ngFor="let state of states" [value]="state.abbreviation">
-                {{ state.name }}
+              <mat-option *ngFor="let brand of brandItems" [value]="brand.productBrand.name">
+                {{ brand.productBrand.name }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="productForm.controls['brand'].hasError('required')">
@@ -75,8 +76,8 @@
               <div class="col">
                 <mat-form-field class="full-width">
                   <mat-select placeholder="Variant" formControlName="variant">
-                    <mat-option *ngFor="let state of states" [value]="state.abbreviation">
-                      {{ state.name }}
+                    <mat-option *ngFor="let variantItem of variantItems" [value]="variantItem.productVariant.name">
+                      {{ variantItem.productVariant.name }}
                     </mat-option>
                   </mat-select>
                   <mat-error *ngIf="productForm.get('variants').controls[i].get('variant').hasError('required')">

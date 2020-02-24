@@ -13,14 +13,16 @@ export class StockControlComponent {
     map(({ matches }) => {
       if (matches) {
         return [
-          { title: 'Starting Inventory', cols: 4, rows: 1, routePath: ['./starting-inventory'] },
-          { title: 'Count Inventory', cols: 4, rows: 1, routePath: ['./starting-inventory'] },
+          { title: 'Count Inventory', cols: 4, rows: 1, routePath: ['./count-inventory'], icon:'fa-boxes' },
+          { title: 'Move Inventory', cols: 4, rows: 1, routePath: ['./move-inventory'], icon:'fa-truck-moving' },
+          { title: 'Track Inventory', cols: 4, rows: 1, routePath: ['./track-inventory'], icon:'fa-dolly-flatbed' },
         ];
       }
 
       return [
-        { title: 'Starting Inventory', cols: 1, rows: 1, routePath: ['./starting-inventory'] },
-        { title: 'Count Inventory', cols: 1, rows: 1, routePath: ['./starting-inventory'] },
+        { title: 'Count Inventory', cols: 1, rows: 1, routePath: ['./count-inventory'], icon:'fa-boxes' },
+        { title: 'Move Inventory', cols: 1, rows: 1, routePath: ['./move-inventory'], icon:'fa-truck-moving' },
+        { title: 'Track Inventory', cols: 1, rows: 1, routePath: ['./track-inventory'], icon:'fa-dolly-flatbed' },
       ];
     })
   );

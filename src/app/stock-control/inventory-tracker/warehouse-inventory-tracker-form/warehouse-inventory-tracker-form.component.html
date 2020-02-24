@@ -1,0 +1,33 @@
+<ngx-spinner [name]="spinnerName"></ngx-spinner>
+
+<form [formGroup]="warehouseInventoryTrackerForm" novalidate (ngSubmit)="onSubmit()">
+  <mat-card class="shipping-card">
+    <mat-card-header>
+      <mat-card-title>Track Warehouse Inventory</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="row">
+        <div class="col">
+          <mat-form-field class="full-width">
+            <mat-select placeholder="Warehouse" formControlName="warehouseId">
+              <mat-option *ngFor="let warehouseItem of warehouseItems" [value]="warehouseItem.id">
+                {{ warehouseItem.warehouse.name }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="warehouseInventoryTrackerForm.controls['warehouseId'].hasError('required')">
+              Warehouse is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button color="secondary" type="button" (click)="back()">Cancel</button>
+      <button mat-raised-button color="primary" type="submit">Search</button>
+    </mat-card-actions>
+  </mat-card>
+</form>
+
+<app-warehouse-inventory-details
+[warehouseInventorySnapshot]="warehouseInventorySnapshot"
+*ngIf="warehouseInventorySnapshot !== null && warehouseInventorySnapshot !== undefined"></app-warehouse-inventory-details>

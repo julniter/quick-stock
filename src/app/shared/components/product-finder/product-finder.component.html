@@ -1,0 +1,42 @@
+<div class="product-finder">
+  <ngx-spinner [name]="spinnerName"></ngx-spinner>
+
+  <div class='select-finder-toggle'>
+    <button type="button" mat-raised-button [color]="selectedInput === 0 ? 'accent' : ''" alt="Select to find Product" (click)="setSelectedFinder(0)">Select</button>&nbsp;
+    <button type="button" mat-raised-button [color]="selectedInput === 1 ? 'accent' : ''" alt="Scan to find Product" (click)="setSelectedFinder(1)">Scan</button>&nbsp;
+    <button type="button" mat-raised-button [color]="selectedInput === 2 ? 'accent' : ''" alt="Input Code to find Product" (click)="setSelectedFinder(2)">Input</button>&nbsp;
+  </div>
+
+  <div class="select-options">
+    <div class="select-option" *ngIf="selectedInput === 0">
+      <mat-form-field class="full-width max-half-width">
+        <mat-select placeholder="Select Product" (selectionChange)="setSelectedProductFromSelect($event.value)">
+          <mat-option *ngFor="let productItem of productItems" [value]="productItem">
+            {{ productItem.product.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="select-option" *ngIf="selectedInput === 1">
+      <div style="position: relative;">
+        <app-barcode-reader (readCode)="readBarcodeEmit($event)"></app-barcode-reader>
+      </div>
+    </div>
+
+    <div class="select-option" *ngIf="selectedInput === 2">
+      <mat-form-field class="full-width max-half-width">
+        <input matInput placeholder="Product Code" #productFinderInputCode>
+      </mat-form-field>
+      <button mat-button type="button" (click)="setSelectedProductFromInput(productFinderInputCode.value)">
+        <i class="fa fa-search"></i>&nbsp;
+      </button>
+    </div>
+  </div>
+
+  <div class="select-actions">
+    <button mat-button type="button" (click)="emitSelectedPrduct($event)">
+      <i class="fa fa-plus"></i>&nbsp;Add Product{{ getSelectedProduct() ? ' - ' + getSelectedProduct().product.name : '' }}
+    </button>
+  </div>
+</div>

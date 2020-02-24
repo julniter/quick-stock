@@ -10,30 +10,6 @@ export class JobOrdersService {
 
   ref() {
     return this.afStore.collection('sales-job-orders');
-    /*
-      outlet-product {
-        outletid: {
-          products: [
-            productInventory: {
-              product: {
-                productVariations: {
-                  name: string,
-                  count-
-                }
-              }
-            },
-            productVariations: {
-              name: string as id,
-              count: string
-            },
-            productVariations: {
-              name: string as id,
-              count: string
-            }
-          ]
-        }
-      }
-    */
   }
 
 }

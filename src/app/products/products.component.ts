@@ -13,20 +13,20 @@ export class ProductsComponent {
     map(({ matches }) => {
       if (matches) {
         return [
-          { title: 'Product List', cols: 4, rows: 1, routePath: ['./list'] },
-          { title: 'Product Categories', cols: 4, rows: 1, routePath: ['./categories'] },
-          { title: 'Suppliers', cols: 4, rows: 1, routePath: ['./suppliers'] },
-          { title: 'Brands', cols: 4, rows: 1, routePath: ['./brands'] },
-          { title: 'Variants', cols: 4, rows: 1, routePath: ['./variants'] }
+          { title: 'Product List', cols: 4, rows: 1, routePath: ['./list'], icon: 'fa-list' },
+          { title: 'Product Categories', cols: 4, rows: 1, routePath: ['./categories'], icon: 'fa-box-open' },
+          { title: 'Suppliers', cols: 4, rows: 1, routePath: ['./suppliers'], icon: 'fa-store' },
+          { title: 'Brands', cols: 4, rows: 1, routePath: ['./brands'], icon: 'fa-box-open' },
+          { title: 'Variants', cols: 4, rows: 1, routePath: ['./variants'], icon: 'fa-box-open' }
         ];
       }
 
       return [
-        { title: 'Product List', cols: 1, rows: 1, routePath: ['./list'] },
-        { title: 'Product Categories', cols: 1, rows: 1, routePath: ['./categories'] },
-        { title: 'Suppliers', cols: 1, rows: 1, routePath: ['./suppliers'] },
-        { title: 'Brands', cols: 1, rows: 1, routePath: ['./brands'] },
-        { title: 'Variants', cols: 1, rows: 1, routePath: ['./variants'] }
+        { title: 'Product List', cols: 1, rows: 1, routePath: ['./list'], icon: 'fa-boxes' },
+        { title: 'Product Categories', cols: 1, rows: 1, routePath: ['./categories'], icon: 'fa-box-open' },
+        { title: 'Suppliers', cols: 1, rows: 1, routePath: ['./suppliers'], icon: 'fa-address-book' },
+        { title: 'Brands', cols: 1, rows: 1, routePath: ['./brands'], icon: 'fa-box-open' },
+        { title: 'Variants', cols: 1, rows: 1, routePath: ['./variants'], icon: 'fa-box-open' }
       ];
     })
   );

@@ -25,9 +25,13 @@
     "@angular/router": "~8.2.14",
     "firebase": "^7.6.1",
     "hammerjs": "^2.0.8",
+    "javascript-barcode-reader": "^0.5.4",
     "material-design-icons": "^3.0.1",
     "ngx-auth-firebaseui": "^3.4.2",
+    "ngx-barcode-scanner": "0.0.7",
     "ngx-spinner": "^8.1.0",
+    "ngx-webcam": "^0.2.6",
+    "quagga": "^0.12.1",
     "rxjs": "~6.4.0",
     "tslib": "^1.10.0",
     "zone.js": "~0.9.1"

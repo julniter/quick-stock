@@ -1,0 +1,33 @@
+<ngx-spinner [name]="spinnerName"></ngx-spinner>
+
+<form [formGroup]="outletInventoryTrackerForm" novalidate (ngSubmit)="onSubmit()">
+  <mat-card class="shipping-card">
+    <mat-card-header>
+      <mat-card-title>Track Outlet Inventory</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="row">
+        <div class="col">
+          <mat-form-field class="full-width">
+            <mat-select placeholder="Outlet" formControlName="outletId">
+              <mat-option *ngFor="let outletItem of outletItems" [value]="outletItem.id">
+                {{ outletItem.outlet.name }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="outletInventoryTrackerForm.controls['outletId'].hasError('required')">
+              Outlet is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button color="secondary" type="button" (click)="back()">Cancel</button>
+      <button mat-raised-button color="primary" type="submit">Search</button>
+    </mat-card-actions>
+  </mat-card>
+</form>
+
+<app-outlet-inventory-details
+[outletInventorySnapshot]="outletInventorySnapshot"
+*ngIf="outletInventorySnapshot !== null && outletInventorySnapshot !== undefined"></app-outlet-inventory-details>

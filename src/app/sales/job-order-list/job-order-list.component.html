@@ -16,19 +16,19 @@
     <!-- Supplier Column -->
     <ng-container matColumnDef="supplier">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Supplier</th>
-      <td mat-cell *matCellDef="let row">{{row.jobOrder.supplier.productSupplier.company}}</td>
+      <td mat-cell *matCellDef="let row">{{row.supplier.productSupplier.company}}</td>
     </ng-container>
 
     <!-- Product Column -->
     <ng-container matColumnDef="product">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Product</th>
-      <td mat-cell *matCellDef="let row">{{row.jobOrder.product.product.product.name}}</td>
+      <td mat-cell *matCellDef="let row">{{row.product.product.name}}</td>
     </ng-container>
 
     <!-- Warehouse Column -->
     <ng-container matColumnDef="warehouse">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Warehouse</th>
-      <td mat-cell *matCellDef="let row">{{row.jobOrder.warehouse.warehouse.name}}</td>
+      <td mat-cell *matCellDef="let row">{{row.warehouse.warehouse.name}}</td>
     </ng-container>
 
     <!-- Type Column -->
@@ -40,14 +40,16 @@
     <!-- Status Column -->
     <ng-container matColumnDef="status">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
-      <td mat-cell *matCellDef="let row">{{row.jobOrder.status}}</td>
+      <td mat-cell *matCellDef="let row">{{row.status | jobOrderStatusValue}}</td>
     </ng-container>
 
     <!-- Actions Column -->
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef>Actions</th>
       <td mat-cell *matCellDef="let row">
-        <button mat-raised-button color="primary" type="button" (click)="view(row)"><i class="fa fa-edit"></i> Edit</button>
+        <button mat-raised-button color="primary" type="button" (click)="edit(row)" *ngIf="row.status === jobOrderStatus.Pending"><i class="fa fa-edit"></i> Edit</button>
+        &nbsp;
+        <button mat-raised-button color="primary" type="button" (click)="view(row)" *ngIf="row.status !== jobOrderStatus.Pending"><i class="fa fa-eye"></i> View</button>
         &nbsp;
         <button mat-raised-button color="primary" type="button" (click)="copy(row)"><i class="fa fa-copy"></i> Copy</button>
       </td>

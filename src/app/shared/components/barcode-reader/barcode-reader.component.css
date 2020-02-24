@@ -1,0 +1,20 @@
+.barcode-reader {
+  position: relative;
+}
+
+
+:host ::ng-deep #yourElement {
+  position: relative;
+  width: 300px;
+  height: 250px;
+}
+
+:host ::ng-deep #yourElement video,
+:host ::ng-deep #yourElement canvas {
+  max-width: 100% !important;
+  width: 100% !important;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block !important;
+}

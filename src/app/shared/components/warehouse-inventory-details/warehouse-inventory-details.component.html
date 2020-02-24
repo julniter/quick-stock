@@ -1,0 +1,13 @@
+<mat-card class="shipping-card" *ngIf="warehouse !== null && warehouse !== undefined">
+  <mat-card-header>
+    <mat-card-title>
+      {{ warehouse.name | titlecase }}
+      <mat-card-subtitle>{{ warehouse.address }}, {{ warehouse.address2 }}, {{ warehouse.city }}, {{ warehouse.province }} {{ warehouse.postalCode }}</mat-card-subtitle>
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+
+    <app-inventory-product-details [inventoryProducts]="warehouseProducts"></app-inventory-product-details>
+
+  </mat-card-content>
+</mat-card>

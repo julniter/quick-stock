@@ -4,12 +4,12 @@ import { AngularFirestore } from '@angular/fire/firestore';
 @Injectable({
   providedIn: 'root'
 })
-export class OutletProductService {
+export class ProductsToWarehouseService {
 
   constructor(private afStore: AngularFirestore) {}
 
   ref() {
-    return this.afStore.collection('outlet-product');
+    return this.afStore.collection('products-to-warehouse');
     /*
       outlet-product {
         outletid: {

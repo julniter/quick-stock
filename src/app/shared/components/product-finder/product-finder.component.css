@@ -1,0 +1,27 @@
+.product-finder {
+  position: relative;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.max-half-width {
+  max-width: 50%;
+}
+
+.max-three-quarter-width {
+  max-width: 75%;
+}
+
+.max-quarter-width {
+  max-width: 25%;
+}
+
+.select-option {
+  padding: 10px 0;
+}
+
+.select-actions {
+  margin-bottom: 20px;
+}
