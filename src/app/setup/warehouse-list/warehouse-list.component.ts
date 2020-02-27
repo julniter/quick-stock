@@ -6,7 +6,7 @@ import { WarehouseListDataSource, WarehouseListItem } from './warehouse-list-dat
 import { Subject } from 'rxjs';
 import { SpinnerService } from 'src/app/shared/spinner.service';
 import { Router } from '@angular/router';
-import { WarehousesService } from 'src/app/setup-warehouses.services';
+import { WarehousesService } from 'src/app/setup-warehouses.service';
 import { PageMode } from 'src/app/firebase.meta';
 
 @Component({

@@ -1,0 +1,44 @@
+
+<mat-card class="action-card">
+  <mat-card-actions>
+    <button mat-raised-button color="primary" type="button" [routerLink]="['result']"><i class="fa fa-check"></i> Generate Report</button>
+  </mat-card-actions>
+</mat-card>
+<div class="mat-elevation-z8">
+  <table mat-table class="full-width-table" matSort aria-label="Elements">
+
+    <!-- Company Column -->
+    <ng-container matColumnDef="#">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header><input type="checkbox"></th>
+      <td mat-cell *matCellDef="let row"><input type="checkbox"></td>
+    </ng-container>
+
+    <!-- Company Column -->
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+      <td mat-cell *matCellDef="let row">{{row.outlet.name}}</td>
+    </ng-container>
+
+    <!-- City Column -->
+    <ng-container matColumnDef="city">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>City</th>
+      <td mat-cell *matCellDef="let row">{{row.outlet.city}}</td>
+    </ng-container>
+
+    <!-- Province Column -->
+    <ng-container matColumnDef="province">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Province</th>
+      <td mat-cell *matCellDef="let row">{{row.outlet.province}}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+  <mat-paginator #paginator
+      [length]="dataSource?.data.length"
+      [pageIndex]="0"
+      [pageSize]="50"
+      [pageSizeOptions]="[25, 50, 100, 250]">
+  </mat-paginator>
+</div>

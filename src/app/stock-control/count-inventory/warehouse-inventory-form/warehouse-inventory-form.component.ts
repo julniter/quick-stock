@@ -65,7 +65,9 @@ export class WarehouseInventoryFormComponent implements OnInit {
     this.selectedProduct = $event.value;
   }
 
-  addProduct() {
+  addProduct(product: ProductListItem) {
+    this.selectedProduct = product;
+
     if (this.selectedProduct) {
       const selectedProduct: ProductInventoryItem = Object.assign(
         { reOrderPoint: null, productVariations: [] },

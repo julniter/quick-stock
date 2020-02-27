@@ -3,7 +3,7 @@ import { OutletListItem } from 'src/app/setup/outlet-list/outlet-list-datasource
 import { OutletsService } from 'src/app/setup-outlets.service';
 import { ProductsService } from 'src/app/products.service';
 import { WarehouseListItem } from 'src/app/setup/warehouse-list/warehouse-list-datasource';
-import { WarehousesService } from 'src/app/setup-warehouses.services';
+import { WarehousesService } from 'src/app/setup-warehouses.service';
 import { ProductListItem } from 'src/app/products/product-list/product-list-datasource';
 import { SpinnerService } from 'src/app/shared/spinner.service';
 import { first } from 'rxjs/operators';

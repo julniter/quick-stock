@@ -16,6 +16,7 @@ export class StockControlComponent {
           { title: 'Count Inventory', cols: 4, rows: 1, routePath: ['./count-inventory'], icon:'fa-boxes' },
           { title: 'Move Inventory', cols: 4, rows: 1, routePath: ['./move-inventory'], icon:'fa-truck-moving' },
           { title: 'Track Inventory', cols: 4, rows: 1, routePath: ['./track-inventory'], icon:'fa-dolly-flatbed' },
+          { title: 'Product Look Up', cols: 4, rows: 1, routePath: ['./product-look-up'], icon:'fa-search' },
         ];
       }
 
@@ -23,6 +24,7 @@ export class StockControlComponent {
         { title: 'Count Inventory', cols: 1, rows: 1, routePath: ['./count-inventory'], icon:'fa-boxes' },
         { title: 'Move Inventory', cols: 1, rows: 1, routePath: ['./move-inventory'], icon:'fa-truck-moving' },
         { title: 'Track Inventory', cols: 1, rows: 1, routePath: ['./track-inventory'], icon:'fa-dolly-flatbed' },
+        { title: 'Product Look Up', cols: 1, rows: 1, routePath: ['./product-look-up'], icon:'fa-search' },
       ];
     })
   );

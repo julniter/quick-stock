@@ -12,7 +12,7 @@ import { WarehouseListItem } from 'src/app/setup/warehouse-list/warehouse-list-d
 import { ProductListItem, ProductVariation } from 'src/app/products/product-list/product-list-datasource';
 import { CustomersService } from 'src/app/customers.service';
 import { ProductSuppliersService } from 'src/app/product-suppliers.service';
-import { WarehousesService } from 'src/app/setup-warehouses.services';
+import { WarehousesService } from 'src/app/setup-warehouses.service';
 import { ProductsService } from 'src/app/products.service';
 
 @Component({

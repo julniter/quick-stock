@@ -29,17 +29,10 @@
             </mat-error>
           </mat-form-field>
         </div>
+      </div>
+      <div class="row">
         <div class="col">
-          <mat-form-field class="full-width max-half-width">
-            <mat-select placeholder="Select Product" (selectionChange)="setSelectedProduct($event)" [disabled]="filteredProductItems.length === 0">
-              <mat-option *ngFor="let productItem of filteredProductItems" [value]="productItem">
-                {{ productItem.product.name }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-          <button mat-button type="button" (click)="addProduct()">
-            <i class="fa fa-plus"></i>&nbsp;Add Product
-          </button>
+          <app-product-finder [productItems]="productItems" (productSelected)="addProduct($event)"></app-product-finder>
         </div>
       </div>
       <div *ngIf="products.controls.length">

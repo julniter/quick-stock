@@ -17,6 +17,7 @@ import { CountInventoryComponent } from './count-inventory/count-inventory.compo
 import { InventoryTrackerComponent } from './inventory-tracker/inventory-tracker.component';
 import { OutletInventoryTrackerFormComponent } from './inventory-tracker/outlet-inventory-tracker-form/outlet-inventory-tracker-form.component';
 import { WarehouseInventoryTrackerFormComponent } from './inventory-tracker/warehouse-inventory-tracker-form/warehouse-inventory-tracker-form.component';
+import { ProductLookUpComponent } from './product-look-up/product-look-up.component';
 
 
 @NgModule({
@@ -33,6 +34,7 @@ import { WarehouseInventoryTrackerFormComponent } from './inventory-tracker/ware
     InventoryTrackerComponent,
     OutletInventoryTrackerFormComponent,
     WarehouseInventoryTrackerFormComponent,
+    ProductLookUpComponent
   ],
   imports: [
     CommonModule,

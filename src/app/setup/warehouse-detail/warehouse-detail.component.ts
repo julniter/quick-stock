@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { WarehouseListItem } from '../warehouse-list/warehouse-list-datasource';
 import { Router } from '@angular/router';
-import { WarehousesService } from 'src/app/setup-warehouses.services';
+import { WarehousesService } from 'src/app/setup-warehouses.service';
 import { SpinnerService } from 'src/app/shared/spinner.service';
 import * as firebase from 'firebase';
 import { PageMode } from 'src/app/firebase.meta';
