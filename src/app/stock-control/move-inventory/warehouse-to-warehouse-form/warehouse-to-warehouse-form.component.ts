@@ -7,8 +7,9 @@ import {
   ProductListItem
 } from 'src/app/products/product-list/product-list-datasource';
 import {
+  WarehouseInventorySnapshot,
   ProductInventoryItem,
-  WarehouseInventorySnapshot
+  InventorySnopshot
 } from 'src/app/inventory.model';
 import * as firebase from 'firebase';
 import { InventoryService } from 'src/app/inventory.service';
@@ -34,6 +35,9 @@ export class WarehouseToWarehouseFormComponent implements OnInit {
   @Input() warehouseItems: WarehouseListItem[];
   @Input() productItems: ProductListItem[];
 
+  filteredProductItems: ProductListItem[] = [];
+  selectedProducts: ProductListItem[];
+
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -42,17 +46,6 @@ export class WarehouseToWarehouseFormComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    const ref = this.$db.outlet().ref.doc();
-    this.destinationWarehouseInventorySnapshot = {
-      id: ref.id,
-      isActive: true,
-      isDeleted: false,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      warehouse: null,
-      snapshot: {
-        productInventory: []
-      }
-    };
   }
 
   get products() {
@@ -61,6 +54,37 @@ export class WarehouseToWarehouseFormComponent implements OnInit {
 
   getProductVariations(i) {
     return this.products.controls[i].get('productVariations') as FormArray;
+  }
+
+  setFilteredProduct(snapshot: InventorySnopshot) {
+    this.filteredProductItems = this.productItems.filter(p => {
+      return (snapshot.productInventory.find(f => f.id === p.id) !== undefined);
+    });
+  }
+
+  setOriginSnapshot($event: {value: string}) {
+    this.products.controls = [];
+    this.selectedProducts = [];
+
+    this.spinner.show(this.spinnerName);
+    this.$db.getLatestWarehouseSnapshot($event.value).then(res => {
+      this.warehouseInventorySnapshot = res.docs[0].data() as WarehouseInventorySnapshot;
+      this.setFilteredProduct(this.warehouseInventorySnapshot.snapshot);
+    }).finally(() => {
+      this.spinner.hide(this.spinnerName);
+    });
+  }
+
+  setDestinationSnapshot($event: {value: string}) {
+    this.products.controls = [];
+    this.selectedProducts = [];
+
+    this.spinner.show(this.spinnerName);
+    this.$db.getLatestWarehouseSnapshot($event.value).then(res => {
+      this.destinationWarehouseInventorySnapshot = res.docs[0].data() as WarehouseInventorySnapshot;
+    }).finally(() => {
+      this.spinner.hide(this.spinnerName);
+    });
   }
 
   setSelectedProduct($event: { value: ProductListItem }) {
@@ -76,7 +100,7 @@ export class WarehouseToWarehouseFormComponent implements OnInit {
         this.selectedProduct
       );
 
-      this.destinationWarehouseInventorySnapshot.snapshot.productInventory.push(
+      this.selectedProducts.push(
         selectedProduct
       );
 
@@ -96,8 +120,8 @@ export class WarehouseToWarehouseFormComponent implements OnInit {
   }
 
   getProductName(index: number) {
-    if (this.destinationWarehouseInventorySnapshot.snapshot.productInventory[index]) {
-      return this.destinationWarehouseInventorySnapshot.snapshot.productInventory[index]
+    if (this.selectedProducts[index]) {
+      return this.selectedProducts[index]
         .product.name;
     }
 
@@ -105,8 +129,8 @@ export class WarehouseToWarehouseFormComponent implements OnInit {
   }
 
   getProductVariationCount(index: number) {
-    if (this.destinationWarehouseInventorySnapshot.snapshot.productInventory[index]) {
-      return this.destinationWarehouseInventorySnapshot.snapshot.productInventory[index]
+    if (this.selectedProducts[index]) {
+      return this.selectedProducts[index]
         .product.variations.length;
     }
 
@@ -120,13 +144,13 @@ export class WarehouseToWarehouseFormComponent implements OnInit {
         sku: [{ value: v.sku, disabled: true }, Validators.required],
         code: [{ value: v.code, disabled: true }, Validators.required],
         price: [{ value: v.price, disabled: true }, Validators.required],
-        count: [null, Validators.required]
+        count: [0, Validators.required]
       });
     });
   }
 
   removeProduct(i: number) {
-    this.destinationWarehouseInventorySnapshot.snapshot.productInventory.splice(i, 1);
+    this.selectedProducts.splice(i, 1);
     this.products.removeAt(i);
   }
 
@@ -140,28 +164,46 @@ export class WarehouseToWarehouseFormComponent implements OnInit {
       this.back();
     };
 
-    if (this.products.controls.length > 0) {
+    const inventoryForm = this.warehouseToWarehouseForm.getRawValue();
+
+    if (this.products.controls.length > 0 && inventoryForm.warehouseId !== inventoryForm.destinationWarehouseId) {
 
       this.spinner.show(this.spinnerName);
 
-      const inventoryForm = this.warehouseToWarehouseForm.getRawValue();
+      this.warehouseInventorySnapshot.snapshot
+      = this.$db.updateSnapshotLessProduct(
+        this.warehouseInventorySnapshot.snapshot,
+        inventoryForm.products, this.selectedProducts
+        );
 
-      this.destinationWarehouseInventorySnapshot.warehouse = this.warehouseItems.find(o => o.id === inventoryForm.warehouseId).warehouse;
-      this.destinationWarehouseInventorySnapshot.snapshot.productInventory =
-      this.destinationWarehouseInventorySnapshot.snapshot.productInventory
-      .map(
-        (pi: ProductInventoryItem, index) => {
-        pi.reOrderPoint = inventoryForm.products[index].reOrderPoint;
-        pi.productVariations = inventoryForm.products[index].productVariations;
-        return pi;
-      });
+      this.warehouseInventorySnapshot.productIds
+      = this.warehouseInventorySnapshot.snapshot.productInventory.map(p => p.id);
 
-      // this.$db
-      //   .outletSnapshot(inventoryForm.outletId)
-      //   .doc(this.destinationWarehouseInventorySnapshot.id)
-      //   .set(this.destinationWarehouseInventorySnapshot)
-      //   .catch(errorFn)
-      //   .finally(finallyFn);
+      this.destinationWarehouseInventorySnapshot.snapshot
+      = this.$db.updateSnapshotAddProduct(
+        this.destinationWarehouseInventorySnapshot.snapshot,
+        inventoryForm.products, this.selectedProducts
+        );
+
+      this.destinationWarehouseInventorySnapshot.productIds
+      = this.destinationWarehouseInventorySnapshot.snapshot.productInventory.map(p => p.id);
+
+      const origin = this.$db.warehouse.ref.doc();
+      const destination = this.$db.warehouse.ref.doc();
+      const timeStamp = firebase.firestore.FieldValue.serverTimestamp();
+
+      this.warehouseInventorySnapshot.id = origin.id;
+      this.warehouseInventorySnapshot.createdAt = timeStamp;
+      this.destinationWarehouseInventorySnapshot.id = destination.id;
+      this.destinationWarehouseInventorySnapshot.createdAt = timeStamp;
+
+      Promise.all([
+        this.$db.saveWarehouse(this.warehouseInventorySnapshot),
+        this.$db.saveWarehouse(this.destinationWarehouseInventorySnapshot)
+      ])
+      .catch(errorFn)
+      .finally(finallyFn);
+
     }
   }
 

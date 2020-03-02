@@ -40,13 +40,14 @@ export class OutletInventoryFormComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    const ref = this.$db.outlet().ref.doc();
+    const ref = this.$db.outlet.ref.doc();
     this.outletInventorySnapshot = {
       id: ref.id,
       isActive: true,
       isDeleted: false,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       outlet: null,
+      productIds: [],
       snapshot: {
         productInventory: []
       }
@@ -144,7 +145,7 @@ export class OutletInventoryFormComponent implements OnInit {
 
       const inventoryForm = this.outletInventoryForm.getRawValue();
 
-      this.outletInventorySnapshot.outlet = this.outletItems.find(o => o.id === inventoryForm.outletId).outlet;
+      this.outletInventorySnapshot.outlet = this.outletItems.find(o => o.id === inventoryForm.outletId);
       this.outletInventorySnapshot.snapshot.productInventory = this.outletInventorySnapshot.snapshot.productInventory
       .map(
         (pi: ProductInventoryItem, index) => {
@@ -153,10 +154,10 @@ export class OutletInventoryFormComponent implements OnInit {
         return pi;
       });
 
+      this.outletInventorySnapshot.productIds = this.outletInventorySnapshot.snapshot.productInventory.map(p => p.id);
+
       this.$db
-        .outletSnapshot(inventoryForm.outletId)
-        .doc(this.outletInventorySnapshot.id)
-        .set(this.outletInventorySnapshot)
+        .saveOutlet(this.outletInventorySnapshot)
         .catch(errorFn)
         .finally(finallyFn);
     }

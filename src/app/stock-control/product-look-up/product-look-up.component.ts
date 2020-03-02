@@ -5,6 +5,7 @@ import { SpinnerService } from 'src/app/shared/spinner.service';
 import { first } from 'rxjs/operators';
 import { ProductsService } from 'src/app/products.service';
 import { ProductListItem } from 'src/app/products/product-list/product-list-datasource';
+import { InventoryService } from 'src/app/inventory.service';
 
 @Component({
   selector: 'app-product-look-up',
@@ -15,10 +16,14 @@ export class ProductLookUpComponent implements OnInit {
 
   spinnerName = 'ProductLookUpComponent';
   productItems: ProductListItem[] = [];
+  selectedProduct: ProductListItem;
+  outletList: OutletListItem[];
+  warehouseList: WarehouseListItem[];
 
   constructor(
     private spinner: SpinnerService,
-    private $dbProducts: ProductsService) {}
+    private $dbProducts: ProductsService,
+    private $dbInventory: InventoryService) {}
 
   ngOnInit() {
     this.loadData();
@@ -32,6 +37,29 @@ export class ProductLookUpComponent implements OnInit {
     }).finally(() => {
       this.spinner.hide(this.spinnerName);
     });
+  }
+
+  addProduct(product: ProductListItem) {
+    this.spinner.show(this.spinnerName);
+    this.selectedProduct = product;
+    this.outletList = undefined;
+    this.warehouseList = undefined;
+
+    Promise.all([
+      this.$dbInventory.queryProductFromOutletSnapshots(product.id).valueChanges().pipe(first()).toPromise().then(outlets => {
+        this.outletList = outlets as any;
+      }),
+      this.$dbInventory.queryProductFromWarehouseSnapshots(product.id).valueChanges().pipe(first()).toPromise().then(warehouses => {
+        this.warehouseList = warehouses as any;
+      })
+    ])
+    .catch(error => {
+      console.error(error);
+    })
+    .finally(() => {
+      this.spinner.hide(this.spinnerName);
+    });
+
   }
 
 }

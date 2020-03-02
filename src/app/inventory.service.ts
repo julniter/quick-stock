@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { InventorySnopshot, ProductInventoryItem, InventoryProductVariations } from './inventory.model';
+import { InventorySnopshot, ProductInventoryItem, InventoryProductVariations,
+  OutletInventorySnapshot, WarehouseInventorySnapshot } from './inventory.model';
 import { ProductListItem } from './products/product-list/product-list-datasource';
 
 @Injectable({
@@ -10,8 +11,39 @@ export class InventoryService {
 
   constructor(private afStore: AngularFirestore) {}
 
-  outlet() {
+  get outlet() {
     return this.afStore.collection('inventory-outlet');
+  }
+
+  saveOutlet(snapshot: OutletInventorySnapshot) {
+    const response = new Promise((resolve, reject) => {
+      this.afStore.collection(
+        'inventory-outlet',
+        ref => ref
+        .where('outlet.id', '==', snapshot.outlet.id)
+        .where('isActive', '==', true)
+      )
+      .doc()
+      .update({isActive: false})
+      .then((res) => {
+        return this.afStore.collection('inventory-outlet')
+        .doc(snapshot.id)
+        .set(snapshot)
+        .finally(() => {
+          resolve(snapshot);
+        })
+        .catch(error => {
+          console.error(error);
+          reject(error);
+        });
+      })
+      .catch(error => {
+        console.error(error);
+        reject(error);
+      });
+    });
+
+    return response;
   }
 
   outletSnapshot(id: string) {
@@ -26,8 +58,43 @@ export class InventoryService {
     return this.afStore.collection('inventory-outlet').doc(id).collection('snapshot').ref.orderBy('createdAt', 'desc').get();
   }
 
-  warehouse() {
+  queryProductFromOutletSnapshots(productId: string) {
+    return this.afStore.collection('inventory-outlet', ref => ref.where('productIds', 'array-contains', productId));
+  }
+
+  get warehouse() {
     return this.afStore.collection('inventory-warehouse');
+  }
+
+  saveWarehouse(snapshot: WarehouseInventorySnapshot) {
+    const response = new Promise((resolve, reject) => {
+      this.afStore.collection(
+        'inventory-warehouse',
+        ref => ref
+        .where('warehouse.id', '==', snapshot.warehouse.id)
+        .where('isActive', '==', true)
+      )
+      .doc()
+      .update({isActive: false})
+      .then((res) => {
+        return this.afStore.collection('inventory-warehouse')
+        .doc(snapshot.id)
+        .set(snapshot)
+        .finally(() => {
+          resolve(snapshot);
+        })
+        .catch(error => {
+          console.error(error);
+          reject(error);
+        });
+      })
+      .catch(error => {
+        console.error(error);
+        reject(error);
+      });
+    });
+
+    return response;
   }
 
   warehouseSnapshot(id: string) {
@@ -40,6 +107,10 @@ export class InventoryService {
 
   getWarehouseSnapshots(id: string) {
     return this.afStore.collection('inventory-warehouse').doc(id).collection('snapshot').ref.orderBy('createdAt', 'desc').get();
+  }
+
+  queryProductFromWarehouseSnapshots(productId: string) {
+    return this.afStore.collection('inventory-warehouse', ref => ref.where('productIds', 'array-contains', productId));
   }
 
   updateSnapshotAddProduct(target: InventorySnopshot, source: ProductInventoryItem[], products: ProductListItem[]) {

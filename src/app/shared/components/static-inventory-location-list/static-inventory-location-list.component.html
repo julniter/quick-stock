@@ -1,0 +1,25 @@
+<table mat-table [dataSource]="inventorySnapshots" class="mat-elevation-z8" class="full-width">
+
+  <ng-container matColumnDef="summary">
+    <th mat-header-cell *matHeaderCellDef class="text-center"> Location </th>
+    <td mat-cell *matCellDef="let inventory">
+      {{inventory.outlet && inventory.outlet.name}}{{inventory.warehouse && inventory.warehouse.name}} -
+      {{inventory.outlet && inventory.outlet.city}}{{inventory.warehouse && inventory.warehouse.city}},
+      {{inventory.outlet && inventory.outlet.province}}{{inventory.warehouse && inventory.warehouse.province}}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="reOrderPoint">
+    <th mat-header-cell *matHeaderCellDef class="align-numeric"> Reorder Point </th>
+    <td mat-cell *matCellDef="let inventory" class="align-numeric"> {{inventory.snapshot.productInventory[0].reOrderPoint}} </td>
+  </ng-container>
+
+  <ng-container *ngFor="let dc of dynamicDisplayedColumns; let i = index;" matColumnDef="{{dc.key}}">
+    <th mat-header-cell *matHeaderCellDef class="align-numeric"> {{ dc.value }} </th>
+    <td mat-cell *matCellDef="let inventory" class="align-numeric"> {{ inventory.snapshot.productInventory[0].productVariations[i].count }} </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+

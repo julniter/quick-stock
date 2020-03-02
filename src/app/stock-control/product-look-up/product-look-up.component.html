@@ -3,8 +3,15 @@
   <mat-card-content>
     <div class="row">
       <div class="col">
-        <app-product-finder [productItems]="productItems"></app-product-finder>
+        <app-product-finder [productItems]="productItems" (productSelected)="addProduct($event)"></app-product-finder>
       </div>
     </div>
   </mat-card-content>
 </mat-card>
+
+<app-inventory-location-list-details
+*ngIf="selectedProduct !== undefined && outletList !== undefined && warehouseList !== undefined"
+[product]="selectedProduct"
+[outlets]="outletList"
+[warehouses]="warehouseList">
+</app-inventory-location-list-details>

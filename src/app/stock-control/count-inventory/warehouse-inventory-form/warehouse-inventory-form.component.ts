@@ -40,13 +40,14 @@ export class WarehouseInventoryFormComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    const ref = this.$db.warehouse().ref.doc();
+    const ref = this.$db.warehouse.ref.doc();
     this.warehouseInventorySnapshot = {
       id: ref.id,
       isActive: true,
       isDeleted: false,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       warehouse: null,
+      productIds: [],
       snapshot: {
         productInventory: []
       }
@@ -144,7 +145,7 @@ export class WarehouseInventoryFormComponent implements OnInit {
 
       const inventoryForm = this.warehouseInventoryForm.getRawValue();
 
-      this.warehouseInventorySnapshot.warehouse = this.warehouseItems.find(o => o.id === inventoryForm.warehouseId).warehouse;
+      this.warehouseInventorySnapshot.warehouse = this.warehouseItems.find(o => o.id === inventoryForm.warehouseId);
       this.warehouseInventorySnapshot.snapshot.productInventory = this.warehouseInventorySnapshot.snapshot.productInventory
       .map(
         (pi: ProductInventoryItem, index) => {
@@ -153,10 +154,10 @@ export class WarehouseInventoryFormComponent implements OnInit {
         return pi;
       });
 
+      this.warehouseInventorySnapshot.productIds = this.warehouseInventorySnapshot.snapshot.productInventory.map(p => p.id);
+
       this.$db
-        .warehouseSnapshot(inventoryForm.warehouseId)
-        .doc(this.warehouseInventorySnapshot.id)
-        .set(this.warehouseInventorySnapshot)
+        .saveWarehouse(this.warehouseInventorySnapshot)
         .catch(errorFn)
         .finally(finallyFn);
     }

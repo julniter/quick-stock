@@ -18,7 +18,7 @@ export class OutletInventoryDetailsComponent implements OnInit {
 
   ngOnInit() {
     if (this.outletInventorySnapshot !== null && this.outletInventorySnapshot !== undefined) {
-      this.outlet = this.outletInventorySnapshot.outlet;
+      this.outlet = this.outletInventorySnapshot.outlet.outlet;
       this.outletProducts = this.outletInventorySnapshot.snapshot.productInventory;
     }
   }

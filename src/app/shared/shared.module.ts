@@ -12,6 +12,8 @@ import { BarecodeScannerLivestreamModule } from 'ngx-barcode-scanner';
 import { WebcamModule } from 'ngx-webcam';
 import { BarcodeReaderComponent } from './components/barcode-reader/barcode-reader.component';
 import { ProductFinderComponent } from './components/product-finder/product-finder.component';
+import { InventoryLocationListDetailsComponent } from './components/inventory-location-list-details/inventory-location-list-details.component';
+import { StaticInventoryLocationListComponent } from './components/static-inventory-location-list/static-inventory-location-list.component';
 
 
 
@@ -23,7 +25,9 @@ import { ProductFinderComponent } from './components/product-finder/product-find
     WarehouseInventoryDetailsComponent,
     InventoryProductDetailsComponent,
     BarcodeReaderComponent,
-    ProductFinderComponent
+    ProductFinderComponent,
+    InventoryLocationListDetailsComponent,
+    StaticInventoryLocationListComponent
   ],
   imports: [
     CommonModule,
@@ -53,7 +57,9 @@ import { ProductFinderComponent } from './components/product-finder/product-find
     BarecodeScannerLivestreamModule,
     WebcamModule,
     BarcodeReaderComponent,
-    ProductFinderComponent
+    ProductFinderComponent,
+    InventoryLocationListDetailsComponent,
+    StaticInventoryLocationListComponent
   ]
 })
 export class SharedModule { }

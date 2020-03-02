@@ -18,7 +18,7 @@ export class WarehouseInventoryDetailsComponent implements OnInit {
 
   ngOnInit() {
     if (this.warehouseInventorySnapshot !== null && this.warehouseInventorySnapshot !== undefined) {
-      this.warehouse = this.warehouseInventorySnapshot.warehouse;
+      this.warehouse = this.warehouseInventorySnapshot.warehouse.warehouse;
       this.warehouseProducts = this.warehouseInventorySnapshot.snapshot.productInventory;
     }
   }

@@ -1,16 +1,20 @@
 import { FirebaseMetaData } from './firebase.meta';
 import { ProductVariation, ProductListItem } from './products/product-list/product-list-datasource';
-import { Outlet } from './setup/outlet-list/outlet-list-datasource';
-import { Warehouse } from './setup/warehouse-list/warehouse-list-datasource';
+import { Outlet, OutletListItem } from './setup/outlet-list/outlet-list-datasource';
+import { Warehouse, WarehouseListItem } from './setup/warehouse-list/warehouse-list-datasource';
 
-export interface OutletInventorySnapshot extends FirebaseMetaData {
-  outlet: Outlet;
+export interface LocationInventorySnapshot extends FirebaseMetaData {
+  location?: Outlet | Warehouse;
   snapshot: InventorySnopshot;
+  productIds: string[];
 }
 
-export interface WarehouseInventorySnapshot extends FirebaseMetaData {
-  warehouse: Warehouse;
-  snapshot: InventorySnopshot;
+export interface OutletInventorySnapshot extends LocationInventorySnapshot {
+  outlet: OutletListItem;
+}
+
+export interface WarehouseInventorySnapshot extends LocationInventorySnapshot {
+  warehouse: WarehouseListItem;
 }
 
 export interface InventorySnopshot {

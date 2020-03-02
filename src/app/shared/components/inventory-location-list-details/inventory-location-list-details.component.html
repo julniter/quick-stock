@@ -1,5 +1,5 @@
-<mat-accordion  *ngFor="let product of inventoryProducts">
-  <mat-expansion-panel>
+<mat-accordion>
+  <mat-expansion-panel [expanded]="true">
     <mat-expansion-panel-header>
       <mat-panel-title>
         <h3>{{ product.product.name | titlecase }}</h3>
@@ -13,8 +13,6 @@
       <mat-card-content>
 
         <mat-chip-list aria-label="Fish selection">
-          <mat-chip color="primary" selected><span>Total Count:</span>&nbsp;<span>{{ getTotalCount(product.productVariations) | number:'.0' }}</span></mat-chip>
-          <mat-chip color="primary" selected><span>Reorder Point:</span>&nbsp;<span>{{ product.reOrderPoint | number:'.0' }}</span></mat-chip>
           <mat-chip color="secondary" selected><span>Category:</span>&nbsp;<span>{{ product.product.category }}</span></mat-chip>
           <mat-chip color="secondary" selected><span>Brand:</span>&nbsp;<span>{{ product.product.brand }}</span></mat-chip>
           <mat-chip color="secondary" selected><span>Type:</span>&nbsp;<span>{{ product.product.type }}</span></mat-chip>
@@ -23,12 +21,11 @@
 
         <mat-grid-list cols="2" rowHeight="150px">
           <mat-grid-tile
-              *ngFor="let productVariation of product.productVariations"
+              *ngFor="let productVariation of product.product.variations"
               [colspan]="1"
               [rowspan]="1">
               <h4>{{ productVariation.name }}</h4>
               <mat-chip-list aria-label="Fish selection">
-                <mat-chip color="primary" selected><span>Count: </span>&nbsp;<span>{{ productVariation.count | number:'.0' }}</span></mat-chip>
                 <mat-chip color="accent" selected><span>Price: </span>&nbsp;<span>{{ productVariation.price  | currency:'PHP ':'code':'1.2-2' }}</span></mat-chip>
                 <mat-chip><span>SKU:</span>&nbsp;<span>{{ productVariation.sku }}</span></mat-chip>
                 <mat-chip><span>Code:</span>&nbsp;<span>{{ productVariation.code }}</span></mat-chip>
@@ -41,3 +38,20 @@
 
   </mat-expansion-panel>
 </mat-accordion>
+
+<mat-card>
+  <mat-card-content>
+
+    <mat-tab-group>
+      <mat-tab label="Outlet">
+        <app-static-inventory-location-list [inventorySnapshots]="outlets" [product]="product"></app-static-inventory-location-list>
+      </mat-tab>
+      <mat-tab label="Warehouse">
+        <app-static-inventory-location-list [inventorySnapshots]="warehouses" [product]="product"></app-static-inventory-location-list>
+      </mat-tab>
+    </mat-tab-group>
+
+  </mat-card-content>
+</mat-card>
+
+<div class="spacer"></div>

@@ -172,11 +172,13 @@ export class OutletToOutletFormComponent implements OnInit {
 
       this.outletInventorySnapshot.snapshot =
       this.$db.updateSnapshotLessProduct(this.outletInventorySnapshot.snapshot, inventoryForm.products, this.selectedProducts);
+      this.outletInventorySnapshot.productIds = this.outletInventorySnapshot.snapshot.productInventory.map(p => p.id);
       this.destinationOutletInventorySnapshot.snapshot =
       this.$db.updateSnapshotAddProduct(this.destinationOutletInventorySnapshot.snapshot, inventoryForm.products, this.selectedProducts);
+      this.destinationOutletInventorySnapshot.productIds = this.destinationOutletInventorySnapshot.snapshot.productInventory.map(p => p.id);
 
-      const origin = this.$db.outlet().ref.doc();
-      const destination = this.$db.outlet().ref.doc();
+      const origin = this.$db.outlet.ref.doc();
+      const destination = this.$db.outlet.ref.doc();
       const timeStamp = firebase.firestore.FieldValue.serverTimestamp();
 
       this.outletInventorySnapshot.id = origin.id;
@@ -185,12 +187,8 @@ export class OutletToOutletFormComponent implements OnInit {
       this.destinationOutletInventorySnapshot.createdAt = timeStamp;
 
       Promise.all([
-        this.$db.outletSnapshot(inventoryForm.outletId)
-        .doc(this.outletInventorySnapshot.id)
-        .set(this.outletInventorySnapshot),
-        this.$db.outletSnapshot(inventoryForm.destinationOutletId)
-        .doc(this.destinationOutletInventorySnapshot.id)
-        .set(this.destinationOutletInventorySnapshot)
+        this.$db.saveOutlet(this.outletInventorySnapshot),
+        this.$db.saveOutlet(this.destinationOutletInventorySnapshot)
       ])
       .catch(errorFn)
       .finally(finallyFn);

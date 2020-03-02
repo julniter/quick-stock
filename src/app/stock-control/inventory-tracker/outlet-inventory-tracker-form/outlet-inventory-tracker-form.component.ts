@@ -34,6 +34,7 @@ export class OutletInventoryTrackerFormComponent implements OnInit {
   }
 
   displayInventorySnapshot(outletSnapshots) {
+    console.log(outletSnapshots);
     this.outletInventorySnapshot = outletSnapshots[0];
   }
 

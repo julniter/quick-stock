@@ -7,7 +7,7 @@
       <div class="row">
         <div class="col">
           <mat-form-field class="full-width">
-            <mat-select placeholder="Outlet" formControlName="outletId">
+            <mat-select placeholder="Outlet" formControlName="outletId" (selectionChange)="setOriginSnapshot($event)">
               <mat-option *ngFor="let outletItem of outletItems" [value]="outletItem.id">
                 {{ outletItem.outlet.name }}
               </mat-option>
@@ -19,13 +19,13 @@
         </div>
         <div class="col">
           <mat-form-field class="full-width">
-            <mat-select placeholder="Warehouse" formControlName="warehouseId">
+            <mat-select placeholder="Destination Warehouse" formControlName="destinationWarehouseId" (selectionChange)="setDestinationSnapshot($event)">
               <mat-option *ngFor="let warehouseItem of warehouseItems" [value]="warehouseItem.id">
                 {{ warehouseItem.warehouse.name }}
               </mat-option>
             </mat-select>
-            <mat-error *ngIf="outletToWarehouseForm.controls['warehouseId'].hasError('required')">
-              Outlet is <strong>required</strong>
+            <mat-error *ngIf="outletToWarehouseForm.controls['destinationWarehouseId'].hasError('required')">
+              Warehouse is <strong>required</strong>
             </mat-error>
           </mat-form-field>
         </div>
@@ -53,9 +53,6 @@
                   <button mat-button type="button" (click)="removeProduct(i)">
                     <i class="fa fa-trash-alt"></i> Remove Product
                   </button>
-                  <mat-form-field class="full-width max-quarter-width">
-                    <input matInput placeholder="Product Re-Order Point" formControlName="reOrderPoint">
-                  </mat-form-field>
                   <mat-card>
                     <mat-card-content>
                       <div *ngFor="let type of getProductVariations(i).controls; let x = index;">
