@@ -34,13 +34,10 @@ export class OutletInventoryTrackerFormComponent implements OnInit {
   }
 
   displayInventorySnapshot(outletSnapshots) {
-    console.log(outletSnapshots);
     this.outletInventorySnapshot = outletSnapshots[0];
   }
 
   onSubmit() {
-    console.log(this.outletInventoryTrackerForm);
-
     if (this.outletInventoryTrackerForm.valid) {
       this.outletInventorySnapshot = null;
       this.spinner.show(this.spinnerName);

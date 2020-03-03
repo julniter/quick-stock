@@ -15,102 +15,126 @@ export class InventoryService {
     return this.afStore.collection('inventory-outlet');
   }
 
+  deactivateOutletSnapshot(id: string) {
+    return this.getLatestOutletSnapshot(id).then(res => {
+      return res.docs.map(d => {
+        return d.ref.update({isActive: false});
+      });
+    });
+  }
+
   saveOutlet(snapshot: OutletInventorySnapshot) {
-    const response = new Promise((resolve, reject) => {
-      this.afStore.collection(
-        'inventory-outlet',
-        ref => ref
-        .where('outlet.id', '==', snapshot.outlet.id)
-        .where('isActive', '==', true)
-      )
-      .doc()
-      .update({isActive: false})
-      .then((res) => {
+    return this.deactivateOutletSnapshot(snapshot.outlet.id)
+    .then(res => {
+      return Promise.all(res).then(res => {
         return this.afStore.collection('inventory-outlet')
         .doc(snapshot.id)
         .set(snapshot)
-        .finally(() => {
-          resolve(snapshot);
+        .then((r) => {
+          return r;
         })
         .catch(error => {
           console.error(error);
-          reject(error);
+          return error;
         });
       })
       .catch(error => {
         console.error(error);
-        reject(error);
+        return error;
       });
+    })
+    .catch(error => {
+      console.error(error);
+      return error;
     });
-
-    return response;
-  }
-
-  outletSnapshot(id: string) {
-    return this.afStore.collection('inventory-outlet').doc(id).collection('snapshot');
   }
 
   getLatestOutletSnapshot(id: string) {
-    return this.afStore.collection('inventory-outlet').doc(id).collection('snapshot').ref.orderBy('createdAt', 'desc').limit(1).get();
+    return this.afStore.collection(
+      'inventory-outlet',
+      ref => ref
+      .where('outlet.id', '==', id)
+      .where('isActive', '==', true)
+    ).ref.orderBy('createdAt', 'desc').limit(1).get();
   }
 
   getOutletSnapshots(id: string) {
-    return this.afStore.collection('inventory-outlet').doc(id).collection('snapshot').ref.orderBy('createdAt', 'desc').get();
+    return this.afStore.collection(
+      'inventory-outlet',
+      ref => ref
+      .where('outlet.id', '==', id)
+    ).ref.orderBy('createdAt', 'desc').get();
   }
 
   queryProductFromOutletSnapshots(productId: string) {
-    return this.afStore.collection('inventory-outlet', ref => ref.where('productIds', 'array-contains', productId));
+    return this.afStore.collection('inventory-outlet',
+      ref => ref
+      .where('isActive', '==', true)
+      .where('productIds', 'array-contains', productId)
+    );
   }
 
   get warehouse() {
     return this.afStore.collection('inventory-warehouse');
   }
 
+  deactivateWarehouseSnapshot(id: string) {
+    return this.getLatestWarehouseSnapshot(id).then(res => {
+      return res.docs.map(d => {
+        return d.ref.update({isActive: false});
+      });
+    });
+  }
+
   saveWarehouse(snapshot: WarehouseInventorySnapshot) {
-    const response = new Promise((resolve, reject) => {
-      this.afStore.collection(
-        'inventory-warehouse',
-        ref => ref
-        .where('warehouse.id', '==', snapshot.warehouse.id)
-        .where('isActive', '==', true)
-      )
-      .doc()
-      .update({isActive: false})
-      .then((res) => {
+    return this.deactivateWarehouseSnapshot(snapshot.warehouse.id)
+    .then(res => {
+      return Promise.all(res).then(res => {
         return this.afStore.collection('inventory-warehouse')
         .doc(snapshot.id)
         .set(snapshot)
-        .finally(() => {
-          resolve(snapshot);
+        .then((r) => {
+          return r;
         })
         .catch(error => {
           console.error(error);
-          reject(error);
+          return error;
         });
       })
       .catch(error => {
         console.error(error);
-        reject(error);
+        return error;
       });
+    })
+    .catch(error => {
+      console.error(error);
+      return error;
     });
-
-    return response;
-  }
-
-  warehouseSnapshot(id: string) {
-    return this.afStore.collection('inventory-warehouse').doc(id).collection('snapshot');
   }
 
   getLatestWarehouseSnapshot(id: string) {
-    return this.afStore.collection('inventory-warehouse').doc(id).collection('snapshot').ref.orderBy('createdAt', 'desc').limit(1).get();
+    return this.afStore.collection(
+      'inventory-warehouse',
+      ref => ref
+      .where('warehouse.id', '==', id)
+      .where('isActive', '==', true)
+    ).ref.orderBy('createdAt', 'desc').limit(1).get();
   }
 
   getWarehouseSnapshots(id: string) {
-    return this.afStore.collection('inventory-warehouse').doc(id).collection('snapshot').ref.orderBy('createdAt', 'desc').get();
+    return this.afStore.collection(
+      'inventory-warehouse',
+      ref => ref
+      .where('warehouse.id', '==', id)
+    ).ref.orderBy('createdAt', 'desc').get();
   }
 
   queryProductFromWarehouseSnapshots(productId: string) {
-    return this.afStore.collection('inventory-warehouse', ref => ref.where('productIds', 'array-contains', productId));
+    return this.afStore.collection('inventory-warehouse',
+      ref => ref
+      .where('isActive', '==', true)
+      .where('productIds', 'array-contains', productId)
+    );
   }
 
   updateSnapshotAddProduct(target: InventorySnopshot, source: ProductInventoryItem[], products: ProductListItem[]) {

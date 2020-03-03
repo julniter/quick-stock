@@ -202,7 +202,7 @@ export class OutletToWarehouseFormComponent implements OnInit {
 
       Promise.all([
         this.$db.saveOutlet(this.outletInventorySnapshot),
-        this.$db.warehouseSnapshot(this.destinationWarehouseInventorySnapshot)
+        this.$db.saveWarehouse(this.destinationWarehouseInventorySnapshot)
       ])
       .catch(errorFn)
       .finally(finallyFn);
