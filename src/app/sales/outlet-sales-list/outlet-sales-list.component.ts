@@ -21,7 +21,7 @@ export class OutletSalesListComponent implements AfterViewInit, OnInit, OnDestro
   dataSource: OutletSalesListDataSource;
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-  displayedColumns = ['name', 'status', 'createdAt', 'actions'];
+  displayedColumns = ['name', 'status', 'createdAt'];//, 'actions'];
   destroy$: Subject<void> = new Subject();
 
   constructor(private $db: OutletSalesService, private spinner: SpinnerService, private router: Router) {}

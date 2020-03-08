@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators, FormArray } from '@angular/forms';
+import { FormBuilder, Validators, FormArray, Form } from '@angular/forms';
 import { ProductCategoryListItem } from '../product-category-list/product-category-list-datasource';
 import { Router } from '@angular/router';
 import { ProductCategoriesService } from 'src/app/product-categories.service';
@@ -98,5 +98,9 @@ export class ProductCategoryDetailComponent implements OnInit {
 
   back() {
     this.router.navigate(['products/categories']);
+  }
+
+  getControls() {
+    return (this.productCategoryForm.get('types') as FormArray).controls;
   }
 }

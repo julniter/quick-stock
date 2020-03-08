@@ -225,4 +225,8 @@ export class ProductDetailComponent implements OnInit {
     back() {
       this.router.navigate(['products/list']);
     }
+
+    getControls() {
+      return (this.productForm.get('variations') as FormArray).controls;
+    }
 }

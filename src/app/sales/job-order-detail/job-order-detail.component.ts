@@ -257,4 +257,8 @@ export class JobOrderDetailComponent implements OnInit {
     back() {
       this.router.navigate(['sales/job-orders']);
     }
+
+    getControls() {
+      return (this.jobOrderForm.get('productVariations') as FormArray).controls;
+    }
 }

@@ -21,7 +21,7 @@
           </button>
         </div>
       </div>
-      <div class="row" *ngFor="let type of productCategoryForm.get('types').controls; let i = index;">
+      <div class="row" *ngFor="let type of getControls(); let i = index;">
         <div class="col">
           <button mat-button type="button" (click)="removeItem(i)" *ngIf="types.controls.length > 1">
             <i class="fas fa-trash-alt"></i>
@@ -29,7 +29,7 @@
           <mat-form-field class="max-half-width" formArrayName="types">
             <div [formGroupName]="i">
               <input matInput placeholder="Name" formControlName="name">
-              <mat-error *ngIf="productCategoryForm.get('types').controls[i].get('name').hasError('required')">
+              <mat-error *ngIf="productCategoryForm.get('types').get(i).get('name').hasError('required')">
                 Name <strong>required</strong>
               </mat-error>
             </div>

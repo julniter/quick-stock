@@ -64,7 +64,7 @@
           </button>
         </div>
       </div>
-      <div *ngFor="let type of productForm.get('variants').controls; let i = index;">
+      <div *ngFor="let type of getControls(); let i = index;">
         <div formArrayName="variants">
           <div [formGroupName]="i">
             <div class="row">
@@ -80,7 +80,7 @@
                       {{ variantItem.productVariant.name }}
                     </mat-option>
                   </mat-select>
-                  <mat-error *ngIf="productForm.get('variants').controls[i].get('variant').hasError('required')">
+                  <mat-error *ngIf="productForm.get('variants').get(i).get('variant').hasError('required')">
                     Variant is <strong>required</strong>
                   </mat-error>
                 </mat-form-field>
@@ -88,7 +88,7 @@
               <div class="col">
                 <mat-form-field class="full-width">
                   <input matInput placeholder="Values seperated by comma (,)" formControlName="variantValues">
-                  <mat-error *ngIf="productForm.get('variants').controls[i].get('variantValues').hasError('required')">
+                  <mat-error *ngIf="productForm.get('variants').get(i).get('variantValues').hasError('required')">
                     Variant Value is <strong>required</strong>
                   </mat-error>
                 </mat-form-field>
@@ -98,15 +98,15 @@
         </div>
       </div>
 
-      <div *ngIf="productForm.get('variations').controls.length">
-        <div *ngFor="let type of productForm.get('variations').controls; let i = index;">
+      <div *ngIf="getControls().length">
+        <div *ngFor="let type of getControls(); let i = index;">
           <div formArrayName="variations">
             <div [formGroupName]="i">
               <div class="row">
                 <div class="col">
                   <mat-form-field class="full-width">
                     <input matInput placeholder="Variation Name" formControlName="name">
-                    <mat-error *ngIf="productForm.get('variations').controls[i].get('name').hasError('required')">
+                    <mat-error *ngIf="productForm.get('variants').get(i).get('name').hasError('required')">
                       Variation Name is <strong>required</strong>
                     </mat-error>
                   </mat-form-field>
@@ -114,7 +114,7 @@
                 <div class="col">
                   <mat-form-field class="full-width">
                     <input matInput placeholder="SKU" formControlName="sku">
-                    <mat-error *ngIf="productForm.get('variations').controls[i].get('sku').hasError('required')">
+                    <mat-error *ngIf="productForm.get('variants').get(i).get('sku').hasError('required')">
                       SKU is <strong>required</strong>
                     </mat-error>
                   </mat-form-field>
@@ -122,7 +122,7 @@
                 <div class="col">
                   <mat-form-field class="full-width">
                     <input matInput placeholder="Code" formControlName="code">
-                    <mat-error *ngIf="productForm.get('variations').controls[i].get('code').hasError('required')">
+                    <mat-error *ngIf="productForm.get('variants').get(i).get('code').hasError('required')">
                       Code is <strong>required</strong>
                     </mat-error>
                   </mat-form-field>
@@ -130,7 +130,7 @@
                 <div class="col">
                   <mat-form-field class="full-width">
                     <input matInput placeholder="Price" formControlName="price">
-                    <mat-error *ngIf="productForm.get('variations').controls[i].get('price').hasError('required')">
+                    <mat-error *ngIf="productForm.get('variants').get(i).get('price').hasError('required')">
                       Price is <strong>required</strong>
                     </mat-error>
                   </mat-form-field>
