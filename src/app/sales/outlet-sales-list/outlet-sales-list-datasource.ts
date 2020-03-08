@@ -4,65 +4,18 @@ import { MatSort } from '@angular/material/sort';
 import { Observable, of as observableOf } from 'rxjs';
 import { FirebaseMetaData } from 'src/app/firebase.meta';
 import { SpinnerService } from '../../shared/spinner.service';
-import { CustomerListItem } from 'src/app/customers/customer-list/customer-list-datasource';
-import { ProductListItem, ProductVariation } from 'src/app/products/product-list/product-list-datasource';
-import { ProductSupplierListItem } from 'src/app/products/product-supplier-list/product-supplier-list-datasource';
-import { WarehouseListItem } from 'src/app/setup/warehouse-list/warehouse-list-datasource';
+import { OutletInventorySnapshot } from 'src/app/inventory.model';
 
-export function getJobOrderTypes() {
-  return [
-    JobOrderType[JobOrderType.Internal],
-    JobOrderType[JobOrderType.External]
-  ];
-}
-
-export function getJobOrderStatus() {
-  return [
-    JobOrderStatus.Pending,
-    JobOrderStatus.InProgress,
-    JobOrderStatus.Received,
-    JobOrderStatus.Delivered,
-    JobOrderStatus.Cancelled
-  ];
-}
-
-export enum JobOrderType {
-  Internal,
-  External
-}
-
-export enum JobOrderStatus {
+export enum OutletSalesStatus {
   Pending,
-  InProgress,
-  Received,
-  Delivered,
-  Cancelled
-}
-
-export interface JobOrderProductVariation extends ProductVariation {
-  targetCount: number;
-  receivedCount?: number;
-  deliveredCount?: number;
-}
-
-export interface JobOrder {
-  referenceNumber?: string;
-  type: JobOrderType;
-  productId: string;
-  productVariations: JobOrderProductVariation[];
-  warehouseId: string;
-  supplierId: string;
-  customerId?: string;
+  Verified,
+  Rejected
 }
 
 // TODO: Replace this with your own data model type
-export interface JobOrderListItem extends FirebaseMetaData {
-  jobOrder: JobOrder;
-  customer?: CustomerListItem;
-  warehouse: WarehouseListItem;
-  supplier: ProductSupplierListItem;
-  product: ProductListItem;
-  status: JobOrderStatus;
+export interface OutletSalesListItem extends FirebaseMetaData {
+  outletInventorySnapshot: OutletInventorySnapshot;
+  status: OutletSalesStatus;
 }
 
 /**
@@ -70,8 +23,8 @@ export interface JobOrderListItem extends FirebaseMetaData {
  * encapsulate all logic for fetching and manipulating the displayed data
  * (including sorting, pagination, and filtering).
  */
-export class JobOrderListDataSource extends DataSource<JobOrderListItem> {
-  data: JobOrderListItem[] = [];
+export class OutletSalesListDataSource extends DataSource<OutletSalesListItem> {
+  data: OutletSalesListItem[] = [];
   paginator: MatPaginator;
   sort: MatSort;
 
@@ -84,7 +37,7 @@ export class JobOrderListDataSource extends DataSource<JobOrderListItem> {
    * the returned stream emits new items.
    * @returns A stream of the items to be rendered.
    */
-  connect(): Observable<JobOrderListItem[]> {
+  connect(): Observable<OutletSalesListItem[]> {
     // Combine everything that affects the rendered data into one update
     // stream for the data-table to consume.
     const dataMutations = [
@@ -111,7 +64,7 @@ export class JobOrderListDataSource extends DataSource<JobOrderListItem> {
    * Paginate the data (client-side). If you're using server-side pagination,
    * this would be replaced by requesting the appropriate data from the server.
    */
-  private getPagedData(data: JobOrderListItem[]) {
+  private getPagedData(data: OutletSalesListItem[]) {
     const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
     return data.splice(startIndex, this.paginator.pageSize);
   }
@@ -120,7 +73,7 @@ export class JobOrderListDataSource extends DataSource<JobOrderListItem> {
    * Sort the data (client-side). If you're using server-side sorting,
    * this would be replaced by requesting the appropriate data from the server.
    */
-  private getSortedData(data: JobOrderListItem[]) {
+  private getSortedData(data: OutletSalesListItem[]) {
     if (!this.sort.active || this.sort.direction === '') {
       return data;
     }
@@ -128,40 +81,22 @@ export class JobOrderListDataSource extends DataSource<JobOrderListItem> {
     return data.sort((a, b) => {
       const isAsc = this.sort.direction === 'asc';
       switch (this.sort.active) {
-        case 'id':
+        case 'name':
           return compare(
-            a.id,
-            b.id,
+            a.outletInventorySnapshot.outlet.outlet.name,
+            b.outletInventorySnapshot.outlet.outlet.name,
             isAsc
           );
-        case 'supplier':
+          case 'status':
+            return compare(
+              OutletSalesStatus[a.status],
+              OutletSalesStatus[b.status],
+              isAsc
+            );
+        case 'createdAt':
           return compare(
-            a.supplier.productSupplier.company,
-            b.supplier.productSupplier.company,
-            isAsc
-          );
-        case 'product':
-          return compare(
-            a.product.product.name,
-            b.product.product.name,
-            isAsc
-          );
-        case 'warehouse':
-          return compare(
-            a.warehouse.warehouse.name,
-            b.warehouse.warehouse.name,
-            isAsc
-          );
-        case 'type':
-          return compare(
-            a.jobOrder.type,
-            b.jobOrder.type,
-            isAsc
-          );
-        case 'status':
-          return compare(
-            a.status,
-            b.status,
+            a.createdAt,
+            b.createdAt,
             isAsc
           );
         default:

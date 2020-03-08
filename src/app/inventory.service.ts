@@ -76,7 +76,7 @@ export class InventoryService {
     return this.afStore
     .collection('inventory-outlet').ref
     .where('isActive', '==', true)
-    .where('productIds', 'array-contains', productId);
+    .where('productIds', 'array-contains', productId).get();
   }
 
   get warehouse() {
@@ -144,7 +144,7 @@ export class InventoryService {
     return this.afStore
     .collection('inventory-warehouse').ref
     .where('isActive', '==', true)
-    .where('productIds', 'array-contains', productId);
+    .where('productIds', 'array-contains', productId).get();
   }
 
   updateSnapshotAddProduct(target: InventorySnopshot, source: ProductInventoryItem[], products: ProductListItem[]) {

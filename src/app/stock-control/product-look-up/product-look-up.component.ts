@@ -46,11 +46,19 @@ export class ProductLookUpComponent implements OnInit {
     this.warehouseList = undefined;
 
     Promise.all([
-      this.$dbInventory.queryProductFromOutletSnapshots(product.id).valueChanges().pipe(first()).toPromise().then(outlets => {
-        this.outletList = outlets as any;
+      this.$dbInventory
+      .queryProductFromOutletSnapshots(product.id)
+      .then(outlets => {
+        if (outlets.docs.length) {
+          this.outletList = outlets.docs.map(d => d.data()) as any;
+        }
       }),
-      this.$dbInventory.queryProductFromWarehouseSnapshots(product.id).valueChanges().pipe(first()).toPromise().then(warehouses => {
-        this.warehouseList = warehouses as any;
+      this.$dbInventory
+      .queryProductFromWarehouseSnapshots(product.id)
+      .then(warehouses => {
+        if (warehouses.docs.length) {
+          this.warehouseList = warehouses.docs.map(d => d.data()) as any;
+        }
       })
     ])
     .catch(error => {

@@ -8,6 +8,11 @@
       <div class="row">
         <div class="col">
           <mat-form-field class="full-width">
+            <input matInput placeholder="Reference Number #" formControlName="referenceNumber">
+          </mat-form-field>
+        </div>
+        <div class="col">
+          <mat-form-field class="full-width">
             <mat-select placeholder="Type" formControlName="type">
               <mat-option *ngFor="let jobOrderTypeItem of jobOrderTypeItems" [value]="jobOrderTypeItem">
                 {{ jobOrderTypeItem }}

@@ -78,15 +78,23 @@ export class ProductSummaryComponent implements AfterViewInit, OnInit, OnDestroy
     this.spinner.show();
     const lookUps = Promise.all(this.selection.selected.map(p => {
       return Promise.all([
-        this.$dbInventory.queryProductFromOutletSnapshots(p.id)
-        .valueChanges().pipe(first()).toPromise()
+        this.$dbInventory
+        .queryProductFromOutletSnapshots(p.id)
         .then(outlets => {
-          return outlets as any;
+          if (outlets.docs.length) {
+            return outlets.docs.map(d => d.data()) as OutletInventorySnapshot[];
+          } else {
+            return [];
+          }
         }),
-        this.$dbInventory.queryProductFromWarehouseSnapshots(p.id)
-        .valueChanges().pipe(first()).toPromise()
+        this.$dbInventory
+        .queryProductFromWarehouseSnapshots(p.id)
         .then(warehouses => {
-          return warehouses as any;
+          if (warehouses.docs.length) {
+            return warehouses.docs.map(d => d.data()) as WarehouseInventorySnapshot[];
+          } else {
+            return [];
+          }
         })
       ])
       .then((response) => {
@@ -119,7 +127,6 @@ export class ProductSummaryComponent implements AfterViewInit, OnInit, OnDestroy
 
   generatePdf(psd: ProductSummaryDataReport[]) {
     const docDef = this.pdfService.getProductSummaryDocDef(psd);
-    console.log(docDef);
     pdfMake.createPdf(docDef).open();
    }
 

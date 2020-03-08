@@ -13,6 +13,12 @@
       <td mat-cell *matCellDef="let row">{{row.id}}</td>
     </ng-container>
 
+    <!-- Reference Number Column -->
+    <ng-container matColumnDef="referenceNumber">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Reference Number</th>
+      <td mat-cell *matCellDef="let row">{{row.jobOrder.referenceNumber}}</td>
+    </ng-container>
+
     <!-- Supplier Column -->
     <ng-container matColumnDef="supplier">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Supplier</th>

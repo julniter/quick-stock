@@ -20,7 +20,7 @@ export class DashboardComponent {
     map(({ matches }) => {
       if (matches) {
         return [
-          { title: 'Stock Monitoring', cols: 4, rows: 1, widget: DashboardWidgets.OutletPreview, icon: 'fa-chart-line' },
+          //{ title: 'Stock Monitoring', cols: 4, rows: 1, widget: DashboardWidgets.OutletPreview, icon: 'fa-chart-line' },
           { title: 'Outlets', cols: 4, rows: 1, widget: DashboardWidgets.OutletPreview, icon: 'fa-store' },
           { title: 'Warehouses', cols: 4, rows: 1, widget: DashboardWidgets.WarehousePreview, icon: 'fa-warehouse' },
           { title: 'Products', cols: 4, rows: 1, widget: DashboardWidgets.ProductPreview, icon: 'fa-boxes' },
@@ -28,7 +28,7 @@ export class DashboardComponent {
       }
 
       return [
-        { title: 'Stock Monitoring', cols: 2, rows: 1, widget: DashboardWidgets.OutletPreview, icon: 'fa-chart-line' },
+        //{ title: 'Stock Monitoring', cols: 2, rows: 1, widget: DashboardWidgets.OutletPreview, icon: 'fa-chart-line' },
         { title: 'Outlets', cols: 2, rows: 1, widget: DashboardWidgets.OutletPreview, icon: 'fa-store' },
         { title: 'Warehouses', cols: 2, rows: 1, widget: DashboardWidgets.WarehousePreview, icon: 'fa-warehouse' },
         { title: 'Products', cols: 2, rows: 1, widget: DashboardWidgets.ProductPreview, icon: 'fa-boxes' },

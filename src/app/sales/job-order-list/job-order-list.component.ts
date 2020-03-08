@@ -7,7 +7,7 @@ import { Subject } from 'rxjs';
 import { SpinnerService } from 'src/app/shared/spinner.service';
 import { Router } from '@angular/router';
 import { PageMode } from 'src/app/firebase.meta';
-import { JobOrdersService } from 'src/app/sales-job-orders,service';
+import { JobOrdersService } from 'src/app/sales-job-orders.service';
 
 @Component({
   selector: 'app-job-order-list',
@@ -22,7 +22,7 @@ export class JobOrderListComponent
   dataSource: JobOrderListDataSource;
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-  displayedColumns = ['id', 'supplier', 'product', 'warehouse', 'type', 'status', 'actions'];
+  displayedColumns = ['id', 'referenceNumber', 'supplier', 'product', 'warehouse', 'type', 'status', 'actions'];
   destroy$: Subject<void> = new Subject();
 
   jobOrderStatus: any;

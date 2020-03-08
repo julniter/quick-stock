@@ -1,0 +1,49 @@
+
+<mat-card class="action-card">
+  <mat-card-actions>
+    <button mat-raised-button color="primary" type="button" [routerLink]="['./new']"><i class="fa fa-plus-square"></i> Create Outlet Sales</button>
+  </mat-card-actions>
+</mat-card>
+<div class="mat-elevation-z8">
+  <table mat-table class="full-width-table" matSort aria-label="Elements">
+
+    <!-- Company Column -->
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+      <td mat-cell *matCellDef="let row">{{row.outletInventorySnapshot.outlet.outlet.name}}</td>
+    </ng-container>
+
+    <!-- Company Column -->
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+      <td mat-cell *matCellDef="let row">{{row.status | outletSalesStatus}}</td>
+    </ng-container>
+
+    <!-- Province Column -->
+    <ng-container matColumnDef="createdAt">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Created At</th>
+      <td mat-cell *matCellDef="let row">{{row.createdAt.toDate() | date:'yyyy-MM-dd' }}</td>
+    </ng-container>
+
+    <!-- Actions Column -->
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let row">
+        <button mat-raised-button color="primary" type="button" (click)="view(row)"><i class="fa fa-edit"></i> Edit</button>
+        &nbsp;
+
+        <button mat-raised-button color="primary" type="button" (click)="copy(row)"><i class="fa fa-copy"></i> Copy</button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+  <mat-paginator #paginator
+      [length]="dataSource?.data.length"
+      [pageIndex]="0"
+      [pageSize]="50"
+      [pageSizeOptions]="[25, 50, 100, 250]">
+  </mat-paginator>
+</div>

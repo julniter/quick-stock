@@ -14,6 +14,7 @@ import { BarcodeReaderComponent } from './components/barcode-reader/barcode-read
 import { ProductFinderComponent } from './components/product-finder/product-finder.component';
 import { InventoryLocationListDetailsComponent } from './components/inventory-location-list-details/inventory-location-list-details.component';
 import { StaticInventoryLocationListComponent } from './components/static-inventory-location-list/static-inventory-location-list.component';
+import { OutletSalesStatusPipe } from '../outlet-sales-status.pipe';
 
 
 
@@ -27,7 +28,8 @@ import { StaticInventoryLocationListComponent } from './components/static-invent
     BarcodeReaderComponent,
     ProductFinderComponent,
     InventoryLocationListDetailsComponent,
-    StaticInventoryLocationListComponent
+    StaticInventoryLocationListComponent,
+    OutletSalesStatusPipe
   ],
   imports: [
     CommonModule,
@@ -59,7 +61,8 @@ import { StaticInventoryLocationListComponent } from './components/static-invent
     BarcodeReaderComponent,
     ProductFinderComponent,
     InventoryLocationListDetailsComponent,
-    StaticInventoryLocationListComponent
+    StaticInventoryLocationListComponent,
+    OutletSalesStatusPipe
   ]
 })
 export class SharedModule { }

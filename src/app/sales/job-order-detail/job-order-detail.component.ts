@@ -1,8 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators, FormArray } from '@angular/forms';
-import { JobOrderListItem, JobOrderStatus, JobOrderType, getJobOrderTypes, JobOrderProductVariation } from '../job-order-list/job-order-list-datasource';
+import {
+  JobOrderListItem,
+  JobOrderStatus,
+  JobOrderType,
+  getJobOrderTypes,
+  JobOrderProductVariation
+} from '../job-order-list/job-order-list-datasource';
 import { Router } from '@angular/router';
-import { JobOrdersService } from 'src/app/sales-job-orders,service';
+import { JobOrdersService } from 'src/app/sales-job-orders.service';
 import { SpinnerService } from 'src/app/shared/spinner.service';
 import * as firebase from 'firebase';
 import { PageMode } from 'src/app/firebase.meta';
@@ -25,6 +31,7 @@ export class JobOrderDetailComponent implements OnInit {
   pageMode = PageMode.New;
   jobOrderItem: JobOrderListItem;
   jobOrderForm = this.fb.group({
+    referenceNumber: [null],
     type: [null, Validators.required],
     customerId : [null],
     warehouseId: [null, Validators.required],
@@ -82,6 +89,7 @@ export class JobOrderDetailComponent implements OnInit {
           customer: null,
           status: JobOrderStatus.Pending,
           jobOrder: {
+            referenceNumber: null,
             type: JobOrderType.External,
             customerId: null,
             supplierId: null,
@@ -97,6 +105,9 @@ export class JobOrderDetailComponent implements OnInit {
           }
         }
       } else {
+        console.log(this.jobOrderItem);
+        this.jobOrderForm.setValue(this.jobOrderItem.jobOrder);
+
         if (this.pageMode === PageMode.Copy) {
           const ref = this.$db.ref().ref.doc();
           this.jobOrderItem.id = ref.id;
@@ -113,7 +124,7 @@ export class JobOrderDetailComponent implements OnInit {
 
         if (this.productVariations.controls.length) {
 
-          [].fill(0, 0, this.productVariations.controls.length).map(((v, i)=> {
+          [].fill(0, 0, this.productVariations.controls.length).map(((v, i) => {
             if (this.productVariations.controls[i]) {
               this.productVariations.controls[i].get('name').disable();
               this.productVariations.controls[i].get('sku').disable();
@@ -131,24 +142,43 @@ export class JobOrderDetailComponent implements OnInit {
 
       this.jobOrderTypeItems = getJobOrderTypes();
 
-      this.$dbCustomers.ref().valueChanges().subscribe(items => {
-        this.customerItems = items as any;
-        this.hideSpinner();
-      });
-
-      this.$dbProducts.ref().valueChanges().subscribe(items => {
-        this.productItems = items as any;
-        this.hideSpinner();
-      });
-
-      this.$dbSuppliers.ref().valueChanges().subscribe(items => {
-        this.supplierItems = items as any;
-        this.hideSpinner();
-      });
-
-      this.$dbWarehouses.ref().valueChanges().subscribe(items => {
-        this.warehouseItems = items as any;
-        this.hideSpinner();
+      return Promise.all([
+        this.$dbCustomers.ref().get().toPromise().then(items => {
+          if (items.docs.length) {
+            return this.customerItems = items.docs.map(d => d.data()) as any;
+          } else {
+            return this.customerItems = [];
+          }
+        }),
+        this.$dbProducts.ref().get().toPromise().then(items => {
+          if (items.docs.length) {
+            return this.productItems = items.docs.map(d => d.data()) as any;
+          } else {
+            return this.productItems = [];
+          }
+        }),
+        this.$dbSuppliers.ref().get().toPromise().then(items => {
+          if (items.docs.length) {
+            return this.supplierItems = items.docs.map(d => d.data()) as any;
+          } else {
+            return this.supplierItems = [];
+          }
+        }),
+        this.$dbWarehouses.ref().get().toPromise().then(items => {
+          if (items.docs.length) {
+            return this.warehouseItems = items.docs.map(d => d.data()) as any;
+          } else {
+            return this.warehouseItems = [];
+          }
+        })
+      ]).then(res => {
+        this.jobOrderForm.setValue(this.jobOrderItem.jobOrder);
+      })
+      .catch(err => {
+        console.error(err);
+      })
+      .finally(() => {
+        this.spinner.hide(this.spinnerName);
       });
     }
 
@@ -194,13 +224,6 @@ export class JobOrderDetailComponent implements OnInit {
 
     get productVariations() {
       return this.jobOrderForm.get('productVariations') as FormArray;
-    }
-
-    hideSpinner() {
-      if (this.customerItems.length && this.productItems.length && this.supplierItems.length && this.warehouseItems.length) {
-        this.spinner.hide(this.spinnerName);
-        this.jobOrderForm.setValue(this.jobOrderItem.jobOrder);
-      }
     }
 
     onSubmit() {
