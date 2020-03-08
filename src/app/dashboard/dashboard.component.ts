@@ -2,6 +2,13 @@ import { Component } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
 
+export enum DashboardWidgets {
+  StockMonitoring,
+  OutletPreview,
+  WarehousePreview,
+  ProductPreview
+}
+
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -13,21 +20,25 @@ export class DashboardComponent {
     map(({ matches }) => {
       if (matches) {
         return [
-          { title: 'Card 1', cols: 1, rows: 1 },
-          { title: 'Card 2', cols: 1, rows: 1 },
-          { title: 'Card 3', cols: 1, rows: 1 },
-          { title: 'Card 4', cols: 1, rows: 1 }
+          { title: 'Stock Monitoring', cols: 4, rows: 1, widget: DashboardWidgets.OutletPreview, icon: 'fa-chart-line' },
+          { title: 'Outlets', cols: 4, rows: 1, widget: DashboardWidgets.OutletPreview, icon: 'fa-store' },
+          { title: 'Warehouses', cols: 4, rows: 1, widget: DashboardWidgets.WarehousePreview, icon: 'fa-warehouse' },
+          { title: 'Products', cols: 4, rows: 1, widget: DashboardWidgets.ProductPreview, icon: 'fa-boxes' },
         ];
       }
 
       return [
-        { title: 'Card 1', cols: 1, rows: 1 },
-        { title: 'Card 2', cols: 1, rows: 1 },
-        { title: 'Card 3', cols: 1, rows: 1 },
-        { title: 'Card 4', cols: 1, rows: 1 }
+        { title: 'Stock Monitoring', cols: 2, rows: 1, widget: DashboardWidgets.OutletPreview, icon: 'fa-chart-line' },
+        { title: 'Outlets', cols: 2, rows: 1, widget: DashboardWidgets.OutletPreview, icon: 'fa-store' },
+        { title: 'Warehouses', cols: 2, rows: 1, widget: DashboardWidgets.WarehousePreview, icon: 'fa-warehouse' },
+        { title: 'Products', cols: 2, rows: 1, widget: DashboardWidgets.ProductPreview, icon: 'fa-boxes' },
       ];
     })
   );
+
+  outletPreviewWidget = DashboardWidgets.OutletPreview;
+  warehousePreviewWidget = DashboardWidgets.WarehousePreview;
+  productPreviewWidget = DashboardWidgets.ProductPreview;
 
   constructor(private breakpointObserver: BreakpointObserver) {}
 }

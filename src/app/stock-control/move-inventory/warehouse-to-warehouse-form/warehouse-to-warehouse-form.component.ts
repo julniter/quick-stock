@@ -9,7 +9,8 @@ import {
 import {
   WarehouseInventorySnapshot,
   ProductInventoryItem,
-  InventorySnopshot
+  InventorySnopshot,
+  InventoryProductVariations
 } from 'src/app/inventory.model';
 import * as firebase from 'firebase';
 import { InventoryService } from 'src/app/inventory.service';
@@ -109,7 +110,7 @@ export class WarehouseToWarehouseFormComponent implements OnInit {
           reOrderPoint: [selectedProduct.reOrderPoint, Validators.required],
           productVariations: this.fb.array(
             this.createProductVariationFormArray(
-              selectedProduct.product.variations
+              selectedProduct.product.variations as any
             )
           )
         })
@@ -137,14 +138,14 @@ export class WarehouseToWarehouseFormComponent implements OnInit {
     return '';
   }
 
-  createProductVariationFormArray(variations: ProductVariation[]) {
-    return variations.map((v: ProductVariation) => {
+  createProductVariationFormArray(variations: InventoryProductVariations[]) {
+    return variations.map((v: InventoryProductVariations) => {
       return this.fb.group({
         name: [{ value: v.name, disabled: true }, Validators.required],
         sku: [{ value: v.sku, disabled: true }, Validators.required],
         code: [{ value: v.code, disabled: true }, Validators.required],
         price: [{ value: v.price, disabled: true }, Validators.required],
-        count: [0, Validators.required]
+        count: [(v.count === undefined ? null : v.count), Validators.required]
       });
     });
   }
@@ -210,4 +211,47 @@ export class WarehouseToWarehouseFormComponent implements OnInit {
   back() {
     this.router.navigate(['stock-control']);
   }
+
+  loadLatestSnapshot() {
+    const selectedWarehouse = this.warehouseItems.find(o => o.id === this.warehouseToWarehouseForm.getRawValue().warehouseId);
+
+    this.products.controls = [];
+    this.selectedProducts = [];
+
+    if (selectedWarehouse !== undefined) {
+      this.spinner.show(this.spinnerName);
+
+      this.$db.getLatestWarehouseSnapshot(selectedWarehouse.id).then(res => {
+
+        if (res.docs.length) {
+          const snapshot = res.docs[0].data() as WarehouseInventorySnapshot;
+
+          this.products.controls = [];
+          this.selectedProducts = snapshot.snapshot.productInventory;
+
+          snapshot.snapshot.productInventory.map((pi: ProductInventoryItem) => {
+
+            this.warehouseInventorySnapshot.snapshot.productInventory.push(pi);
+
+            this.products.push(
+              this.fb.group({
+                reOrderPoint: [pi.reOrderPoint, Validators.required],
+                productVariations: this.fb.array(
+                  this.createProductVariationFormArray(pi.productVariations)
+                )
+              })
+            );
+
+          });
+        }
+
+      }).catch(err => {
+        console.error(err);
+      }).finally(() => {
+        this.spinner.hide(this.spinnerName);
+      });
+    }
+  }
+
+
 }

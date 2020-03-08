@@ -12,4 +12,12 @@ export class ProductsService {
     return this.afStore.collection('products');
   }
 
+  topFive() {
+    return this.afStore.collection('products',
+      ref => ref
+      .orderBy('createdAt')
+      .limit(5)
+    );
+  }
+
 }

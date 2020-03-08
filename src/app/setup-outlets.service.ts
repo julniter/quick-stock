@@ -12,4 +12,12 @@ export class OutletsService {
     return this.afStore.collection('setup-outlets');
   }
 
+  topFive() {
+    return this.afStore.collection('setup-outlets',
+      ref => ref
+      .orderBy('createdAt')
+      .limit(5)
+    );
+  }
+
 }

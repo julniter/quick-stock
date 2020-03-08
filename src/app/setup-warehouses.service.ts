@@ -12,4 +12,12 @@ export class WarehousesService {
     return this.afStore.collection('setup-warehouses');
   }
 
+  topFive() {
+    return this.afStore.collection('setup-warehouses',
+      ref => ref
+      .orderBy('createdAt')
+      .limit(5)
+    );
+  }
+
 }

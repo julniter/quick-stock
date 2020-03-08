@@ -8,7 +8,8 @@ import {
 } from 'src/app/products/product-list/product-list-datasource';
 import {
   OutletInventorySnapshot,
-  ProductInventoryItem
+  ProductInventoryItem,
+  InventoryProductVariations
 } from 'src/app/inventory.model';
 import { OutletListItem } from 'src/app/setup/outlet-list/outlet-list-datasource';
 import * as firebase from 'firebase';
@@ -84,7 +85,7 @@ export class OutletInventoryFormComponent implements OnInit {
           reOrderPoint: [selectedProduct.reOrderPoint, Validators.required],
           productVariations: this.fb.array(
             this.createProductVariationFormArray(
-              selectedProduct.product.variations
+              selectedProduct.product.variations as any
             )
           )
         })
@@ -112,14 +113,14 @@ export class OutletInventoryFormComponent implements OnInit {
     return '';
   }
 
-  createProductVariationFormArray(variations: ProductVariation[]) {
-    return variations.map((v: ProductVariation) => {
+  createProductVariationFormArray(variations: InventoryProductVariations[]) {
+    return (variations as any).map((v: InventoryProductVariations) => {
       return this.fb.group({
         name: [{ value: v.name, disabled: true }, Validators.required],
         sku: [{ value: v.sku, disabled: true }, Validators.required],
         code: [{ value: v.code, disabled: true }, Validators.required],
         price: [{ value: v.price, disabled: true }, Validators.required],
-        count: [null, Validators.required]
+        count: [(v.count === undefined ? null : v.count), Validators.required]
       });
     });
   }
@@ -144,7 +145,6 @@ export class OutletInventoryFormComponent implements OnInit {
       this.spinner.show(this.spinnerName);
 
       const inventoryForm = this.outletInventoryForm.getRawValue();
-
       this.outletInventorySnapshot.outlet = this.outletItems.find(o => o.id === inventoryForm.outletId);
       this.outletInventorySnapshot.snapshot.productInventory = this.outletInventorySnapshot.snapshot.productInventory
       .map(
@@ -165,5 +165,42 @@ export class OutletInventoryFormComponent implements OnInit {
 
   back() {
     this.router.navigate(['stock-control']);
+  }
+
+  loadLatestSnapshot() {
+    const selectedOutlet = this.outletItems.find(o => o.id === this.outletInventoryForm.getRawValue().outletId);
+
+    this.products.controls = [];
+
+    if (selectedOutlet !== undefined) {
+      this.spinner.show(this.spinnerName);
+
+      this.$db.getLatestOutletSnapshot(selectedOutlet.id).then(res => {
+
+        if (res.docs.length) {
+          const snapshot = res.docs[0].data() as OutletInventorySnapshot;
+
+          snapshot.snapshot.productInventory.map((pi: ProductInventoryItem) => {
+
+            this.outletInventorySnapshot.snapshot.productInventory.push(pi);
+
+            this.products.push(
+              this.fb.group({
+                reOrderPoint: [pi.reOrderPoint, Validators.required],
+                productVariations: this.fb.array(
+                  this.createProductVariationFormArray(pi.productVariations)
+                )
+              })
+            );
+
+          });
+        }
+
+      }).catch(err => {
+        console.error(err);
+      }).finally(() => {
+        this.spinner.hide(this.spinnerName);
+      });
+    }
   }
 }

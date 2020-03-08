@@ -1,14 +1,17 @@
 <div class="grid-container">
   <h1 class="mat-h1">Quick Stock Dashboard</h1>
-  <mat-grid-list cols="4" rowHeight="250px">
+  <mat-grid-list cols="4" rowHeight="500px">
     <mat-grid-tile *ngFor="let card of cards | async" [colspan]="card.cols" [rowspan]="card.rows">
       <mat-card class="dashboard-card">
         <mat-card-header>
           <mat-card-title>
+            <i class="fa {{card.icon}}"></i> {{ card.title }}
           </mat-card-title>
         </mat-card-header>
         <mat-card-content class="dashboard-card-content">
-          <div><i class="fa fa-chart-line"></i></div>
+          <app-product-preview *ngIf="card.widget === productPreviewWidget"></app-product-preview>
+          <app-outlet-preview *ngIf="card.widget === outletPreviewWidget"></app-outlet-preview>
+          <app-warehouse-preview *ngIf="card.widget === warehousePreviewWidget"></app-warehouse-preview>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>

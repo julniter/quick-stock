@@ -8,7 +8,8 @@ import {
 } from 'src/app/products/product-list/product-list-datasource';
 import {
   WarehouseInventorySnapshot,
-  ProductInventoryItem
+  ProductInventoryItem,
+  InventoryProductVariations
 } from 'src/app/inventory.model';
 import { WarehouseListItem } from 'src/app/setup/warehouse-list/warehouse-list-datasource';
 import * as firebase from 'firebase';
@@ -84,7 +85,7 @@ export class WarehouseInventoryFormComponent implements OnInit {
           reOrderPoint: [selectedProduct.reOrderPoint, Validators.required],
           productVariations: this.fb.array(
             this.createProductVariationFormArray(
-              selectedProduct.product.variations
+              selectedProduct.product.variations as any
             )
           )
         })
@@ -112,14 +113,14 @@ export class WarehouseInventoryFormComponent implements OnInit {
     return '';
   }
 
-  createProductVariationFormArray(variations: ProductVariation[]) {
-    return variations.map((v: ProductVariation) => {
+  createProductVariationFormArray(variations: InventoryProductVariations[]) {
+    return variations.map((v: InventoryProductVariations) => {
       return this.fb.group({
         name: [{ value: v.name, disabled: true }, Validators.required],
         sku: [{ value: v.sku, disabled: true }, Validators.required],
         code: [{ value: v.code, disabled: true }, Validators.required],
         price: [{ value: v.price, disabled: true }, Validators.required],
-        count: [null, Validators.required]
+        count: [(v.count === undefined ? null : v.count), Validators.required]
       });
     });
   }
@@ -165,5 +166,41 @@ export class WarehouseInventoryFormComponent implements OnInit {
 
   back() {
     this.router.navigate(['stock-control']);
+  }
+
+  loadLatestSnapshot() {
+    const selectedWarehouse = this.warehouseItems.find(o => o.id === this.warehouseInventoryForm.getRawValue().warehouseId);
+
+    this.products.controls = [];
+
+    if (selectedWarehouse !== undefined) {
+      this.spinner.show(this.spinnerName);
+
+      this.$db.getLatestWarehouseSnapshot(selectedWarehouse.id).then(res => {
+        if (res.docs.length) {
+          const snapshot = res.docs[0].data() as WarehouseInventorySnapshot;
+
+          snapshot.snapshot.productInventory.map((pi: ProductInventoryItem) => {
+
+            this.warehouseInventorySnapshot.snapshot.productInventory.push(pi);
+
+            this.products.push(
+              this.fb.group({
+                reOrderPoint: [pi.reOrderPoint, Validators.required],
+                productVariations: this.fb.array(
+                  this.createProductVariationFormArray(pi.productVariations)
+                )
+              })
+            );
+
+          });
+        }
+
+      }).catch(err => {
+        console.error(err);
+      }).finally(() => {
+        this.spinner.hide(this.spinnerName);
+      });
+    }
   }
 }

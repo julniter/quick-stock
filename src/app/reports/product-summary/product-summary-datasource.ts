@@ -74,13 +74,13 @@ export class ProductSummaryDataSource extends DataSource<ProductListItem> {
             b.product.name,
             isAsc
           );
-        case 'city':
+        case 'brand':
           return compare(
-            a.product.category,
-            b.product.category,
+            a.product.brand,
+            b.product.brand,
             isAsc
           );
-        case 'province':
+        case 'type':
           return compare(
             a.product.type,
             b.product.type,

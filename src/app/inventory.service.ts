@@ -50,28 +50,33 @@ export class InventoryService {
   }
 
   getLatestOutletSnapshot(id: string) {
-    return this.afStore.collection(
-      'inventory-outlet',
-      ref => ref
-      .where('outlet.id', '==', id)
-      .where('isActive', '==', true)
-    ).ref.orderBy('createdAt', 'desc').limit(1).get();
+    return this.afStore
+    .collection('inventory-outlet').ref
+    .where('outlet.id', '==', id)
+    .where('isActive', '==', true)
+    .orderBy('createdAt', 'desc').limit(1).get();
+  }
+
+  getMultiLatestOutletSnapshot(ids: string[]) {
+    return this.afStore
+    .collection('inventory-outlet').ref
+    .where('outlet.id', 'in', ids)
+    .where('isActive', '==', true)
+    .orderBy('createdAt', 'desc');
   }
 
   getOutletSnapshots(id: string) {
-    return this.afStore.collection(
-      'inventory-outlet',
-      ref => ref
-      .where('outlet.id', '==', id)
-    ).ref.orderBy('createdAt', 'desc').get();
+    return this.afStore
+    .collection('inventory-outlet').ref
+    .where('outlet.id', '==', id)
+    .orderBy('createdAt', 'desc').get();
   }
 
   queryProductFromOutletSnapshots(productId: string) {
-    return this.afStore.collection('inventory-outlet',
-      ref => ref
-      .where('isActive', '==', true)
-      .where('productIds', 'array-contains', productId)
-    );
+    return this.afStore
+    .collection('inventory-outlet').ref
+    .where('isActive', '==', true)
+    .where('productIds', 'array-contains', productId);
   }
 
   get warehouse() {
@@ -113,28 +118,33 @@ export class InventoryService {
   }
 
   getLatestWarehouseSnapshot(id: string) {
-    return this.afStore.collection(
-      'inventory-warehouse',
-      ref => ref
-      .where('warehouse.id', '==', id)
-      .where('isActive', '==', true)
-    ).ref.orderBy('createdAt', 'desc').limit(1).get();
+    return this.afStore
+    .collection('inventory-warehouse').ref
+    .where('warehouse.id', '==', id)
+    .where('isActive', '==', true)
+    .orderBy('createdAt', 'desc').limit(1).get();
+  }
+
+  getMultiLatestWarehouseSnapshot(ids: string[]) {
+    return this.afStore
+    .collection('inventory-warehouse').ref
+    .where('warehouse.id', 'in', ids)
+    .where('isActive', '==', true)
+    .orderBy('createdAt', 'desc');
   }
 
   getWarehouseSnapshots(id: string) {
-    return this.afStore.collection(
-      'inventory-warehouse',
-      ref => ref
-      .where('warehouse.id', '==', id)
-    ).ref.orderBy('createdAt', 'desc').get();
+    return this.afStore
+    .collection('inventory-warehouse').ref
+    .where('warehouse.id', '==', id)
+    .orderBy('createdAt', 'desc').get();
   }
 
   queryProductFromWarehouseSnapshots(productId: string) {
-    return this.afStore.collection('inventory-warehouse',
-      ref => ref
-      .where('isActive', '==', true)
-      .where('productIds', 'array-contains', productId)
-    );
+    return this.afStore
+    .collection('inventory-warehouse').ref
+    .where('isActive', '==', true)
+    .where('productIds', 'array-contains', productId);
   }
 
   updateSnapshotAddProduct(target: InventorySnopshot, source: ProductInventoryItem[], products: ProductListItem[]) {
