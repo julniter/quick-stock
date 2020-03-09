@@ -14,6 +14,9 @@ const routes: Routes = [
   { path: 'job-orders/:jobOrderId/details', component: JobOrderDetailComponent },
   { path: 'outlet-sales', component: OutletSalesListComponent },
   { path: 'outlet-sales/new', component: OutletSalesDetailComponent },
+  { path: 'outlet-sales/:outletName/view', component: OutletSalesDetailComponent },
+  { path: 'outlet-sales/:outletName/details', component: OutletSalesDetailComponent },
+  { path: 'outlet-sales/:outletName/copy', component: OutletSalesDetailComponent },
 ];
 
 @NgModule({

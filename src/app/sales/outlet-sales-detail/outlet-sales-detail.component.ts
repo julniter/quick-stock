@@ -18,6 +18,7 @@ import { OutletsService } from 'src/app/setup-outlets.service';
 import { ProductsService } from 'src/app/products.service';
 import { OutletSalesService } from 'src/app/sales-outlet-sales.service';
 import { OutletSalesListItem, OutletSalesStatus } from '../outlet-sales-list/outlet-sales-list-datasource';
+import { PageMode } from 'src/app/firebase.meta';
 
 @Component({
   selector: 'app-outlet-sales-detail',
@@ -25,7 +26,7 @@ import { OutletSalesListItem, OutletSalesStatus } from '../outlet-sales-list/out
   styleUrls: ['./outlet-sales-detail.component.css']
 })
 export class OutletSalesDetailComponent implements OnInit {
-  isNew = false;
+  pageMode: PageMode;
   selectedProduct: ProductListItem;
   spinnerName = 'OutletSalesFormComponent';
   outletSalesListItem: OutletSalesListItem;
@@ -51,24 +52,36 @@ export class OutletSalesDetailComponent implements OnInit {
     this.loadData();
     const ref = this.$dbSales.ref().ref.doc();
     const refInventory = this.$dbSales.ref().ref.doc();
-    this.outletSalesListItem = {
-      id: ref.id,
-      isActive: true,
-      isDeleted: false,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      status: OutletSalesStatus.Pending,
-      outletInventorySnapshot: {
-        id: refInventory.id,
+
+    this.outletSalesListItem = window.history.state.item;
+    this.pageMode = window.history.state.pageMode;
+
+    if (this.outletSalesListItem === undefined && this.router.url !== '/sales/outlet-sales/new') {
+      this.back();
+    }
+
+    if (this.outletSalesListItem === undefined) {
+      this.outletSalesListItem = {
+        id: ref.id,
         isActive: true,
         isDeleted: false,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        outlet: null,
-        productIds: [],
-        snapshot: {
-          productInventory: []
+        status: OutletSalesStatus.Pending,
+        outletInventorySnapshot: {
+          id: refInventory.id,
+          isActive: true,
+          isDeleted: false,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          outlet: null,
+          productIds: [],
+          snapshot: {
+            productInventory: []
+          }
         }
-      }
-    };
+      };
+    } else {
+      this.loadLatestSnapshot(this.outletSalesListItem.outletInventorySnapshot);
+    }
   }
 
   loadData() {
@@ -202,11 +215,19 @@ export class OutletSalesDetailComponent implements OnInit {
       this.outletSalesListItem.outletInventorySnapshot.productIds
       = this.outletSalesListItem.outletInventorySnapshot.snapshot.productInventory.map(p => p.id);
 
-      this.$dbSales.ref()
-        .doc(this.outletSalesListItem.id)
-        .set(this.outletSalesListItem)
-        .catch(errorFn)
-        .finally(finallyFn);
+      if (window.history.state.pageMode === PageMode.Edit) {
+        this.$dbSales.ref()
+          .doc(this.outletSalesListItem.id)
+          .update(this.outletSalesListItem)
+          .catch(errorFn)
+          .finally(finallyFn);
+      } else {
+        this.$dbSales.ref()
+          .doc(this.outletSalesListItem.id)
+          .set(this.outletSalesListItem)
+          .catch(errorFn)
+          .finally(finallyFn);
+      }
     }
   }
 
@@ -214,12 +235,12 @@ export class OutletSalesDetailComponent implements OnInit {
     this.router.navigate(['sales']);
   }
 
-  loadLatestSnapshot() {
+  loadLatestSnapshot(outletSnapshot: OutletInventorySnapshot = null) {
     const selectedOutlet = this.outletItems.find(o => o.id === this.outletSalesForm.getRawValue().outletId);
 
     this.products.controls = [];
 
-    if (selectedOutlet !== undefined) {
+    if (selectedOutlet !== undefined && outletSnapshot == null) {
       this.spinner.show(this.spinnerName);
 
       this.$db.getLatestOutletSnapshot(selectedOutlet.id).then(res => {
@@ -247,6 +268,25 @@ export class OutletSalesDetailComponent implements OnInit {
         console.error(err);
       }).finally(() => {
         this.spinner.hide(this.spinnerName);
+      });
+    } else {
+      outletSnapshot.snapshot.productInventory.map((pi: ProductInventoryItem) => {
+
+        this.outletSalesListItem.outletInventorySnapshot.snapshot.productInventory.push(pi);
+
+        if (this.pageMode !== PageMode.Copy) {
+          this.outletSalesForm.get('outletId').setValue(this.outletSalesListItem.outletInventorySnapshot.outlet.id);
+        }
+
+        this.products.push(
+          this.fb.group({
+            reOrderPoint: [{ value: pi.reOrderPoint, disabled: true } , Validators.required],
+            productVariations: this.fb.array(
+              this.createProductVariationFormArray(pi.productVariations)
+            )
+          })
+        );
+
       });
     }
   }

@@ -15,6 +15,10 @@ import { ProductFinderComponent } from './components/product-finder/product-find
 import { InventoryLocationListDetailsComponent } from './components/inventory-location-list-details/inventory-location-list-details.component';
 import { StaticInventoryLocationListComponent } from './components/static-inventory-location-list/static-inventory-location-list.component';
 import { OutletSalesStatusPipe } from '../outlet-sales-status.pipe';
+import { VerifyDialogComponent } from './components/verify-dialog/verify-dialog.component';
+import { RejectDialogComponent } from './components/reject-dialog/reject-dialog.component';
+import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
+import { CancelDialogComponent } from './components/cancel-dialog/cancel-dialog.component';
 
 
 
@@ -29,7 +33,11 @@ import { OutletSalesStatusPipe } from '../outlet-sales-status.pipe';
     ProductFinderComponent,
     InventoryLocationListDetailsComponent,
     StaticInventoryLocationListComponent,
-    OutletSalesStatusPipe
+    OutletSalesStatusPipe,
+    VerifyDialogComponent,
+    RejectDialogComponent,
+    ConfirmDialogComponent,
+    CancelDialogComponent
   ],
   imports: [
     CommonModule,
@@ -62,7 +70,17 @@ import { OutletSalesStatusPipe } from '../outlet-sales-status.pipe';
     ProductFinderComponent,
     InventoryLocationListDetailsComponent,
     StaticInventoryLocationListComponent,
-    OutletSalesStatusPipe
+    OutletSalesStatusPipe,
+    VerifyDialogComponent,
+    RejectDialogComponent,
+    ConfirmDialogComponent,
+    CancelDialogComponent
+  ],
+  entryComponents: [
+    VerifyDialogComponent,
+    RejectDialogComponent,
+    ConfirmDialogComponent,
+    CancelDialogComponent
   ]
 })
 export class SharedModule { }

@@ -26,15 +26,20 @@
     </ng-container>
 
     <!-- Actions Column -->
-    <!-- <ng-container matColumnDef="actions">
+    <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef>Actions</th>
       <td mat-cell *matCellDef="let row">
-        <button mat-raised-button color="primary" type="button" (click)="view(row)"><i class="fa fa-edit"></i> Edit</button>
+        <button mat-raised-button color="primary" type="button" (click)="view(row)" *ngIf="row.status !== 0"><i class="fa fa-edit"></i> View</button>
         &nbsp;
-
+        <button mat-raised-button color="primary" type="button" (click)="edit(row)" *ngIf="row.status === 0"><i class="fa fa-edit"></i> Edit</button>
+        &nbsp;
         <button mat-raised-button color="primary" type="button" (click)="copy(row)"><i class="fa fa-copy"></i> Copy</button>
+        &nbsp;
+        <button mat-raised-button color="primary" type="button" (click)="verify(row)" *ngIf="row.status === 0"><i class="fa fa-check"></i> Verify</button>
+        &nbsp;
+        <button mat-raised-button color="primary" type="button" (click)="reject(row)" *ngIf="row.status === 0"><i class="fa fa-thumbs-down"></i> Reject</button>
       </td>
-    </ng-container> -->
+    </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
