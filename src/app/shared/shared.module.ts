@@ -22,6 +22,8 @@ import { CancelDialogComponent } from './components/cancel-dialog/cancel-dialog.
 import { JobOrderTypePipe } from '../job-order-type.pipe';
 import { ProcessDialogComponent } from './process-dialog/process-dialog.component';
 import { ReceiveDialogComponent } from './receive-dialog/receive-dialog.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { DeliverDialogComponent } from './deliver-dialog/deliver-dialog.component';
 
 
 
@@ -43,7 +45,8 @@ import { ReceiveDialogComponent } from './receive-dialog/receive-dialog.componen
     CancelDialogComponent,
     JobOrderTypePipe,
     ProcessDialogComponent,
-    ReceiveDialogComponent
+    ReceiveDialogComponent,
+    DeliverDialogComponent
   ],
   imports: [
     CommonModule,
@@ -60,7 +63,8 @@ import { ReceiveDialogComponent } from './receive-dialog/receive-dialog.componen
     }),
     NgxSpinnerModule,
     BarecodeScannerLivestreamModule,
-    WebcamModule
+    WebcamModule,
+    ReactiveFormsModule
   ],
   exports: [
     NgxAuthFirebaseUIModule,
@@ -91,7 +95,8 @@ import { ReceiveDialogComponent } from './receive-dialog/receive-dialog.componen
     ConfirmDialogComponent,
     CancelDialogComponent,
     ProcessDialogComponent,
-    ReceiveDialogComponent
+    ReceiveDialogComponent,
+    DeliverDialogComponent
   ]
 })
 export class SharedModule { }

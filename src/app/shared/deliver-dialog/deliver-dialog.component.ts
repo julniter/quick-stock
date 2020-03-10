@@ -9,18 +9,18 @@ import { ProductListItem } from 'src/app/products/product-list/product-list-data
 import * as firebase from 'firebase';
 
 @Component({
-  selector: 'app-receive-dialog',
-  templateUrl: './receive-dialog.component.html',
-  styleUrls: ['./receive-dialog.component.css']
+  selector: 'app-deliver-dialog',
+  templateUrl: './deliver-dialog.component.html',
+  styleUrls: ['./deliver-dialog.component.css']
 })
-export class ReceiveDialogComponent implements OnInit {
+export class DeliverDialogComponent implements OnInit {
 
   jobOrderForm = this.fb.group({
     products: this.fb.array([])
   });
 
   constructor(
-    public dialogRef: MatDialogRef<ReceiveDialogComponent>,
+    public dialogRef: MatDialogRef<DeliverDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: {jobOrderListItem: JobOrderListItem},
     private fb: FormBuilder,
     private spinner: SpinnerService,
@@ -93,7 +93,7 @@ export class ReceiveDialogComponent implements OnInit {
         if (res.docs.length) {
           const latestSnapshot = res.docs[0].data() as WarehouseInventorySnapshot;
           latestSnapshot.snapshot
-          = this.$dbInventory.updateSnapshotAddProduct(
+          = this.$dbInventory.updateSnapshotLessProduct(
             latestSnapshot.snapshot,
             this.data.jobOrderListItem.jobOrder.products,
             this.data.jobOrderListItem.jobOrder.products as ProductListItem[]

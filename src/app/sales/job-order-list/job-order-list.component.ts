@@ -14,6 +14,7 @@ import * as firebase from 'firebase';
 import { ProcessDialogComponent } from 'src/app/shared/process-dialog/process-dialog.component';
 import { CancelDialogComponent } from 'src/app/shared/components/cancel-dialog/cancel-dialog.component';
 import { ReceiveDialogComponent } from 'src/app/shared/receive-dialog/receive-dialog.component';
+import { DeliverDialogComponent } from 'src/app/shared/deliver-dialog/deliver-dialog.component';
 
 @Component({
   selector: 'app-job-order-list',
@@ -118,26 +119,52 @@ export class JobOrderListComponent implements AfterViewInit, OnInit, OnDestroy {
   receive(jobOrderListItem: JobOrderListItem) {
     const dialogRef = this.dialog.open(
       ReceiveDialogComponent, {
-        maxWidth: 700,
+        width: '80%',
         data: { jobOrderListItem }
-      }
+      },
     );
 
     dialogRef.afterClosed().subscribe(result => {
       if (result !== true) { return; }
+
+      this.spinner.show();
+      this.$db
+      .ref()
+      .doc(jobOrderListItem.id)
+      .update({status: JobOrderStatus.Received })
+      .then(res => {})
+      .catch(err => {
+        console.error(err);
+      })
+      .finally(() => {
+        this.spinner.hide();
+      });
     });
   }
 
   deliver(jobOrderListItem: JobOrderListItem) {
     const dialogRef = this.dialog.open(
-      ReceiveDialogComponent, {
-        maxWidth: 700,
+      DeliverDialogComponent, {
+        width: '80%',
         data: { jobOrderListItem }
-      }
+      },
     );
 
     dialogRef.afterClosed().subscribe(result => {
       if (result !== true) { return; }
+
+      this.spinner.show();
+      this.$db
+      .ref()
+      .doc(jobOrderListItem.id)
+      .update({status: JobOrderStatus.Delivered })
+      .then(res => {})
+      .catch(err => {
+        console.error(err);
+      })
+      .finally(() => {
+        this.spinner.hide();
+      });
     });
   }
 

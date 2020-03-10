@@ -127,6 +127,7 @@ export class OutletSalesListComponent implements AfterViewInit, OnInit, OnDestro
           outletSalesItem.outletInventorySnapshot.snapshot.productInventory,
           outletSalesItem.outletInventorySnapshot.snapshot.productInventory as ProductListItem[]
         );
+        latestSnapshot.productIds = latestSnapshot.snapshot.productInventory.map(p => p.id);
 
         return this.$dbInventory
         .saveOutlet(latestSnapshot)
