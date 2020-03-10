@@ -2,6 +2,18 @@
   width: 100%;
 }
 
+.max-half-width {
+  max-width: 50%;
+}
+
+.max-three-quarter-width {
+  max-width: 75%;
+}
+
+.max-quarter-width {
+  max-width: 25%;
+}
+
 .shipping-card {
   min-width: 120px;
   margin: 20px auto;
@@ -24,4 +36,12 @@
 
 .col:last-child {
   margin-right: 0;
+}
+
+.fa {
+  vertical-align: baseline !important;
+}
+
+form {
+  position: relative;
 }

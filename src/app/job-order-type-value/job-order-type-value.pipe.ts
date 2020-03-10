@@ -9,9 +9,9 @@ export class JobOrderTypeValuePipe implements PipeTransform {
   transform(value: any, ...args: any[]): any {
     switch(value) {
       case JobOrderType.Internal:
-        return JobOrderType[JobOrderType.Internal];
+        return JobOrderType[value];
       case JobOrderType.External:
-        return JobOrderType.External;
+        return JobOrderType[value];
       default:
         return '--';
     }

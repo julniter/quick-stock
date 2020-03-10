@@ -232,7 +232,7 @@ export class OutletSalesDetailComponent implements OnInit {
   }
 
   back() {
-    this.router.navigate(['sales']);
+    this.router.navigate(['sales', 'outlet-sales']);
   }
 
   loadLatestSnapshot(outletSnapshot: OutletInventorySnapshot = null) {

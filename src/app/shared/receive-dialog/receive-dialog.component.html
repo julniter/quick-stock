@@ -1,0 +1,10 @@
+<h2>Receive Job Order</h2>
+<div mat-dialog-content>
+  <p>This action will <b>increase</b> the inventory of {{ data.jobOrderListItem.warehouse.warehouse.name }}.</p>
+  <p>Please specify the actual <b>received</b> items.</p>
+  <br/><br/><br/>
+</div>
+<div mat-dialog-actions>
+  <button mat-button color="secondary" [mat-dialog-close]="false">Cancel</button>
+  <button mat-button color="primary" [mat-dialog-close]="true" cdkFocusInitial>Save</button>
+</div>

@@ -1,0 +1,8 @@
+<h2>{{ data.header }}</h2>
+<div mat-dialog-content>
+  <p>Process {{ data.message }}?</p>
+</div>
+<div mat-dialog-actions>
+  <button mat-button color="secondary" [mat-dialog-close]="false">No Thanks</button>
+  <button mat-button color="primary" [mat-dialog-close]="true" cdkFocusInitial>Ok</button>
+</div>

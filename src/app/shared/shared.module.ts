@@ -19,6 +19,9 @@ import { VerifyDialogComponent } from './components/verify-dialog/verify-dialog.
 import { RejectDialogComponent } from './components/reject-dialog/reject-dialog.component';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import { CancelDialogComponent } from './components/cancel-dialog/cancel-dialog.component';
+import { JobOrderTypePipe } from '../job-order-type.pipe';
+import { ProcessDialogComponent } from './process-dialog/process-dialog.component';
+import { ReceiveDialogComponent } from './receive-dialog/receive-dialog.component';
 
 
 
@@ -37,7 +40,10 @@ import { CancelDialogComponent } from './components/cancel-dialog/cancel-dialog.
     VerifyDialogComponent,
     RejectDialogComponent,
     ConfirmDialogComponent,
-    CancelDialogComponent
+    CancelDialogComponent,
+    JobOrderTypePipe,
+    ProcessDialogComponent,
+    ReceiveDialogComponent
   ],
   imports: [
     CommonModule,
@@ -74,13 +80,18 @@ import { CancelDialogComponent } from './components/cancel-dialog/cancel-dialog.
     VerifyDialogComponent,
     RejectDialogComponent,
     ConfirmDialogComponent,
-    CancelDialogComponent
+    CancelDialogComponent,
+    JobOrderTypePipe,
+    ProcessDialogComponent,
+    ReceiveDialogComponent
   ],
   entryComponents: [
     VerifyDialogComponent,
     RejectDialogComponent,
     ConfirmDialogComponent,
-    CancelDialogComponent
+    CancelDialogComponent,
+    ProcessDialogComponent,
+    ReceiveDialogComponent
   ]
 })
 export class SharedModule { }

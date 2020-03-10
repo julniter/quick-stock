@@ -4,31 +4,13 @@ import { MatSort } from '@angular/material/sort';
 import { Observable, of as observableOf } from 'rxjs';
 import { FirebaseMetaData } from 'src/app/firebase.meta';
 import { SpinnerService } from '../../shared/spinner.service';
+import { ProductInventoryItem } from 'src/app/inventory.model';
 import { CustomerListItem } from 'src/app/customers/customer-list/customer-list-datasource';
-import { ProductListItem, ProductVariation } from 'src/app/products/product-list/product-list-datasource';
-import { ProductSupplierListItem } from 'src/app/products/product-supplier-list/product-supplier-list-datasource';
 import { WarehouseListItem } from 'src/app/setup/warehouse-list/warehouse-list-datasource';
 
-export function getJobOrderTypes() {
-  return [
-    JobOrderType[JobOrderType.Internal],
-    JobOrderType[JobOrderType.External]
-  ];
-}
-
-export function getJobOrderStatus() {
-  return [
-    JobOrderStatus.Pending,
-    JobOrderStatus.InProgress,
-    JobOrderStatus.Received,
-    JobOrderStatus.Delivered,
-    JobOrderStatus.Cancelled
-  ];
-}
-
-export enum JobOrderType {
-  Internal,
-  External
+export enum JobOrderStock {
+  New,
+  Existing
 }
 
 export enum JobOrderStatus {
@@ -39,29 +21,26 @@ export enum JobOrderStatus {
   Cancelled
 }
 
-export interface JobOrderProductVariation extends ProductVariation {
-  targetCount: number;
-  receivedCount?: number;
-  deliveredCount?: number;
+export enum JobOrderType {
+  Internal,
+  External
 }
 
 export interface JobOrder {
-  referenceNumber?: string;
-  type: JobOrderType;
-  productId: string;
-  productVariations: JobOrderProductVariation[];
+  referenceNumber: number;
   warehouseId: string;
-  supplierId: string;
   customerId?: string;
+  products: ProductInventoryItem[];
+  type: JobOrderType;
+  stock: JobOrderStock;
 }
 
 // TODO: Replace this with your own data model type
 export interface JobOrderListItem extends FirebaseMetaData {
+  productIds: string[];
   jobOrder: JobOrder;
-  customer?: CustomerListItem;
   warehouse: WarehouseListItem;
-  supplier: ProductSupplierListItem;
-  product: ProductListItem;
+  customer?: CustomerListItem;
   status: JobOrderStatus;
 }
 
@@ -128,22 +107,10 @@ export class JobOrderListDataSource extends DataSource<JobOrderListItem> {
     return data.sort((a, b) => {
       const isAsc = this.sort.direction === 'asc';
       switch (this.sort.active) {
-        case 'id':
+        case 'referenceNumber':
           return compare(
-            a.id,
-            b.id,
-            isAsc
-          );
-        case 'supplier':
-          return compare(
-            a.supplier.productSupplier.company,
-            b.supplier.productSupplier.company,
-            isAsc
-          );
-        case 'product':
-          return compare(
-            a.product.product.name,
-            b.product.product.name,
+            a.jobOrder.referenceNumber,
+            b.jobOrder.referenceNumber,
             isAsc
           );
         case 'warehouse':
@@ -152,16 +119,22 @@ export class JobOrderListDataSource extends DataSource<JobOrderListItem> {
             b.warehouse.warehouse.name,
             isAsc
           );
-        case 'type':
+        case 'Type':
           return compare(
-            a.jobOrder.type,
-            b.jobOrder.type,
+            JobOrderType[a.jobOrder.type],
+            JobOrderType[b.jobOrder.type],
             isAsc
           );
         case 'status':
           return compare(
-            a.status,
-            b.status,
+            JobOrderStatus[a.status],
+            JobOrderStatus[b.status],
+            isAsc
+          );
+        case 'createdAt':
+          return compare(
+            a.createdAt,
+            b.createdAt,
             isAsc
           );
         default:

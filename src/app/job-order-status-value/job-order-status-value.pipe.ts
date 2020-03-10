@@ -8,18 +8,17 @@ export class JobOrderStatusValuePipe implements PipeTransform {
 
   transform(value: any, ...args: any[]): any {
     switch(value) {
-      case JobOrderStatus.Pending:
-        return JobOrderStatus[JobOrderStatus.Pending];
       case JobOrderStatus.Received:
-        return JobOrderStatus[JobOrderStatus.Received];
+        return JobOrderStatus[value];
       case JobOrderStatus.Cancelled:
-        return JobOrderStatus[JobOrderStatus.Cancelled];
+        return JobOrderStatus[value];
       case JobOrderStatus.Delivered:
-        return JobOrderStatus[JobOrderStatus.Delivered];
+        return JobOrderStatus[value];
       case JobOrderStatus.InProgress:
-        return JobOrderStatus[JobOrderStatus.InProgress];
+        return JobOrderStatus[value];
+      case JobOrderStatus.Pending:
       default:
-        return '--';
+        return JobOrderStatus[JobOrderStatus.Pending];
     }
   }
 

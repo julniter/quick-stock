@@ -1,54 +1,31 @@
-<ngx-spinner [name]="spinnerName"></ngx-spinner>
-<form [formGroup]="jobOrderForm" novalidate (ngSubmit)="onSubmit()" *ngIf="customerItems.length && productItems.length && supplierItems.length && warehouseItems.length">
+<form [formGroup]="jobOrderForm" novalidate (ngSubmit)="onSubmit()">
   <mat-card class="shipping-card">
     <mat-card-header>
-      <mat-card-title>Job Order Detail</mat-card-title>
+      <mat-card-title>Job Order</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <div class="row">
+      <div class="row" *ngIf="pageMode !== 3">
         <div class="col">
           <mat-form-field class="full-width">
-            <input matInput placeholder="Reference Number #" formControlName="referenceNumber">
+            <input matInput placeholder="Rerefence Number" formControlName="referenceNumber">
+            <mat-error *ngIf="jobOrderForm.controls['referenceNumber'].hasError('required')">
+              Rerefence Number is <strong>required</strong>
+            </mat-error>
           </mat-form-field>
         </div>
         <div class="col">
           <mat-form-field class="full-width">
             <mat-select placeholder="Type" formControlName="type">
-              <mat-option *ngFor="let jobOrderTypeItem of jobOrderTypeItems" [value]="jobOrderTypeItem">
-                {{ jobOrderTypeItem }}
-              </mat-option>
+              <mat-option [value]="1"> External </mat-option>
+              <mat-option [value]="0"> Internal </mat-option>
             </mat-select>
             <mat-error *ngIf="jobOrderForm.controls['type'].hasError('required')">
               Type is <strong>required</strong>
             </mat-error>
           </mat-form-field>
         </div>
-        <div class="col">
-          <mat-form-field class="full-width">
-            <mat-select placeholder="Customer" formControlName="customerId" (selectionChange)="setCustomerFormControlState($event)">
-              <mat-option *ngFor="let customerItem of customerItems" [value]="customerItem.id">
-                {{ customerItem.customer.company }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="jobOrderForm.controls['customerId'].hasError('required')">
-              Customer is <strong>required</strong>
-            </mat-error>
-          </mat-form-field>
-        </div>
       </div>
-      <div class="row">
-        <div class="col">
-          <mat-form-field class="full-width">
-            <mat-select placeholder="Supplier" formControlName="supplierId">
-              <mat-option *ngFor="let supplierItem of supplierItems" [value]="supplierItem.id">
-                {{ supplierItem.productSupplier.company }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="jobOrderForm.controls['supplierId'].hasError('required')">
-              Supplier is <strong>required</strong>
-            </mat-error>
-          </mat-form-field>
-        </div>
+      <div class="row" *ngIf="pageMode !== 3">
         <div class="col">
           <mat-form-field class="full-width">
             <mat-select placeholder="Warehouse" formControlName="warehouseId">
@@ -61,69 +38,106 @@
             </mat-error>
           </mat-form-field>
         </div>
-      </div>
-      <div class="row">
         <div class="col">
           <mat-form-field class="full-width">
-            <mat-select placeholder="Product" formControlName="productId" (selectionChange)="setProductVariationFormControls($event)">
-              <mat-option *ngFor="let productItem of productItems" [value]="productItem.id">
-                {{ productItem.product.name }}
+            <mat-select placeholder="Customer" formControlName="customerId">
+              <mat-option *ngFor="let customerItem of customerItems" [value]="customerItem.id">
+                {{ customerItem.customer.company }}
               </mat-option>
             </mat-select>
-            <mat-error *ngIf="jobOrderForm.controls['productId'].hasError('required')">
-              Product is <strong>required</strong>
+          </mat-form-field>
+        </div>
+        <div class="col">
+          <mat-form-field class="full-width">
+            <mat-select placeholder="Stock" formControlName="stock">
+              <mat-option [value]="1"> Existing </mat-option>
+              <mat-option [value]="0"> New </mat-option>
+            </mat-select>
+            <mat-error *ngIf="jobOrderForm.controls['stock'].hasError('required')">
+              Stock is <strong>required</strong>
             </mat-error>
           </mat-form-field>
         </div>
       </div>
-      <div *ngIf="jobOrderForm.get('productId').value !== null && jobOrderForm.get('productId').value !== undefined">
-        <div *ngIf="getControls().length">
-          <div *ngFor="let type of getControls(); let i = index;">
-            <div formArrayName="productVariations">
-              <div [formGroupName]="i">
-                <div class="row">
-                  <div class="col">
-                    <mat-form-field class="full-width">
-                      <input matInput placeholder="Variation Name" formControlName="name">
-                      <mat-error *ngIf="getControls()[i].get('name').hasError('required')">
-                        Variation Name is <strong>required</strong>
-                      </mat-error>
-                    </mat-form-field>
-                  </div>
-                  <div class="col">
-                    <mat-form-field class="full-width">
-                      <input matInput placeholder="SKU" formControlName="sku">
-                      <mat-error *ngIf="getControls()[i].get('sku').hasError('required')">
-                        SKU is <strong>required</strong>
-                      </mat-error>
-                    </mat-form-field>
-                  </div>
-                  <div class="col">
-                    <mat-form-field class="full-width">
-                      <input matInput placeholder="Code" formControlName="code">
-                      <mat-error *ngIf="getControls()[i].get('code').hasError('required')">
-                        Code is <strong>required</strong>
-                      </mat-error>
-                    </mat-form-field>
-                  </div>
-                  <div class="col">
-                    <mat-form-field class="full-width">
-                      <input matInput placeholder="Price" formControlName="price">
-                      <mat-error *ngIf="getControls()[i].get('price').hasError('required')">
-                        Price is <strong>required</strong>
-                      </mat-error>
-                    </mat-form-field>
-                  </div>
-                  <div class="col">
-                    <mat-form-field class="full-width">
-                      <input matInput placeholder="Target Count" formControlName="targetCount">
-                      <mat-error *ngIf="getControls()[i].get('targetCount').hasError('required')">
-                        Target Count is <strong>required</strong>
-                      </mat-error>
-                    </mat-form-field>
-                  </div>
-                </div>
-              </div>
+      <div class="row" *ngIf="pageMode !== 3">
+        <div class="col">
+          <app-product-finder [productItems]="productItems" (productSelected)="addProduct($event)"></app-product-finder>
+        </div>
+      </div>
+      <div *ngIf="products.controls.length">
+        <div *ngFor="let type of products.controls; let i = index;">
+          <div class="row" formArrayName="products">
+            <div class="col" [formGroupName]="i">
+              <mat-accordion>
+                <mat-expansion-panel>
+                  <mat-expansion-panel-header>
+                    <mat-panel-title>
+                      {{ getProductName(i) | titlecase }}
+                    </mat-panel-title>
+                    <mat-panel-description>
+                      {{ getProductVariationCount(i) }} Variant(s)
+                    </mat-panel-description>
+                  </mat-expansion-panel-header>
+
+                  <button mat-button type="button" (click)="removeProduct(i)" *ngIf="pageMode !== 3">
+                    <i class="fa fa-trash-alt"></i> Remove Product
+                  </button>
+                  <mat-form-field class="full-width max-quarter-width">
+                    <input matInput placeholder="Product Re-Order Point" formControlName="reOrderPoint">
+                  </mat-form-field>
+                  <mat-card>
+                    <mat-card-content>
+                      <div *ngFor="let type of getProductVariations(i).controls; let x = index;">
+                        <div formArrayName="productVariations">
+                          <div class="row" [formGroupName]="x">
+                            <div class="col">
+                              <mat-form-field class="full-width">
+                                <input matInput placeholder="Variation Name" formControlName="name">
+                                <mat-error *ngIf="getProductVariations(i).controls[x].get('name').hasError('required')">
+                                  Variation Name is <strong>required</strong>
+                                </mat-error>
+                              </mat-form-field>
+                            </div>
+                            <div class="col">
+                              <mat-form-field class="full-width">
+                                <input matInput placeholder="SKU" formControlName="sku">
+                                <mat-error *ngIf="getProductVariations(i).controls[x].get('sku').hasError('required')">
+                                  SKU is <strong>required</strong>
+                                </mat-error>
+                              </mat-form-field>
+                            </div>
+                            <div class="col">
+                              <mat-form-field class="full-width">
+                                <input matInput placeholder="Code" formControlName="code">
+                                <mat-error *ngIf="getProductVariations(i).controls[x].get('code').hasError('required')">
+                                  Code is <strong>required</strong>
+                                </mat-error>
+                              </mat-form-field>
+                            </div>
+                            <div class="col">
+                              <mat-form-field class="full-width">
+                                <input matInput placeholder="Price" formControlName="price">
+                                <mat-error *ngIf="getProductVariations(i).controls[x].get('price').hasError('required')">
+                                  Price is <strong>required</strong>
+                                </mat-error>
+                              </mat-form-field>
+                            </div>
+                            <div class="col">
+                              <mat-form-field class="full-width">
+                                <input matInput placeholder="Count" formControlName="count">
+                                <mat-error *ngIf="getProductVariations(i).controls[x].get('count').hasError('required')">
+                                  Count is <strong>required</strong>
+                                </mat-error>
+                              </mat-form-field>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </mat-card-content>
+                  </mat-card>
+
+                </mat-expansion-panel>
+              </mat-accordion>
             </div>
           </div>
         </div>
@@ -131,7 +145,8 @@
     </mat-card-content>
     <mat-card-actions>
       <button mat-raised-button color="secondary" type="button" (click)="back()">Cancel</button>
-      <button mat-raised-button color="primary" type="submit" *ngIf="pageMode !== pageModes.View">Submit</button>
+      <button mat-raised-button color="primary" type="submit" *ngIf="pageMode !== 3">Submit</button>
     </mat-card-actions>
   </mat-card>
+  <ngx-spinner [name]="spinnerName"></ngx-spinner>
 </form>
