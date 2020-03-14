@@ -39,11 +39,11 @@ import { DeliverDialogComponent } from './deliver-dialog/deliver-dialog.componen
     InventoryLocationListDetailsComponent,
     StaticInventoryLocationListComponent,
     OutletSalesStatusPipe,
+    JobOrderTypePipe,
     VerifyDialogComponent,
     RejectDialogComponent,
     ConfirmDialogComponent,
     CancelDialogComponent,
-    JobOrderTypePipe,
     ProcessDialogComponent,
     ReceiveDialogComponent,
     DeliverDialogComponent
