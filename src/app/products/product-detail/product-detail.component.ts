@@ -28,16 +28,8 @@ export class ProductDetailComponent implements OnInit {
     type: [null, Validators.required],
     category: [null, Validators.required],
     description: [null, Validators.required],
-    variants: this.fb.array([this.fb.group({
-      variant: [null, Validators.required],
-      variantValues: [null, Validators.required]
-    })]),
-    variations: this.fb.array([this.fb.group({
-      name: [null, Validators.required],
-      sku: [null, Validators.required],
-      code: [null, Validators.required],
-      price: [null, Validators.required]
-    })])
+    variants: this.fb.array([]),
+    variations: this.fb.array([])
   });
 
   brandItems: ProductBrandListItem[] = [];
@@ -53,74 +45,6 @@ export class ProductDetailComponent implements OnInit {
     private $dbVariants: ProductVariantsService,
     private $dbCategories: ProductCategoriesService) {}
 
-    ngOnInit() {
-
-      this.spinner.show(this.spinnerName);
-
-      this.$dbBrands.ref().valueChanges().subscribe(items => {
-        this.brandItems = items as any;
-        this.hideSpinner();
-      });
-
-      this.$dbCategories.ref().valueChanges().subscribe(items => {
-        this.categoryItems = items as any;
-        this.hideSpinner();
-      });
-
-      this.$dbVariants.ref().valueChanges().subscribe(items => {
-        this.variantItems = items as any;
-        this.hideSpinner();
-      });
-
-      this.productItem = window.history.state;
-
-      if (this.productItem.id === undefined && this.router.url !== '/products/new') {
-        this.back();
-      }
-
-      if (this.productItem.product === undefined) {
-        const ref = this.$db.ref().ref.doc();
-        this.productItem = {
-          id: ref.id,
-          isActive: true,
-          isDeleted: false,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-          product: {
-            name: '',
-            brand: '',
-            category: '',
-            type: '',
-            description: '',
-            variants: [{ variant: '', variantValues: '' }],
-            variations: [{ name: '', price: 0, sku: '', code: '' }]
-          }
-        }
-        this.isNew = true;
-      } else {
-        const inputCount = this.productItem.product.variants.length - 1;
-        if (inputCount) {
-          for (let index = 1; index <= inputCount; index++) {
-            this.createItem(
-              this.productItem.product.variants[index].variant,
-              this.productItem.product.variants[index].variantValues
-            );
-          }
-        }
-      }
-
-      this.variants.valueChanges.subscribe(v => {
-        this.createVariations(v);
-      });
-      console.log(this.productItem.product);
-      this.productForm.setValue(this.productItem.product);
-    }
-
-    private hideSpinner() {
-      if (this.brandItems.length && this.variantItems.length && this.categoryItems.length) {
-        this.spinner.hide(this.spinnerName);
-      }
-    }
-
     get variants() {
       return this.productForm.get('variants') as FormArray;
     }
@@ -131,6 +55,73 @@ export class ProductDetailComponent implements OnInit {
 
     get category() {
       return this.productForm.get('category');
+    }
+
+    ngOnInit() {
+
+      this.spinner.show(this.spinnerName);
+
+      this.productItem = window.history.state;
+
+      if (this.productItem.id === undefined && this.router.url !== '/products/new') {
+        this.back();
+      } else {
+
+        Promise.all([
+          this.$dbBrands.ref().ref.where('isDeleted', '==', false).get().then(items => {
+            this.brandItems = items.docs.length ? items.docs.map(d => d.data()) as any : [];
+          }),
+          this.$dbCategories.ref().ref.where('isDeleted', '==', false).get().then(items => {
+            this.categoryItems = items.docs.length ? items.docs.map(d => d.data()) as any : [];
+          }),
+          this.$dbVariants.ref().ref.where('isDeleted', '==', false).get().then(items => {
+            this.variantItems = items.docs.length ? items.docs.map(d => d.data()) as any : [];
+          })
+        ]).finally(() => {
+          this.spinner.hide(this.spinnerName);
+          if (this.productItem.product === undefined) {
+            const ref = this.$db.ref().ref.doc();
+            this.productItem = {
+              id: ref.id,
+              isActive: true,
+              isDeleted: false,
+              createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+              product: {
+                name: '',
+                brand: '',
+                category: '',
+                type: '',
+                description: '',
+                variants: [],
+                variations: []
+              }
+            };
+            this.isNew = true;
+          } else {
+            const inputCount = this.productItem.product.variants.length - 1;
+            if (inputCount) {
+              for (let index = 1; index <= inputCount; index++) {
+                this.createItem(
+                  this.productItem.product.variants[index].variant,
+                  this.productItem.product.variants[index].variantValues
+                );
+              }
+            }
+          }
+
+          this.productForm.setValue(Object.assign({...this.productItem.product}, {variants: [], variations: []}));
+          this.productItem.product.variants.map((v, i) => {
+            this.createItem(v.variant, v.variantValues);
+          });
+          this.productItem.product.variations.map((v, i) => {
+            this.createVariationGroup('', v.name, v.sku, v.code, v.price);
+          });
+
+          this.productForm.get('name').valueChanges.subscribe(v => {
+            this.updateVaritions();
+          });
+        });
+      }
     }
 
     getTypes() {
@@ -144,11 +135,21 @@ export class ProductDetailComponent implements OnInit {
       return [];
     }
 
+    updateVaritions() {
+      this.createVariations(this.variants.getRawValue());
+    }
+
     createItem(name = null, values = null) {
-      this.variants.push(this.fb.group({
+      const variantGroup = this.fb.group({
         variant: [name, Validators.required],
         variantValues: [values, Validators.required]
-      }));
+      });
+
+      variantGroup.get('variantValues').valueChanges.subscribe(v => {
+        this.updateVaritions();
+      });
+
+      this.getControlsVariants().push(variantGroup);
     }
 
     removeItem(index) {
@@ -166,15 +167,18 @@ export class ProductDetailComponent implements OnInit {
       this.variations.controls = [];
       this.createPermutation(tempVariationsValues).map(variation => {
         if (variation) {
-          this.variations.push(this.fb.group({
-            name: [{value: [productName, variation].join(' '), disabled: true }, Validators.required],
-            sku: [null, Validators.required],
-            code: [null, Validators.required],
-            price: [null, Validators.required]
-          }));
+          this.createVariationGroup(productName, variation);
         }
       });
+    }
 
+    createVariationGroup(productName, variation, sku = null, code = null, price = null) {
+      this.variations.push(this.fb.group({
+        name: [{value: [productName, variation].join(' '), disabled: true }, Validators.required],
+        sku: [sku, Validators.required],
+        code: [code, Validators.required],
+        price: [price, Validators.required]
+      }));
     }
 
     createPermutation(variationValues: string[][]): string[] {
@@ -224,6 +228,10 @@ export class ProductDetailComponent implements OnInit {
 
     back() {
       this.router.navigate(['products/list']);
+    }
+
+    getControlsVariants() {
+      return (this.productForm.get('variants') as FormArray).controls;
     }
 
     getControls() {
