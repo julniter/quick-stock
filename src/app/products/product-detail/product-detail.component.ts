@@ -97,16 +97,6 @@ export class ProductDetailComponent implements OnInit {
               }
             };
             this.isNew = true;
-          } else {
-            const inputCount = this.productItem.product.variants.length - 1;
-            if (inputCount) {
-              for (let index = 1; index <= inputCount; index++) {
-                this.createItem(
-                  this.productItem.product.variants[index].variant,
-                  this.productItem.product.variants[index].variantValues
-                );
-              }
-            }
           }
 
           this.productForm.setValue(Object.assign({...this.productItem.product}, {variants: [], variations: []}));

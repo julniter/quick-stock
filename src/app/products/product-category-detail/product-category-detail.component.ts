@@ -17,9 +17,7 @@ export class ProductCategoryDetailComponent implements OnInit {
   productCategoryItem: ProductCategoryListItem;
   productCategoryForm = this.fb.group({
     name: [null, Validators.required],
-    types: this.fb.array([this.fb.group({
-      name: [null, Validators.required]
-    })])
+    types: this.fb.array([])
   });
 
   constructor(
@@ -48,16 +46,12 @@ export class ProductCategoryDetailComponent implements OnInit {
         }
       }
       this.isNew = true;
-    } else {
-      const inputCount = this.productCategoryItem.productCategory.types.length - 1;
-      if (inputCount) {
-        for (let index = 1; index <= inputCount; index++) {
-          this.createItem(this.productCategoryItem.productCategory.types[index]);
-        }
-      }
     }
 
-    this.productCategoryForm.setValue(this.productCategoryItem.productCategory);
+    this.productCategoryForm.setValue(Object.assign({...this.productCategoryItem.productCategory}, {types: []}));
+    this.productCategoryItem.productCategory.types.map(v => {
+      this.createItem(v.name);
+    });
   }
 
   get types() {
