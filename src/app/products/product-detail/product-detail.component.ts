@@ -139,7 +139,7 @@ export class ProductDetailComponent implements OnInit {
         this.updateVaritions();
       });
 
-      this.getControlsVariants().push(variantGroup);
+      this.variants.push(variantGroup);
     }
 
     removeItem(index) {
@@ -195,6 +195,7 @@ export class ProductDetailComponent implements OnInit {
     }
 
     onSubmit() {
+      console.log(this.productForm);
       if (!this.productForm.valid) { return; }
 
       this.spinner.show(this.spinnerName);
