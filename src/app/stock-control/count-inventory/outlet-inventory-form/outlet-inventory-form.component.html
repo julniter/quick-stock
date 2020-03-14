@@ -4,7 +4,7 @@
       <mat-card-title>Outlet Inventory</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <div class="row">
+      <div class="row" *ngIf="pageMode === 0">
         <div class="col">
           <mat-form-field class="full-width">
             <mat-select placeholder="Outlet" formControlName="outletId">
@@ -21,7 +21,7 @@
           <button mat-raised-button color="secondary" type="button" (click)="loadLatestSnapshot()"> <i class="fa fa-pallet"></i>  Use Latest Inventory</button>
         </div>
       </div>
-      <div class="row">
+      <div class="row" *ngIf="pageMode === 0">
         <div class="col">
           <app-product-finder [productItems]="productItems" (productSelected)="addProduct($event)"></app-product-finder>
         </div>
@@ -107,7 +107,7 @@
     </mat-card-content>
     <mat-card-actions>
       <button mat-raised-button color="secondary" type="button" (click)="back()">Cancel</button>
-      <button mat-raised-button color="primary" type="submit">Submit</button>
+      <button mat-raised-button color="primary" type="submit" *ngIf="pageMode === 0">Submit</button>
     </mat-card-actions>
   </mat-card>
   <ngx-spinner [name]="spinnerName"></ngx-spinner>

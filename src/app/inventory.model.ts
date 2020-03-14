@@ -3,10 +3,17 @@ import { ProductVariation, ProductListItem } from './products/product-list/produ
 import { Outlet, OutletListItem } from './setup/outlet-list/outlet-list-datasource';
 import { Warehouse, WarehouseListItem } from './setup/warehouse-list/warehouse-list-datasource';
 
+export enum InventorySnapshotStatus {
+  Pending,
+  Approved,
+  Rejected
+}
+
 export interface LocationInventorySnapshot extends FirebaseMetaData {
   location?: Outlet | Warehouse;
   snapshot: InventorySnopshot;
   productIds: string[];
+  status?: InventorySnapshotStatus;
 }
 
 export interface OutletInventorySnapshot extends LocationInventorySnapshot {

@@ -24,6 +24,7 @@ import { ProcessDialogComponent } from './process-dialog/process-dialog.componen
 import { ReceiveDialogComponent } from './receive-dialog/receive-dialog.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { DeliverDialogComponent } from './deliver-dialog/deliver-dialog.component';
+import { InventorySnapshotStatusPipe } from './inventory-snapshot-status.pipe';
 
 
 
@@ -46,7 +47,8 @@ import { DeliverDialogComponent } from './deliver-dialog/deliver-dialog.componen
     CancelDialogComponent,
     ProcessDialogComponent,
     ReceiveDialogComponent,
-    DeliverDialogComponent
+    DeliverDialogComponent,
+    InventorySnapshotStatusPipe
   ],
   imports: [
     CommonModule,
@@ -87,7 +89,8 @@ import { DeliverDialogComponent } from './deliver-dialog/deliver-dialog.componen
     CancelDialogComponent,
     JobOrderTypePipe,
     ProcessDialogComponent,
-    ReceiveDialogComponent
+    ReceiveDialogComponent,
+    InventorySnapshotStatusPipe
   ],
   entryComponents: [
     VerifyDialogComponent,

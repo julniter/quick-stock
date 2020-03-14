@@ -9,11 +9,15 @@ import {
 import {
   OutletInventorySnapshot,
   ProductInventoryItem,
-  InventoryProductVariations
+  InventoryProductVariations,
+  InventorySnapshotStatus
 } from 'src/app/inventory.model';
 import { OutletListItem } from 'src/app/setup/outlet-list/outlet-list-datasource';
 import * as firebase from 'firebase';
 import { InventoryService } from 'src/app/inventory.service';
+import { OutletsService } from 'src/app/setup-outlets.service';
+import { ProductsService } from 'src/app/products.service';
+import { PageMode } from 'src/app/firebase.meta';
 
 @Component({
   selector: 'app-outlet-inventory-form',
@@ -22,6 +26,7 @@ import { InventoryService } from 'src/app/inventory.service';
 })
 export class OutletInventoryFormComponent implements OnInit {
   isNew = false;
+  pageMode: PageMode = PageMode.New;
   selectedProduct: ProductListItem;
   spinnerName = 'OutletInventoryFormComponent';
   outletInventorySnapshot: OutletInventorySnapshot;
@@ -30,29 +35,65 @@ export class OutletInventoryFormComponent implements OnInit {
     products: this.fb.array([])
   });
 
-  @Input() outletItems: OutletListItem[];
-  @Input() productItems: ProductListItem[];
+  outletItems: OutletListItem[] = [];
+  productItems: ProductListItem[] = [];
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private $db: InventoryService,
-    private spinner: SpinnerService
+    private spinner: SpinnerService,
+    private $dbOutlet: OutletsService,
+    private $dbProduct: ProductsService
   ) {}
 
   ngOnInit() {
-    const ref = this.$db.outlet.ref.doc();
-    this.outletInventorySnapshot = {
-      id: ref.id,
-      isActive: true,
-      isDeleted: false,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      outlet: null,
-      productIds: [],
-      snapshot: {
-        productInventory: []
-      }
-    };
+
+    this.outletInventorySnapshot = window.history.state.item;
+    this.pageMode = window.history.state.pageMode !== undefined ? window.history.state.pageMode : this.pageMode;
+
+    const ref = this.$db.outletInventoryUpdate.ref.doc();
+
+    if (this.pageMode === PageMode.New  && this.router.url !== '/stock-control/count-inventory/new') {
+      this.back();
+    }
+
+    if (this.pageMode === PageMode.New) {
+      this.outletInventorySnapshot = {
+        id: ref.id,
+        isActive: true,
+        isDeleted: false,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        outlet: null,
+        productIds: [],
+        snapshot: {
+          productInventory: []
+        }
+      };
+    } else {
+      if (this.outletInventorySnapshot === undefined) { this.back(); }
+
+      this.outletInventorySnapshot.snapshot.productInventory.map(p => {
+
+        this.addProduct(p);
+      });
+    }
+
+    this.spinner.show(this.spinnerName);
+    Promise.all([
+      this.$dbOutlet.ref().get().toPromise().then(res => {
+        this.outletItems = res.docs.length ? res.docs.map(d => d.data()) as OutletListItem[] : [];
+      }),
+      this.$dbProduct.ref().get().toPromise().then(res => {
+        this.productItems = res.docs.length ? res.docs.map(d => d.data()) as ProductListItem[] : [];
+      })
+    ])
+    .catch(err => {
+      console.error(err);
+    })
+    .finally(() => {
+      this.spinner.hide(this.spinnerName);
+    });
   }
 
   get products() {
@@ -67,14 +108,17 @@ export class OutletInventoryFormComponent implements OnInit {
     this.selectedProduct = $event.value;
   }
 
-  addProduct(product: ProductListItem) {
+  addProduct(product: ProductListItem | ProductInventoryItem) {
     this.selectedProduct = product;
 
     if (this.selectedProduct) {
       const selectedProduct: ProductInventoryItem = Object.assign(
-        { reOrderPoint: null, productVariations: [] },
+        { reOrderPoint: product['reOrderPoint'] !== undefined ? product['reOrderPoint'] : null,
+        productVariations: product['productVariations'] !== undefined ? product['productVariations'] : [] },
         this.selectedProduct
       );
+
+      const productVariations = product['productVariations'] !== undefined ? product['productVariations'] : selectedProduct.product.variations;
 
       this.outletInventorySnapshot.snapshot.productInventory.push(
         selectedProduct
@@ -84,9 +128,7 @@ export class OutletInventoryFormComponent implements OnInit {
         this.fb.group({
           reOrderPoint: [selectedProduct.reOrderPoint, Validators.required],
           productVariations: this.fb.array(
-            this.createProductVariationFormArray(
-              selectedProduct.product.variations as any
-            )
+            this.createProductVariationFormArray(productVariations)
           )
         })
       );
@@ -132,7 +174,7 @@ export class OutletInventoryFormComponent implements OnInit {
 
   onSubmit() {
     const errorFn = error => {
-      console.log(error);
+      console.error(error);
     };
 
     const finallyFn = () => {
@@ -155,16 +197,19 @@ export class OutletInventoryFormComponent implements OnInit {
       });
 
       this.outletInventorySnapshot.productIds = this.outletInventorySnapshot.snapshot.productInventory.map(p => p.id);
+      this.outletInventorySnapshot.status = InventorySnapshotStatus.Pending;
 
       this.$db
-        .saveOutlet(this.outletInventorySnapshot)
+        .outletInventoryUpdate
+        .doc(this.outletInventorySnapshot.id)
+        .set(this.outletInventorySnapshot)
         .catch(errorFn)
         .finally(finallyFn);
     }
   }
 
   back() {
-    this.router.navigate(['stock-control']);
+    this.router.navigate(['stock-control', 'count-inventory']);
   }
 
   loadLatestSnapshot() {

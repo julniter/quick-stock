@@ -15,6 +15,10 @@ export class InventoryService {
     return this.afStore.collection('inventory-outlet');
   }
 
+  get outletInventoryUpdate() {
+    return this.afStore.collection('inventory-outlet-updates');
+  }
+
   deactivateOutletSnapshot(id: string) {
     return this.getLatestOutletSnapshot(id).then(res => {
       return res.docs.map(d => {

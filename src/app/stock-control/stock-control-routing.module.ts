@@ -12,9 +12,9 @@ const routes: Routes = [
   { path: '', component: StockControlComponent },
   { path: 'count-inventory', component: CountInventoryComponent },
   { path: 'count-inventory/outlet/new', component: OutletInventoryFormComponent },
-  { path: 'count-inventory/outlet/:outletName/detail', component: OutletInventoryFormComponent },
+  { path: 'count-inventory/outlet/:outletName/details', component: OutletInventoryFormComponent },
   { path: 'count-inventory/warehouse/new', component: WarehouseInventoryFormComponent },
-  { path: 'count-inventory/warehouse/:outletName/detail', component: WarehouseInventoryFormComponent },
+  { path: 'count-inventory/warehouse/:outletName/details', component: WarehouseInventoryFormComponent },
   { path: 'move-inventory', component: MoveInventoryComponent },
   { path: 'track-inventory', component: InventoryTrackerComponent },
   { path: 'product-look-up', component: ProductLookUpComponent }
