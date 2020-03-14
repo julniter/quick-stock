@@ -1,7 +1,8 @@
-import { Component, OnInit, Input, Output,  EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output,  EventEmitter, ViewChild } from '@angular/core';
 import { ProductsService } from 'src/app/products.service';
 import { SpinnerService } from '../../spinner.service';
 import { ProductListItem } from 'src/app/products/product-list/product-list-datasource';
+import { BarcodeReaderComponent } from '../barcode-reader/barcode-reader.component';
 
 export enum ProductFinderType {
   Select,
@@ -18,6 +19,9 @@ export class ProductFinderComponent implements OnInit {
 
   @Input() productItems: ProductListItem[];
   @Output() productSelected = new EventEmitter<ProductListItem>();
+
+  @ViewChild(BarcodeReaderComponent, {static: false})
+  private barCodeReaderComponent: BarcodeReaderComponent;
 
   spinnerName = 'ProductFinderComponent';
   selectedInput = ProductFinderType.Select;
@@ -78,8 +82,18 @@ export class ProductFinderComponent implements OnInit {
 
   // For Scanner
   readBarcodeEmit(code: string) {
-    console.log(code);
-    this.productResultFromScan = this.findProductByCode(code);
+    const scannedProduct = this.findProductByCode(code);
+    if (scannedProduct !== undefined) {
+      this.productResultFromScan = scannedProduct;
+      this.barCodeReaderComponent.stopScanning();
+    }
+  }
+
+  clearSelectedProduct() {
+    this.productResultFromInput = null;
+    this.productResultFromScan = null;
+    this.productResultFromSelect = null;
+    this.selectedProduct = null;
   }
 
 }

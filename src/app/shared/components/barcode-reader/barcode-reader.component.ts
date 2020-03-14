@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import {WebcamImage, WebcamInitError, WebcamUtil, WebcamMirrorProperties} from 'ngx-webcam';
 import { Subject, Observable} from 'rxjs';
 import Quagga from 'quagga';
@@ -175,31 +175,26 @@ export class BarcodeReaderComponent implements OnInit {
     this.spinner.hide(this.spinnerName);
 
 
-    console.log(result);
     if (typeof result === 'undefined') {
       this.scanError = true;
       return;
     }
 
-    console.log(typeof result.codeResult);
 
     if (typeof result.codeResult === 'undefined') {
       this.scanError = true;
       return;
     }
 
-    console.log(typeof result.codeResult.code);
 
     if (typeof result.codeResult.code === 'undefined') {
       this.scanError = true;
       return;
     }
 
-    console.log(result.codeResult.code);
 
     this.readCode.emit(result.codeResult.code);
     this.scanError = false;
-    this.stopScanning();
   }
 
   public cameraWasSwitched(deviceId: string): void {

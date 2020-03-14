@@ -38,5 +38,6 @@
     <button mat-button type="button" (click)="emitSelectedPrduct()">
       <i class="fa fa-plus"></i>&nbsp;Add Product{{ getSelectedProduct() ? ' - ' + getSelectedProduct().product.name : '' }}
     </button>
+    <button mat-mat-flat-button type="button" color="secondary" title="Clear Selection" (click)="clearSelectedProduct()" *ngIf="getSelectedProduct()"><i class="fa fa-times"></i></button>
   </div>
 </div>
