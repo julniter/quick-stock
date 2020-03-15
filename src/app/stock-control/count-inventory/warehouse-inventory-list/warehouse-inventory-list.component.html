@@ -1,7 +1,7 @@
 
 <mat-card class="action-card">
   <mat-card-actions>
-    <button mat-raised-button color="primary" type="button" [routerLink]="['./outlet/new']"><i class="fa fa-plus-square"></i> Request Inventory Update</button>
+    <button mat-raised-button color="primary" type="button" [routerLink]="['./warehouse/new']"><i class="fa fa-plus-square"></i> Request Inventory Update</button>
   </mat-card-actions>
 </mat-card>
 <div class="mat-elevation-z8">
@@ -14,9 +14,9 @@
     </ng-container>
 
     <!-- Brand Column -->
-    <ng-container matColumnDef="outlet">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Outlet</th>
-      <td mat-cell *matCellDef="let row">{{row.outlet.outlet.name}}</td>
+    <ng-container matColumnDef="warehouse">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Warehouse</th>
+      <td mat-cell *matCellDef="let row">{{row.warehouse.warehouse.name}}</td>
     </ng-container>
 
     <!-- Type Column -->

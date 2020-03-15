@@ -54,7 +54,7 @@ export class OutletInventoryFormComponent implements OnInit {
 
     const ref = this.$db.outletInventoryUpdate.ref.doc();
 
-    if (this.pageMode === PageMode.New  && this.router.url !== '/stock-control/count-inventory/new') {
+    if (this.pageMode === PageMode.New  && this.router.url !== '/stock-control/count-inventory/outlet/new') {
       this.back();
     }
 

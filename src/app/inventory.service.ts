@@ -87,6 +87,10 @@ export class InventoryService {
     return this.afStore.collection('inventory-warehouse');
   }
 
+  get warehouseInventoryUpdate() {
+    return this.afStore.collection('inventory-warehouse-updates');
+  }
+
   deactivateWarehouseSnapshot(id: string) {
     return this.getLatestWarehouseSnapshot(id).then(res => {
       return res.docs.map(d => {

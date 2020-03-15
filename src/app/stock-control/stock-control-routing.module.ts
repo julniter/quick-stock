@@ -14,7 +14,7 @@ const routes: Routes = [
   { path: 'count-inventory/outlet/new', component: OutletInventoryFormComponent },
   { path: 'count-inventory/outlet/:outletName/details', component: OutletInventoryFormComponent },
   { path: 'count-inventory/warehouse/new', component: WarehouseInventoryFormComponent },
-  { path: 'count-inventory/warehouse/:outletName/details', component: WarehouseInventoryFormComponent },
+  { path: 'count-inventory/warehouse/:warehouseName/details', component: WarehouseInventoryFormComponent },
   { path: 'move-inventory', component: MoveInventoryComponent },
   { path: 'track-inventory', component: InventoryTrackerComponent },
   { path: 'product-look-up', component: ProductLookUpComponent }

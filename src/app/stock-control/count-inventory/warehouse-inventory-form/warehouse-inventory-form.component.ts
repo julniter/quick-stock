@@ -9,11 +9,15 @@ import {
 import {
   WarehouseInventorySnapshot,
   ProductInventoryItem,
-  InventoryProductVariations
+  InventoryProductVariations,
+  InventorySnapshotStatus
 } from 'src/app/inventory.model';
 import { WarehouseListItem } from 'src/app/setup/warehouse-list/warehouse-list-datasource';
 import * as firebase from 'firebase';
 import { InventoryService } from 'src/app/inventory.service';
+import { PageMode } from 'src/app/firebase.meta';
+import { WarehousesService } from 'src/app/setup-warehouses.service';
+import { ProductsService } from 'src/app/products.service';
 
 @Component({
   selector: 'app-warehouse-inventory-form',
@@ -22,6 +26,7 @@ import { InventoryService } from 'src/app/inventory.service';
 })
 export class WarehouseInventoryFormComponent implements OnInit {
   isNew = false;
+  pageMode: PageMode = PageMode.New;
   selectedProduct: ProductListItem;
   spinnerName = 'WarehouseInventoryFormComponent';
   warehouseInventorySnapshot: WarehouseInventorySnapshot;
@@ -30,29 +35,65 @@ export class WarehouseInventoryFormComponent implements OnInit {
     products: this.fb.array([])
   });
 
-  @Input() warehouseItems: WarehouseListItem[];
-  @Input() productItems: ProductListItem[];
+  warehouseItems: WarehouseListItem[] = [];
+  productItems: ProductListItem[] = [];
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private $db: InventoryService,
-    private spinner: SpinnerService
+    private spinner: SpinnerService,
+    private $dbWarehouse: WarehousesService,
+    private $dbProduct: ProductsService
   ) {}
 
   ngOnInit() {
-    const ref = this.$db.warehouse.ref.doc();
-    this.warehouseInventorySnapshot = {
-      id: ref.id,
-      isActive: true,
-      isDeleted: false,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      warehouse: null,
-      productIds: [],
-      snapshot: {
-        productInventory: []
-      }
-    };
+
+    this.warehouseInventorySnapshot = window.history.state.item;
+    this.pageMode = window.history.state.pageMode !== undefined ? window.history.state.pageMode : this.pageMode;
+
+    const ref = this.$db.warehouseInventoryUpdate.ref.doc();
+
+    if (this.pageMode === PageMode.New  && this.router.url !== '/stock-control/count-inventory/warehouse/new') {
+      this.back();
+    }
+
+    if (this.pageMode === PageMode.New) {
+      this.warehouseInventorySnapshot = {
+        id: ref.id,
+        isActive: true,
+        isDeleted: false,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        warehouse: null,
+        productIds: [],
+        snapshot: {
+          productInventory: []
+        }
+      };
+    } else {
+      if (this.warehouseInventorySnapshot === undefined) { this.back(); }
+
+      this.warehouseInventorySnapshot.snapshot.productInventory.map(p => {
+
+        this.addProduct(p);
+      });
+    }
+
+    this.spinner.show(this.spinnerName);
+    Promise.all([
+      this.$dbWarehouse.ref().get().toPromise().then(res => {
+        this.warehouseItems = res.docs.length ? res.docs.map(d => d.data()) as WarehouseListItem[] : [];
+      }),
+      this.$dbProduct.ref().get().toPromise().then(res => {
+        this.productItems = res.docs.length ? res.docs.map(d => d.data()) as ProductListItem[] : [];
+      })
+    ])
+    .catch(err => {
+      console.error(err);
+    })
+    .finally(() => {
+      this.spinner.hide(this.spinnerName);
+    });
   }
 
   get products() {
@@ -67,14 +108,17 @@ export class WarehouseInventoryFormComponent implements OnInit {
     this.selectedProduct = $event.value;
   }
 
-  addProduct(product: ProductListItem) {
+  addProduct(product: ProductListItem | ProductInventoryItem) {
     this.selectedProduct = product;
 
     if (this.selectedProduct) {
       const selectedProduct: ProductInventoryItem = Object.assign(
-        { reOrderPoint: null, productVariations: [] },
+        { reOrderPoint: product['reOrderPoint'] !== undefined ? product['reOrderPoint'] : null,
+        productVariations: product['productVariations'] !== undefined ? product['productVariations'] : [] },
         this.selectedProduct
       );
+
+      const productVariations = product['productVariations'] !== undefined ? product['productVariations'] : selectedProduct.product.variations;
 
       this.warehouseInventorySnapshot.snapshot.productInventory.push(
         selectedProduct
@@ -84,9 +128,7 @@ export class WarehouseInventoryFormComponent implements OnInit {
         this.fb.group({
           reOrderPoint: [selectedProduct.reOrderPoint, Validators.required],
           productVariations: this.fb.array(
-            this.createProductVariationFormArray(
-              selectedProduct.product.variations as any
-            )
+            this.createProductVariationFormArray(productVariations)
           )
         })
       );
@@ -145,7 +187,6 @@ export class WarehouseInventoryFormComponent implements OnInit {
       this.spinner.show(this.spinnerName);
 
       const inventoryForm = this.warehouseInventoryForm.getRawValue();
-
       this.warehouseInventorySnapshot.warehouse = this.warehouseItems.find(o => o.id === inventoryForm.warehouseId);
       this.warehouseInventorySnapshot.snapshot.productInventory = this.warehouseInventorySnapshot.snapshot.productInventory
       .map(
@@ -156,16 +197,19 @@ export class WarehouseInventoryFormComponent implements OnInit {
       });
 
       this.warehouseInventorySnapshot.productIds = this.warehouseInventorySnapshot.snapshot.productInventory.map(p => p.id);
+      this.warehouseInventorySnapshot.status = InventorySnapshotStatus.Pending;
 
       this.$db
-        .saveWarehouse(this.warehouseInventorySnapshot)
-        .catch(errorFn)
-        .finally(finallyFn);
+      .warehouseInventoryUpdate
+      .doc(this.warehouseInventorySnapshot.id)
+      .set(this.warehouseInventorySnapshot)
+      .catch(errorFn)
+      .finally(finallyFn);
     }
   }
 
   back() {
-    this.router.navigate(['stock-control']);
+    this.router.navigate(['stock-control', 'count-inventory']);
   }
 
   loadLatestSnapshot() {
