@@ -2,7 +2,8 @@
   <mat-card class="shipping-card">
     <mat-card-header>
       <mat-card-title *ngIf="pageMode === 0">Move Products from Warehouse to Outlet</mat-card-title>
-      <mat-card-title *ngIf="pageMode !== 0 && moveInventorySnapshot">Move Products from {{ moveInventorySnapshot.source.warehouse.name }} to {{ moveInventorySnapshot.destination.outlet.name }}</mat-card-title>
+      <mat-card-title *ngIf="pageMode !== 0 && moveInventorySnapshot">
+        Move Products from {{ moveInventorySnapshot.source['warehouse'].name }} to {{ moveInventorySnapshot.destination['outlet'].name }}</mat-card-title>
     </mat-card-header>
     <mat-card-content>
       <div class="row" *ngIf="pageMode === 0">
