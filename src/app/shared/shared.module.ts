@@ -25,6 +25,9 @@ import { ReceiveDialogComponent } from './receive-dialog/receive-dialog.componen
 import { ReactiveFormsModule } from '@angular/forms';
 import { DeliverDialogComponent } from './deliver-dialog/deliver-dialog.component';
 import { InventorySnapshotStatusPipe } from './inventory-snapshot-status.pipe';
+import { MoveInventorySnapshotStatusValuePipe } from './move-inventory-snapshot-status-value.pipe';
+import { MoveInventorySnapshotTypePipe } from './move-inventory-snapshot-type.pipe';
+import { ReceiveMovedDialogComponent } from './receive-moved-dialog/receive-moved-dialog.component';
 
 
 
@@ -48,7 +51,10 @@ import { InventorySnapshotStatusPipe } from './inventory-snapshot-status.pipe';
     ProcessDialogComponent,
     ReceiveDialogComponent,
     DeliverDialogComponent,
-    InventorySnapshotStatusPipe
+    InventorySnapshotStatusPipe,
+    MoveInventorySnapshotStatusValuePipe,
+    MoveInventorySnapshotTypePipe,
+    ReceiveMovedDialogComponent
   ],
   imports: [
     CommonModule,
@@ -90,7 +96,9 @@ import { InventorySnapshotStatusPipe } from './inventory-snapshot-status.pipe';
     JobOrderTypePipe,
     ProcessDialogComponent,
     ReceiveDialogComponent,
-    InventorySnapshotStatusPipe
+    InventorySnapshotStatusPipe,
+    MoveInventorySnapshotStatusValuePipe,
+    MoveInventorySnapshotTypePipe
   ],
   entryComponents: [
     VerifyDialogComponent,
@@ -99,7 +107,8 @@ import { InventorySnapshotStatusPipe } from './inventory-snapshot-status.pipe';
     CancelDialogComponent,
     ProcessDialogComponent,
     ReceiveDialogComponent,
-    DeliverDialogComponent
+    DeliverDialogComponent,
+    ReceiveMovedDialogComponent
   ]
 })
 export class SharedModule { }

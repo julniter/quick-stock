@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { InventorySnopshot, ProductInventoryItem, InventoryProductVariations,
-  OutletInventorySnapshot, WarehouseInventorySnapshot } from './inventory.model';
+  OutletInventorySnapshot, WarehouseInventorySnapshot, MoveInventorySnapshotType } from './inventory.model';
 import { ProductListItem } from './products/product-list/product-list-datasource';
 
 @Injectable({
@@ -10,6 +10,21 @@ import { ProductListItem } from './products/product-list/product-list-datasource
 export class InventoryService {
 
   constructor(private afStore: AngularFirestore) {}
+
+  moveInventory(moveInventorySnapshotType: MoveInventorySnapshotType) {
+    switch (moveInventorySnapshotType) {
+      case MoveInventorySnapshotType.OutletToOutlet:
+        return this.afStore.collection('inventory-move-outlet-to-outlet');
+      case MoveInventorySnapshotType.OutletToWarehouse:
+        return this.afStore.collection('inventory-move-outlet-to-warehouse');
+      case MoveInventorySnapshotType.WarehouseToOutlet:
+        return this.afStore.collection('inventory-move-warehouse-to-outlet');
+      case MoveInventorySnapshotType.WarehouseToWarehouse:
+        return this.afStore.collection('inventory-move-warehouse-to-warehouse');
+      default:
+        return this.afStore.collection('inventory-move-outlet-to-outlet');
+    }
+  }
 
   get outlet() {
     return this.afStore.collection('inventory-outlet');

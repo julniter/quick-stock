@@ -1,14 +1,15 @@
 <form [formGroup]="outletToWarehouseForm" novalidate (ngSubmit)="onSubmit()">
   <mat-card class="shipping-card">
     <mat-card-header>
-      <mat-card-title>Move Products from Outlet to Warehouse</mat-card-title>
+      <mat-card-title *ngIf="pageMode === 0">Move Products from Outlet to Warehouse</mat-card-title>
+      <mat-card-title *ngIf="pageMode !== 0 && moveInventorySnapshot">Move Products from {{ moveInventorySnapshot.source.outlet.name }} to {{ moveInventorySnapshot.destination.warehouse.name }}</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <div class="row">
+      <div class="row" *ngIf="pageMode === 0">
         <div class="col">
           <mat-form-field class="full-width">
             <mat-select placeholder="Outlet" formControlName="outletId" (selectionChange)="setOriginSnapshot($event)">
-              <mat-option *ngFor="let outletItem of outletItems" [value]="outletItem.id">
+              <mat-option *ngFor="let outletItem of outletItems" [value]="outletItem">
                 {{ outletItem.outlet.name }}
               </mat-option>
             </mat-select>
@@ -20,7 +21,7 @@
         <div class="col">
           <mat-form-field class="full-width">
             <mat-select placeholder="Destination Warehouse" formControlName="destinationWarehouseId" (selectionChange)="setDestinationSnapshot($event)">
-              <mat-option *ngFor="let warehouseItem of warehouseItems" [value]="warehouseItem.id">
+              <mat-option *ngFor="let warehouseItem of warehouseItems" [value]="warehouseItem">
                 {{ warehouseItem.warehouse.name }}
               </mat-option>
             </mat-select>
@@ -33,7 +34,7 @@
           <button mat-raised-button color="secondary" type="button" (click)="loadLatestSnapshot()"> <i class="fa fa-pallet"></i>  Use Latest Inventory</button>
         </div>
       </div>
-      <div class="row">
+      <div class="row" *ngIf="pageMode === 0">
         <div class="col">
           <app-product-finder [productItems]="productItems" (productSelected)="addProduct($event)"></app-product-finder>
         </div>
@@ -53,7 +54,7 @@
                     </mat-panel-description>
                   </mat-expansion-panel-header>
 
-                  <button mat-button type="button" (click)="removeProduct(i)">
+                  <button mat-button type="button" (click)="removeProduct(i)" *ngIf="pageMode === 0">
                     <i class="fa fa-trash-alt"></i> Remove Product
                   </button>
                   <mat-card>
@@ -116,7 +117,7 @@
     </mat-card-content>
     <mat-card-actions>
       <button mat-raised-button color="secondary" type="button" (click)="back()">Cancel</button>
-      <button mat-raised-button color="primary" type="submit">Submit</button>
+      <button mat-raised-button color="primary" type="submit" *ngIf="pageMode === 0">Submit</button>
     </mat-card-actions>
   </mat-card>
   <ngx-spinner [name]="spinnerName"></ngx-spinner>

@@ -1,0 +1,72 @@
+<form [formGroup]="moveInventoryForm" novalidate (ngSubmit)="onSubmit()">
+  <h2>Receive Job Order</h2>
+  <div mat-dialog-content>
+    <p>This action will <b>increase & decrease</b> the inventory of {{ getSourceDestination() }} respectively.</p>
+    <p>Please specify the actual <b>received items</b>.</p>
+
+    <div *ngIf="products.controls.length">
+      <div *ngFor="let type of products.controls; let i = index;">
+        <div class="row" formArrayName="products">
+          <div class="col" [formGroupName]="i">
+            <mat-accordion>
+              <mat-expansion-panel [expanded]="true" [disabled]="true">
+                <mat-expansion-panel-header class="right-aligned-header">
+                  <mat-panel-title>
+                    {{ getProductName(i) | titlecase }}
+                  </mat-panel-title>
+                  <mat-panel-description>
+                    {{ getProductVariationCount(i) }} Variant(s)
+                  </mat-panel-description>
+                </mat-expansion-panel-header>
+                <mat-card>
+                  <mat-card-content>
+                    <div *ngFor="let type of getProductVariations(i).controls; let x = index;">
+                      <div formArrayName="productVariations">
+                        <div class="row" [formGroupName]="x">
+                          <div class="col">
+                            <mat-form-field class="full-width">
+                              <input matInput placeholder="Variation Name" formControlName="name">
+                              <mat-error *ngIf="getProductVariations(i).controls[x].get('name').hasError('required')">
+                                Variation Name is <strong>required</strong>
+                              </mat-error>
+                            </mat-form-field>
+                          </div>
+                          <div class="col">
+                            <mat-form-field class="full-width">
+                              <input matInput placeholder="Code" formControlName="code">
+                              <mat-error *ngIf="getProductVariations(i).controls[x].get('code').hasError('required')">
+                                Code is <strong>required</strong>
+                              </mat-error>
+                            </mat-form-field>
+                          </div>
+                          <div class="col">
+                            <mat-form-field class="full-width">
+                              <input matInput placeholder="Received Items" formControlName="count">
+                              <mat-error *ngIf="getProductVariations(i).controls[x].get('count').hasError('required')">
+                                Count is <strong>required</strong>
+                              </mat-error>
+                            </mat-form-field>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+
+              </mat-expansion-panel>
+            </mat-accordion>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <br/>
+    <p><b>Kindly double check entries before saving.</b></p>
+    <br/>
+    <br/>
+</div>
+<div mat-dialog-actions>
+  <button mat-raised-button color="secondary" [mat-dialog-close]="false">Cancel</button>
+  <button mat-raised-button color="primary" type="submit">Save</button>
+</div>
+</form>

@@ -1,15 +1,15 @@
 <mat-tab-group>
   <mat-tab label="Outlet to Warehouse">
-    <app-outlet-to-warehouse-form [outletItems]="outletItems" [productItems]="productItems" [warehouseItems]="warehouseItems"></app-outlet-to-warehouse-form>
+    <app-move-inventory-list [moveInventoryType]="0"></app-move-inventory-list>
   </mat-tab>
   <mat-tab label="Warehouse to Outlet">
-    <app-warehouse-to-outlet-form [outletItems]="outletItems" [productItems]="productItems" [warehouseItems]="warehouseItems"></app-warehouse-to-outlet-form>
+    <app-move-inventory-list [moveInventoryType]="2"></app-move-inventory-list>
   </mat-tab>
   <mat-tab label="Outlet to Outlet">
-    <app-outlet-to-outlet-form [outletItems]="outletItems" [productItems]="productItems"></app-outlet-to-outlet-form>
+    <app-move-inventory-list [moveInventoryType]="1"></app-move-inventory-list>
   </mat-tab>
   <mat-tab label="Warehouse to Warehouse">
-    <app-warehouse-to-warehouse-form [productItems]="productItems" [warehouseItems]="warehouseItems"></app-warehouse-to-warehouse-form>
+    <app-move-inventory-list [moveInventoryType]="3"></app-move-inventory-list>
   </mat-tab>
 </mat-tab-group>
 <ngx-spinner [name]="spinnerName"></ngx-spinner>

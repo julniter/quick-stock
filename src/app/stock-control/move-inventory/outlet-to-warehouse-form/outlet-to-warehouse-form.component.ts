@@ -3,7 +3,6 @@ import { FormBuilder, Validators, FormArray } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SpinnerService } from 'src/app/shared/spinner.service';
 import {
-  ProductVariation,
   ProductListItem
 } from 'src/app/products/product-list/product-list-datasource';
 import {
@@ -11,12 +10,19 @@ import {
   WarehouseInventorySnapshot,
   ProductInventoryItem,
   InventorySnopshot,
-  InventoryProductVariations
+  InventoryProductVariations,
+  MoveInventorySnapshotType,
+  MoveInventorySnapshotStatus,
+  MoveInventorySnapshot
 } from 'src/app/inventory.model';
 import * as firebase from 'firebase';
 import { InventoryService } from 'src/app/inventory.service';
 import { OutletListItem } from 'src/app/setup/outlet-list/outlet-list-datasource';
 import { WarehouseListItem } from 'src/app/setup/warehouse-list/warehouse-list-datasource';
+import { OutletsService } from 'src/app/setup-outlets.service';
+import { ProductsService } from 'src/app/products.service';
+import { WarehousesService } from 'src/app/setup-warehouses.service';
+import { PageMode } from 'src/app/firebase.meta';
 
 @Component({
   selector: 'app-outlet-to-warehouse-form',
@@ -35,21 +41,53 @@ export class OutletToWarehouseFormComponent implements OnInit {
     products: this.fb.array([])
   });
 
-  @Input() outletItems: OutletListItem[];
-  @Input() warehouseItems: WarehouseListItem[];
-  @Input() productItems: ProductListItem[];
+  outletItems: OutletListItem[];
+  warehouseItems: WarehouseListItem[];
+  productItems: ProductListItem[];
 
   filteredProductItems: ProductListItem[] = [];
-  selectedProducts: ProductListItem[];
+  selectedProducts: ProductListItem[] = [];
+  pageMode = PageMode.New;
+  moveInventorySnapshot: MoveInventorySnapshot;
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private $db: InventoryService,
-    private spinner: SpinnerService
+    private spinner: SpinnerService,
+    private $dbOutlets: OutletsService,
+    private $dbWarehouses: WarehousesService,
+    private $dbProducts: ProductsService,
   ) {}
 
   ngOnInit() {
+    this.moveInventorySnapshot = window.history.state.item;
+    this.pageMode = window.history.state.pageMode !== undefined ? window.history.state.pageMode : this.pageMode;
+
+    if (this.pageMode === PageMode.New && this.router.url !== '/stock-control/move-inventory/outlet-to-warehouse/new') {
+      this.back();
+    } else {
+      if (this.moveInventorySnapshot !== undefined) {
+        this.moveInventorySnapshot.productVariations.map((pv: ProductInventoryItem) => {
+          this.addProduct(pv);
+        });
+      }
+    }
+
+    this.spinner.show(this.spinnerName);
+    Promise.all([
+      this.$dbOutlets.ref().get().toPromise().then(items => {
+        this.outletItems = items.docs.length ? items.docs.map(i => i.data() as OutletListItem) : [];
+      }),
+      this.$dbWarehouses.ref().get().toPromise().then(items => {
+        this.warehouseItems = items.docs.length ? items.docs.map(i => i.data() as WarehouseListItem) : [];
+      }),
+      this.$dbProducts.ref().get().toPromise().then(items => {
+        this.productItems = items.docs.length ? items.docs.map(i => i.data() as ProductListItem) : [];
+      })
+    ]).finally(() => {
+      this.spinner.hide(this.spinnerName);
+    });
   }
 
   get products() {
@@ -95,26 +133,27 @@ export class OutletToWarehouseFormComponent implements OnInit {
     this.selectedProduct = $event.value;
   }
 
-  addProduct(product: ProductListItem) {
+  addProduct(product: ProductListItem | ProductInventoryItem) {
     this.selectedProduct = product;
 
     if (this.selectedProduct) {
       const selectedProduct: ProductInventoryItem = Object.assign(
-        { reOrderPoint: null, productVariations: [] },
+        { reOrderPoint: product['reOrderPoint'] !== undefined ? product['reOrderPoint'] : null,
+        productVariations: product['productVariations'] !== undefined ? product['productVariations'] : [] },
         this.selectedProduct
       );
 
+      const productVariations = product['productVariations'] !== undefined ? product['productVariations'] : selectedProduct.product.variations;
+
       this.selectedProducts.push(
-        selectedProduct
+        selectedProduct as ProductListItem
       );
 
       this.products.push(
         this.fb.group({
           reOrderPoint: [selectedProduct.reOrderPoint, Validators.required],
           productVariations: this.fb.array(
-            this.createProductVariationFormArray(
-              selectedProduct.product.variations as any
-            )
+            this.createProductVariationFormArray(productVariations)
           )
         })
       );
@@ -169,50 +208,36 @@ export class OutletToWarehouseFormComponent implements OnInit {
     };
 
     const inventoryForm = this.outletToWarehouseForm.getRawValue();
+    const origin = this.$db.moveInventory(MoveInventorySnapshotType.OutletToWarehouse).ref.doc();
+    const timeStamp = firebase.firestore.FieldValue.serverTimestamp();
 
     if (this.products.controls.length > 0 && inventoryForm.outletId !== inventoryForm.destinationWarehouseId) {
 
       this.spinner.show(this.spinnerName);
 
-      this.outletInventorySnapshot.snapshot
-      = this.$db.updateSnapshotLessProduct(
-        this.outletInventorySnapshot.snapshot,
-        inventoryForm.products, this.selectedProducts
-        );
+      const moveInventory = {
+        source: inventoryForm.outletId,
+        destination: inventoryForm.destinationWarehouseId,
+        productVariations: inventoryForm.products,
+        selectedProducts: this.selectedProducts,
+        status: MoveInventorySnapshotStatus.Pending,
+        type: MoveInventorySnapshotType.OutletToWarehouse,
+        id: origin.id,
+        createdAt: timeStamp,
+        isActive: true,
+        isDeleted: false
+      };
 
-      this.outletInventorySnapshot.productIds
-      = this.outletInventorySnapshot.snapshot.productInventory.map(p => p.id);
-
-      this.destinationWarehouseInventorySnapshot.snapshot
-      = this.$db.updateSnapshotAddProduct(
-        this.destinationWarehouseInventorySnapshot.snapshot,
-        inventoryForm.products, this.selectedProducts
-        );
-
-      this.destinationWarehouseInventorySnapshot.productIds
-      = this.destinationWarehouseInventorySnapshot.snapshot.productInventory.map(p => p.id);
-
-      const origin = this.$db.outlet.ref.doc();
-      const destination = this.$db.warehouse.ref.doc();
-      const timeStamp = firebase.firestore.FieldValue.serverTimestamp();
-
-      this.outletInventorySnapshot.id = origin.id;
-      this.outletInventorySnapshot.createdAt = timeStamp;
-      this.destinationWarehouseInventorySnapshot.id = destination.id;
-      this.destinationWarehouseInventorySnapshot.createdAt = timeStamp;
-
-      Promise.all([
-        this.$db.saveOutlet(this.outletInventorySnapshot),
-        this.$db.saveWarehouse(this.destinationWarehouseInventorySnapshot)
-      ])
+      this.$db.moveInventory(MoveInventorySnapshotType.OutletToWarehouse)
+      .doc(moveInventory.id)
+      .set(moveInventory)
       .catch(errorFn)
       .finally(finallyFn);
-
     }
   }
 
   back() {
-    this.router.navigate(['stock-control']);
+    this.router.navigate(['stock-control', 'move-inventory']);
   }
 
   loadLatestSnapshot() {

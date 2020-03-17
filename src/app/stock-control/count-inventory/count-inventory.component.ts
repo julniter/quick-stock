@@ -31,23 +31,6 @@ export class CountInventoryComponent implements OnInit {
   }
 
   loadData() {
-    this.spinner.show(this.spinnerName);
-
-    Promise.all([
-      this.$dbOutlets.ref().valueChanges().pipe(first()).toPromise().then(items => {
-        this.outletItems = items as any;
-      }),
-
-      this.$dbWarehouses.ref().valueChanges().pipe(first()).toPromise().then(items => {
-        this.warehouseItems = items as any;
-      }),
-
-      this.$dbProducts.ref().valueChanges().pipe(first()).toPromise().then(items => {
-        this.productItems = items as any;
-      })
-    ]).finally(() => {
-      this.spinner.hide(this.spinnerName);
-    });
   }
 
 }

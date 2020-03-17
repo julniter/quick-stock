@@ -9,11 +9,34 @@ export enum InventorySnapshotStatus {
   Rejected
 }
 
+export enum MoveInventorySnapshotStatus {
+  Pending,
+  InProgress,
+  Received,
+  Cancelled
+}
+
+export enum MoveInventorySnapshotType {
+  OutletToWarehouse,
+  OutletToOutlet,
+  WarehouseToOutlet,
+  WarehouseToWarehouse
+}
+
+export interface MoveInventorySnapshot extends FirebaseMetaData {
+  source: OutletListItem | WarehouseListItem;
+  destination: OutletListItem | WarehouseListItem;
+  productVariations: ProductInventoryItem[];
+  selectedProducts: ProductListItem[];
+  status: MoveInventorySnapshotStatus;
+  type: MoveInventorySnapshotType;
+}
+
 export interface LocationInventorySnapshot extends FirebaseMetaData {
   location?: Outlet | Warehouse;
   snapshot: InventorySnopshot;
   productIds: string[];
-  status?: InventorySnapshotStatus;
+  status?: InventorySnapshotStatus | MoveInventorySnapshotStatus;
 }
 
 export interface OutletInventorySnapshot extends LocationInventorySnapshot {

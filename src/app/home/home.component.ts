@@ -42,7 +42,17 @@ export class HomeComponent implements OnInit {
       ? rawUrl
           .substring(1)
           .split('/')
-          .map(t => decodeURIComponent(new TitleCasePipe().transform(t.trim().replace('-', ' '))))
+          .map((t) => {
+            const word = t.split('');
+            word.map((v, i) => {
+              if (v === '-') {
+                const temp  = t.split('');
+                temp.splice(i, 1, ' ');
+                t = temp.join('');
+              }
+            });
+            return decodeURIComponent(new TitleCasePipe().transform(t));
+          })
           .join(' / ')
       : this.default;
     this.displayArrow = this.crumbs.indexOf('/') !== -1;

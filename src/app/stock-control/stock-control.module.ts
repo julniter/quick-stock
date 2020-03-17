@@ -20,6 +20,7 @@ import { WarehouseInventoryTrackerFormComponent } from './inventory-tracker/ware
 import { ProductLookUpComponent } from './product-look-up/product-look-up.component';
 import { OutletInventoryListComponent } from './count-inventory/outlet-inventory-list/outlet-inventory-list.component';
 import { WarehouseInventoryListComponent } from './count-inventory/warehouse-inventory-list/warehouse-inventory-list.component';
+import { MoveInventoryListComponent } from './move-inventory/move-inventory-list/move-inventory-list.component';
 
 
 @NgModule({
@@ -38,7 +39,8 @@ import { WarehouseInventoryListComponent } from './count-inventory/warehouse-inv
     WarehouseInventoryTrackerFormComponent,
     ProductLookUpComponent,
     OutletInventoryListComponent,
-    WarehouseInventoryListComponent
+    WarehouseInventoryListComponent,
+    MoveInventoryListComponent
   ],
   imports: [
     CommonModule,
