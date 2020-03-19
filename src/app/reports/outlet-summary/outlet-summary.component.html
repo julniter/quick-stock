@@ -1,7 +1,19 @@
 
 <mat-card class="action-card">
   <mat-card-actions>
-    <button mat-raised-button color="primary" type="button" (click)="onGenerateClick()"><i class="fa fa-chart-line"></i> Generate Report</button>
+    <mat-form-field class="margin-right">
+      <mat-label>Choose a start date</mat-label>
+      <input matInput [matDatepicker]="pickerFrom" (dateChange)="onFromDateChanged($event)" disabled>
+      <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+      <mat-datepicker touchUi #pickerFrom disabled="false"></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field class="example-full-width">
+      <mat-label>Choose an end date</mat-label>
+      <input matInput [matDatepicker]="pickerTo" (dateChange)="onToDateChanged($event)" disabled>
+      <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
+      <mat-datepicker touchUi #pickerTo disabled="false"></mat-datepicker>
+    </mat-form-field>
+    <button mat-raised-button color="primary" type="button" (click)="onGenerateClick()" [disabled]="!isValidDateRange || selection.selected.length === 0"><i class="fa fa-chart-line"></i> Generate Report</button>
   </mat-card-actions>
 </mat-card>
 <div class="mat-elevation-z8">

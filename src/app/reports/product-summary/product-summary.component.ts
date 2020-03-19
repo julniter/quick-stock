@@ -67,6 +67,8 @@ export class ProductSummaryComponent implements AfterViewInit, OnInit, OnDestroy
   }
 
   onGenerateClick() {
+    if (this.selection.selected.length === 0) { return; }
+
     const filterSnapshot = (product: ProductListItem, snapshot: LocationInventorySnapshot []) => {
       return snapshot.map((s: OutletInventorySnapshot | WarehouseInventorySnapshot) => {
         s.snapshot.productInventory = s.snapshot.productInventory.filter(pi => pi.id === product.id);

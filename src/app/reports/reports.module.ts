@@ -5,7 +5,7 @@ import { ReportsRoutingModule } from './reports-routing.module';
 import { ReportsComponent } from './reports.component';
 import { SharedModule } from '../shared/shared.module';
 import { MaterialModule } from '../material/material.module';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { OutletSummaryComponent } from './outlet-summary/outlet-summary.component';
 import { WarehouseSummaryComponent } from './warehouse-summary/warehouse-summary.component';
 import { ProductSummaryComponent } from './product-summary/product-summary.component';
@@ -23,7 +23,8 @@ import { ProductSummaryComponent } from './product-summary/product-summary.compo
     ReportsRoutingModule,
     SharedModule,
     MaterialModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    FormsModule
   ]
 })
 export class ReportsModule { }

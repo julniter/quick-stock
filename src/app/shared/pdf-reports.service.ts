@@ -1,16 +1,17 @@
 import { Injectable } from '@angular/core';
 import { OutletInventorySnapshot, ProductInventoryItem, InventoryProductVariations, WarehouseInventorySnapshot, LocationInventorySnapshot } from '../inventory.model';
 import { ProductListItem } from '../products/product-list/product-list-datasource';
+import { DatePipe } from '@angular/common';
 
 export const STYLES = {
-  header: { bold: true, fontSize: 18, margin: [0, 0, 0, 5], color: '#3f51b5' },
-  subHeader: { bold: false, fontSize: 12, margin: [0, 0, 0, 10], color: '#333' },
-  subHeaderGray: { bold: false, fontSize: 12, margin: [0, 0, 0, 10], color: '#555' },
-  header2: { bold: true, fontSize: 14, margin: [0, 0, 0, 5], color: '#333' },
-  header2DoubleSpace: { bold: true, fontSize: 14, margin: [0, 0, 0, 40], color: '#ff4081' },
-  header3: { bold: true, fontSize: 12, margin: [0, 0, 0, 5], color: '#333' },
-  normal: { bold: false, fontSize: 12, margin: [0, 0, 0, 5], color: '#333' },
-  normalGray: { bold: false, fontSize: 12, margin: [0, 0, 0, 5], color: '#555' },
+  header: { bold: true, fontSize: 14, margin: [0, 0, 0, 5], color: '#3f51b5' },
+  subHeader: { bold: false, fontSize: 8, margin: [0, 0, 0, 10], color: '#333' },
+  subHeaderGray: { bold: false, fontSize: 8, margin: [0, 0, 0, 10], color: '#555' },
+  header2: { bold: true, fontSize: 10, margin: [0, 0, 0, 5], color: '#333' },
+  header2DoubleSpace: { bold: true, fontSize: 10, margin: [0, 0, 0, 20], color: '#ff4081' },
+  header3: { bold: true, fontSize: 8, margin: [0, 0, 0, 5], color: '#333' },
+  normal: { bold: false, fontSize: 8, margin: [0, 0, 0, 5], color: '#333' },
+  normalGray: { bold: false, fontSize: 8, margin: [0, 0, 0, 5], color: '#555' },
   textCenter: { alignment: 'center', color: '#333' },
   textCenterBold: { alignment: 'center', bold: true, color: '#333' },
   textRight: { alignment: 'right', color: '#333' },
@@ -19,13 +20,27 @@ export const STYLES = {
   mdMarginBottom: { margin: [0, 0, 0, 10] },
   lgMarginBottom: { margin: [0, 0, 0, 15] },
   xlMarginBottom: { margin: [0, 0, 0, 20] },
-  xxlMarginBottom: { margin: [0, 0, 0, 40] }
+  xxlMarginBottom: { margin: [0, 0, 0, 40] },
+  descriptionTable: { fontSize: 8, margin: [0, 0, 0, 15] },
+  breakdownTable: { fontSize: 8 },
+  totalTable: { fontSize: 8, margin: [0, 0, 0, 40] }
 };
+
+export interface DataRangedSummaryReport {
+  dateRange: SummaryReportDateRange;
+  startSnapshot: OutletInventorySnapshot | WarehouseInventorySnapshot;
+  endSnapshot: OutletInventorySnapshot | WarehouseInventorySnapshot;
+}
 
 export interface ProductSummaryDataReport {
   product: ProductListItem;
   outletSnapshots: OutletInventorySnapshot[];
   warehouseSnapshots: WarehouseInventorySnapshot[];
+}
+
+export interface SummaryReportDateRange {
+  fromDate: Date;
+  toDate: Date;
 }
 
 @Injectable({
@@ -35,20 +50,20 @@ export class PdfReportsService {
 
   constructor() { }
 
-  getOutletSummaryDocDef(outletSnapshots: OutletInventorySnapshot[]) {
-    const twoDimentionContent = outletSnapshots.map((snapshot: OutletInventorySnapshot, index) => {
+  getOutletSummaryDocDef(outletSnapshots: DataRangedSummaryReport[]) {
+    const twoDimentionContent = outletSnapshots.map((snapshot: DataRangedSummaryReport, index) => {
       return [].concat(...this.outletDetailsLayout(snapshot, index), ...this.productDetailsLayout(snapshot));
     });
 
-    return this.docDefWrapper(twoDimentionContent);
+    return this.docDefWrapper(twoDimentionContent, 'landscape');
   }
 
-  getWarehouseSummaryDocDef(warehouseSnapshots: WarehouseInventorySnapshot[]) {
-    const twoDimentionContent = warehouseSnapshots.map((snapshot: WarehouseInventorySnapshot, index) => {
+  getWarehouseSummaryDocDef(warehouseSnapshots: DataRangedSummaryReport[]) {
+    const twoDimentionContent = warehouseSnapshots.map((snapshot: DataRangedSummaryReport, index) => {
       return [].concat(...this.warehouseDetailsLayout(snapshot, index), ...this.productDetailsLayout(snapshot));
     });
 
-    return this.docDefWrapper(twoDimentionContent);
+    return this.docDefWrapper(twoDimentionContent, 'landscape');
   }
 
   getProductSummaryDocDef(productSummaryDataReport: ProductSummaryDataReport[]) {
@@ -64,11 +79,13 @@ export class PdfReportsService {
     return {
       styles: STYLES,
       content: [...flatContent],
-      pageOrientation
+      pageOrientation,
+      pageMargins: [15, 15, 15, 15]
     };
   }
 
-  private outletDetailsLayout(outlet: OutletInventorySnapshot, index: number) {
+  private outletDetailsLayout(outletRangedSnapshot: DataRangedSummaryReport, index: number) {
+    const outlet = outletRangedSnapshot.endSnapshot as OutletInventorySnapshot;
     const getOutletName = () => {
       if (index !== 0) {
         return {text: outlet.outlet.outlet.name, style: 'header', pageBreak: 'before'};
@@ -91,13 +108,18 @@ export class PdfReportsService {
         style: 'subHeaderGray'
       },
       {
+        text: 'From ' + new DatePipe('en-US').transform(outletRangedSnapshot.dateRange.fromDate, 'longDate') + ' to ' + new DatePipe('en-US').transform(outletRangedSnapshot.dateRange.toDate, 'longDate'),
+        style: 'header3'
+      },
+      {
         text: ('Total Product Type: ' + outlet.snapshot.productInventory.length),
         style: 'header2DoubleSpace'
       }
     ];
   }
 
-  private warehouseDetailsLayout(warehouse: WarehouseInventorySnapshot, index: number) {
+  private warehouseDetailsLayout(warehouseRangedSnapshot: DataRangedSummaryReport, index: number) {
+    const warehouse = warehouseRangedSnapshot.endSnapshot as WarehouseInventorySnapshot;
     const getOutletName = () => {
       if (index !== 0) {
         return {text: warehouse.warehouse.warehouse.name, style: 'header', pageBreak: 'before'};
@@ -180,23 +202,34 @@ export class PdfReportsService {
     ];
   }
 
-  private productDetailsLayout(location: OutletInventorySnapshot | WarehouseInventorySnapshot) {
+  private productDetailsLayout(snapshot: DataRangedSummaryReport) {
     const getVariantText = (pi: ProductInventoryItem) => {
       return pi.product.variants.map(v => v.variant).join(', ');
     };
     const getVariantValueText = (pi: ProductInventoryItem) => {
       return pi.product.variants.map(v => v.variantValues).join(' / ');
     };
-    const getTotalProducts = (pi: ProductInventoryItem) => {
+    const getTotalProducts = (outletSnapshot: OutletInventorySnapshot, index: number) => {
+      if (outletSnapshot === undefined) { return 0; }
+      const pi = outletSnapshot.snapshot.productInventory[index];
+      if (pi === undefined) { return 0; }
       return +pi.productVariations.map(v => v.count).reduce((a, b) => +a + +b, 0);
     };
+    const startCount = (pi: ProductInventoryItem, index: number) => {
+      if (snapshot.startSnapshot === undefined ) {  return 0; }
+      const outletSnapshot = snapshot.startSnapshot as OutletInventorySnapshot;
+      const startPi = outletSnapshot.snapshot.productInventory.find(p => p.id === pi.id);
+      if (startPi === undefined) { return 0; }
+      return startPi.productVariations[index].count;
+    };
     const getVariations = (pi: ProductInventoryItem) => {
-      const variations = pi.productVariations.map((pv: InventoryProductVariations) => {
+      const variations = pi.productVariations.map((pv: InventoryProductVariations, index: number) => {
         return [
           { text: pv.name}
         , { text: pv.sku, style: 'textCenter'}
         , { text: pv.code, style: 'textCenter'}
         , { text: pv.price, style: 'textRight'}
+        , { text: startCount(pi, index), style: 'textRight'}
         , { text: pv.count, style: 'textRight'}
         ];
       });
@@ -206,20 +239,21 @@ export class PdfReportsService {
       , { text: 'SKU', style: 'textCenterBold'}
       , { text: 'Code', style: 'textCenterBold'}
       , { text: 'Price', style: 'textCenterBold'}
-      , { text: 'Count', style: 'textCenterBold'}
+      , { text: 'Start Count (' + new DatePipe('en-US').transform(snapshot.dateRange.fromDate, 'longDate') + ')', style: 'textCenterBold'}
+      , { text: 'End Count (' + new DatePipe('en-US').transform(snapshot.dateRange.toDate, 'longDate') + ')', style: 'textCenterBold'}
       ]);
 
       return variations;
     };
 
-    return location.snapshot.productInventory.map((pi: ProductInventoryItem) => {
+    return snapshot.endSnapshot['snapshot'].productInventory.map((pi: ProductInventoryItem, index: number) => {
       return [
         {text: ('Product Name: ' + pi.product.name), style: 'header3'},
         {text: pi.product.description, style: 'normalGray'},
         {
-          style: 'lgMarginBottom',
+          style: 'descriptionTable',
           table: {
-            widths: [100, '*', '*', '*', '*', '*'],
+            widths: [150, '*', '*', '*', '*', '*'],
             headerRows: 1,
             body: [
               [
@@ -243,21 +277,23 @@ export class PdfReportsService {
           layout: 'noBorders'
         },
         {
+          style: 'breakdownTable',
           table: {
-            widths: [120, '*', '*', '*', '*'],
+            widths: [150, '*', '*', '*', '*', '*'],
             headerRows: 1,
             body: getVariations(pi),
             layout: 'lightHorizontalLines'
           }
         },
         {
-          style: 'xxlMarginBottom',
+          style: 'totalTable',
           table: {
-            widths: [120, '*', '*', '*', '*'],
+            widths: [150, '*', '*', '*', '*', '*'],
             body: [
               ['', '', '',
                 { text: 'Total', style: 'textRightBold' },
-                { text: getTotalProducts(pi) , style: 'textRightBold' }
+                { text: getTotalProducts((snapshot.startSnapshot as OutletInventorySnapshot), index) , style: 'textRightBold' },
+                { text: getTotalProducts((snapshot.endSnapshot as OutletInventorySnapshot), index) , style: 'textRightBold' }
               ]
             ]
           },

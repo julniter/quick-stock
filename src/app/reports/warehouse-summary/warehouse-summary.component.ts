@@ -12,7 +12,7 @@ import { InventoryService } from 'src/app/inventory.service';
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 import { WarehouseInventorySnapshot } from 'src/app/inventory.model';
-import { PdfReportsService } from 'src/app/shared/pdf-reports.service';
+import { PdfReportsService, SummaryReportDateRange, DataRangedSummaryReport } from 'src/app/shared/pdf-reports.service';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 @Component({
@@ -30,6 +30,11 @@ export class WarehouseSummaryComponent implements AfterViewInit, OnInit, OnDestr
   displayedColumns = ['select', 'name', 'city', 'province'];
   destroy$: Subject<void> = new Subject();
   selection = new SelectionModel<WarehouseListItem>(true, []);
+  dateRange: SummaryReportDateRange = {
+    fromDate: null,
+    toDate: null
+  };
+  isValidDateRange = false;
 
   constructor(
     private $db: WarehousesService,
@@ -67,21 +72,89 @@ export class WarehouseSummaryComponent implements AfterViewInit, OnInit, OnDestr
 
   onGenerateClick() {
     const warehouseIds = this.selection.selected.map(s => s.id);
+    const rangedSummarySnapshots: DataRangedSummaryReport[] = [];
+
+    if (warehouseIds.length === 0) { return; }
 
     this.spinner.show();
-    this.$dbInventory.getMultiLatestWarehouseSnapshot(warehouseIds).get().then(res => {
-      const snapshots = res.docs.map(d => d.data()) as WarehouseInventorySnapshot[];
-      this.generatePdf(snapshots);
-    }).catch(error => {
+
+    const startDateLookup = new Date(
+      this.dateRange.fromDate.getFullYear(),
+      this.dateRange.fromDate.getMonth(),
+      this.dateRange.fromDate.getDate() + 1
+    );
+    const startDateYesterdayLookup = new Date(
+      this.dateRange.fromDate.getFullYear(),
+      this.dateRange.fromDate.getMonth(),
+      this.dateRange.fromDate.getDate() - 1
+    );
+
+    Promise.all(warehouseIds.map((warehouseId) => {
+      return Promise.all([
+        this.$dbInventory.getWarehouseSnapshotsByDate(warehouseId, startDateLookup).then(res => res),
+        this.$dbInventory.getWarehouseSnapshotsByDateRange(warehouseId, this.dateRange).then(res => res)
+      ]).then((res) => {
+        const oldLookupSnapshots = res[0].docs.map(d => d.data()) as WarehouseInventorySnapshot[];
+        const rangedLookupSnapshots = res[1].docs.map(d => d.data()) as WarehouseInventorySnapshot[];
+
+        if (rangedLookupSnapshots.length === 0 ) { return; }
+
+        let start;
+        const end = rangedLookupSnapshots[0];
+
+        if (rangedLookupSnapshots.length > 1) {
+          const temp = rangedLookupSnapshots[rangedLookupSnapshots.length - 1];
+          const tempDate = new Date(
+            temp.createdAt.toDate().getFullYear(),
+            temp.createdAt.toDate().getMonth(),
+            temp.createdAt.toDate().getDate()
+          );
+
+          if (tempDate > startDateYesterdayLookup && tempDate < startDateLookup) {
+            start = temp;
+          }
+        }
+
+        if (start === undefined && oldLookupSnapshots.length) {
+          start = oldLookupSnapshots[0];
+        }
+
+        rangedSummarySnapshots.push({
+          startSnapshot: start,
+          endSnapshot: end,
+          dateRange: this.dateRange
+        });
+
+      });
+    })).catch(error => {
       console.error(error);
     }).finally(() => {
+      this.generatePdf(rangedSummarySnapshots);
       this.spinner.hide();
     });
   }
 
-  generatePdf(snapshots: WarehouseInventorySnapshot[]) {
+  generatePdf(snapshots: DataRangedSummaryReport[]) {
     const docDef = this.pdfService.getWarehouseSummaryDocDef(snapshots);
     pdfMake.createPdf(docDef).open();
+   }
+
+   onFromDateChanged($event) {
+     this.dateRange.fromDate = $event.value;
+     this.validateDateRange();
+    }
+
+   onToDateChanged($event) {
+     this.dateRange.toDate = $event.value;
+     this.validateDateRange();
+   }
+
+   validateDateRange() {
+     if (this.dateRange.fromDate && this.dateRange.toDate) {
+       this.isValidDateRange = this.dateRange.toDate.getTime() > this.dateRange.fromDate.getTime();
+     } else {
+       this.isValidDateRange = false;
+     }
    }
 
 }

@@ -12,7 +12,8 @@ import { InventoryService } from 'src/app/inventory.service';
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 import { OutletInventorySnapshot } from 'src/app/inventory.model';
-import { PdfReportsService } from 'src/app/shared/pdf-reports.service';
+import { PdfReportsService, SummaryReportDateRange, DataRangedSummaryReport } from 'src/app/shared/pdf-reports.service';
+import { filter } from 'rxjs/operators';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 @Component({
@@ -30,6 +31,11 @@ export class OutletSummaryComponent implements AfterViewInit, OnInit, OnDestroy 
   displayedColumns = ['select', 'name', 'city', 'province'];
   destroy$: Subject<void> = new Subject();
   selection = new SelectionModel<OutletListItem>(true, []);
+  dateRange: SummaryReportDateRange = {
+    fromDate: null,
+    toDate: null
+  };
+  isValidDateRange = false;
 
   constructor(
     private $db: OutletsService,
@@ -67,21 +73,89 @@ export class OutletSummaryComponent implements AfterViewInit, OnInit, OnDestroy 
 
   onGenerateClick() {
     const outletIds = this.selection.selected.map(s => s.id);
+    const rangedSummarySnapshots: DataRangedSummaryReport[] = [];
+
+    if (outletIds.length === 0) { return; }
 
     this.spinner.show();
-    this.$dbInventory.getMultiLatestOutletSnapshot(outletIds).get().then(res => {
-      const snapshots = res.docs.map(d => d.data()) as OutletInventorySnapshot[];
-      this.generatePdf(snapshots);
-    }).catch(error => {
+
+    const startDateLookup = new Date(
+      this.dateRange.fromDate.getFullYear(),
+      this.dateRange.fromDate.getMonth(),
+      this.dateRange.fromDate.getDate() + 1
+    );
+    const startDateYesterdayLookup = new Date(
+      this.dateRange.fromDate.getFullYear(),
+      this.dateRange.fromDate.getMonth(),
+      this.dateRange.fromDate.getDate() - 1
+    );
+
+    Promise.all(outletIds.map((outletId) => {
+      return Promise.all([
+        this.$dbInventory.getOutletSnapshotsByDate(outletId, startDateLookup).then(res => res),
+        this.$dbInventory.getOutletSnapshotsByDateRange(outletId, this.dateRange).then(res => res)
+      ]).then((res) => {
+        const oldLookupSnapshots = res[0].docs.map(d => d.data()) as OutletInventorySnapshot[];
+        const rangedLookupSnapshots = res[1].docs.map(d => d.data()) as OutletInventorySnapshot[];
+
+        if (rangedLookupSnapshots.length === 0 ) { return; }
+
+        let start;
+        const end = rangedLookupSnapshots[0];
+
+        if (rangedLookupSnapshots.length > 1) {
+          const temp = rangedLookupSnapshots[rangedLookupSnapshots.length - 1];
+          const tempDate = new Date(
+            temp.createdAt.toDate().getFullYear(),
+            temp.createdAt.toDate().getMonth(),
+            temp.createdAt.toDate().getDate()
+          );
+
+          if (tempDate > startDateYesterdayLookup && tempDate < startDateLookup) {
+            start = temp;
+          }
+        }
+
+        if (start === undefined && oldLookupSnapshots.length) {
+          start = oldLookupSnapshots[0];
+        }
+
+        rangedSummarySnapshots.push({
+          startSnapshot: start,
+          endSnapshot: end,
+          dateRange: this.dateRange
+        });
+
+      });
+    })).catch(error => {
       console.error(error);
     }).finally(() => {
+      this.generatePdf(rangedSummarySnapshots);
       this.spinner.hide();
     });
   }
 
-  generatePdf(snapshots: OutletInventorySnapshot[]) {
+  generatePdf(snapshots: DataRangedSummaryReport[]) {
     const docDef = this.pdfService.getOutletSummaryDocDef(snapshots);
     pdfMake.createPdf(docDef).open();
    }
+
+  onFromDateChanged($event) {
+    this.dateRange.fromDate = $event.value;
+    this.validateDateRange();
+   }
+
+  onToDateChanged($event) {
+    this.dateRange.toDate = $event.value;
+    this.validateDateRange();
+  }
+
+  validateDateRange() {
+    if (this.dateRange.fromDate && this.dateRange.toDate) {
+      this.isValidDateRange = this.dateRange.toDate.getTime() > this.dateRange.fromDate.getTime();
+    } else {
+      this.isValidDateRange = false;
+    }
+  }
 
 }

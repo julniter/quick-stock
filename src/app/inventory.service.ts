@@ -3,6 +3,7 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { InventorySnopshot, ProductInventoryItem, InventoryProductVariations,
   OutletInventorySnapshot, WarehouseInventorySnapshot, MoveInventorySnapshotType } from './inventory.model';
 import { ProductListItem } from './products/product-list/product-list-datasource';
+import { SummaryReportDateRange } from './shared/pdf-reports.service';
 
 @Injectable({
   providedIn: 'root'
@@ -91,6 +92,33 @@ export class InventoryService {
     .orderBy('createdAt', 'desc').get();
   }
 
+  getOutletSnapshotsByDateRange(id: string, dateRange: SummaryReportDateRange) {
+    return this.afStore
+    .collection('inventory-outlet').ref
+    .where('outlet.id', '==', id)
+    .where(
+      'createdAt',
+      '>=',
+      dateRange.fromDate
+    )
+    .where(
+      'createdAt',
+      '<=',
+      dateRange.toDate
+      )
+    .orderBy('createdAt', 'desc').get();
+  }
+
+  getOutletSnapshotsByDate(id: string, date: Date) {
+    return this.afStore
+    .collection('inventory-outlet').ref
+    .limit(1)
+    .where('outlet.id', '==', id)
+    .where('createdAt', '<', date)
+    .orderBy('createdAt', 'desc')
+    .get();
+  }
+
   queryProductFromOutletSnapshots(productId: string) {
     return this.afStore
     .collection('inventory-outlet').ref
@@ -161,6 +189,33 @@ export class InventoryService {
     .collection('inventory-warehouse').ref
     .where('warehouse.id', '==', id)
     .orderBy('createdAt', 'desc').get();
+  }
+
+  getWarehouseSnapshotsByDateRange(id: string, dateRange: SummaryReportDateRange) {
+    return this.afStore
+    .collection('inventory-warehouse').ref
+    .where('warehouse.id', '==', id)
+    .where(
+      'createdAt',
+      '>=',
+      dateRange.fromDate
+    )
+    .where(
+      'createdAt',
+      '<=',
+      dateRange.toDate
+      )
+    .orderBy('createdAt', 'desc').get();
+  }
+
+  getWarehouseSnapshotsByDate(id: string, date: Date) {
+    return this.afStore
+    .collection('inventory-warehouse').ref
+    .limit(1)
+    .where('warehouse.id', '==', id)
+    .where('createdAt', '<', date)
+    .orderBy('createdAt', 'desc')
+    .get();
   }
 
   queryProductFromWarehouseSnapshots(productId: string) {

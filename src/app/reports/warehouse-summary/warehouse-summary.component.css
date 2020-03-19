@@ -10,3 +10,7 @@
 .fa {
   vertical-align: baseline !important;
 }
+
+mat-form-field {
+  margin-right: 40px;
+}

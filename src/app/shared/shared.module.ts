@@ -28,8 +28,7 @@ import { InventorySnapshotStatusPipe } from './inventory-snapshot-status.pipe';
 import { MoveInventorySnapshotStatusValuePipe } from './move-inventory-snapshot-status-value.pipe';
 import { MoveInventorySnapshotTypePipe } from './move-inventory-snapshot-type.pipe';
 import { ReceiveMovedDialogComponent } from './receive-moved-dialog/receive-moved-dialog.component';
-
-
+import { MatNativeDateModule } from '@angular/material';
 
 @NgModule({
   declarations: [
@@ -72,7 +71,8 @@ import { ReceiveMovedDialogComponent } from './receive-moved-dialog/receive-move
     NgxSpinnerModule,
     BarecodeScannerLivestreamModule,
     WebcamModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatNativeDateModule,
   ],
   exports: [
     NgxAuthFirebaseUIModule,
@@ -98,7 +98,8 @@ import { ReceiveMovedDialogComponent } from './receive-moved-dialog/receive-move
     ReceiveDialogComponent,
     InventorySnapshotStatusPipe,
     MoveInventorySnapshotStatusValuePipe,
-    MoveInventorySnapshotTypePipe
+    MoveInventorySnapshotTypePipe,
+    MatNativeDateModule
   ],
   entryComponents: [
     VerifyDialogComponent,
