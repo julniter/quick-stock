@@ -119,11 +119,50 @@ export class InventoryService {
     .get();
   }
 
+  getMultiOutletSnapshotsByDate(ids: string, date: Date) {
+    return this.afStore
+    .collection('inventory-outlet').ref
+    .limit(1)
+    .where('outlet.id', 'in', ids)
+    .where('createdAt', '<', date)
+    .orderBy('createdAt', 'desc')
+    .get();
+  }
+
   queryProductFromOutletSnapshots(productId: string) {
     return this.afStore
     .collection('inventory-outlet').ref
     .where('isActive', '==', true)
     .where('productIds', 'array-contains', productId).get();
+  }
+
+  queryProductFromOutletSnapshotsWithDateRange(productId: string, dateRange: SummaryReportDateRange) {
+    return this.afStore
+    .collection('inventory-outlet').ref
+    .where('productIds', 'array-contains', productId)
+    .where(
+      'createdAt',
+      '>=',
+      dateRange.fromDate
+    )
+    .where(
+      'createdAt',
+      '<=',
+      dateRange.toDate
+      )
+    .orderBy('createdAt', 'desc').get();
+  }
+
+  queryProductFromOutletSnapshotsWithDate(productId: string, date: Date) {
+    return this.afStore
+    .collection('inventory-outlet').ref
+    .where('productIds', 'array-contains', productId)
+    .where(
+      'createdAt',
+      '<',
+      date
+    )
+    .orderBy('createdAt', 'desc').get();
   }
 
   get warehouse() {
@@ -218,11 +257,50 @@ export class InventoryService {
     .get();
   }
 
+  getMultiWarehouseSnapshotsByDate(id: string, date: Date) {
+    return this.afStore
+    .collection('inventory-warehouse').ref
+    .limit(1)
+    .where('warehouse.id', '==', id)
+    .where('createdAt', '<', date)
+    .orderBy('createdAt', 'desc')
+    .get();
+  }
+
   queryProductFromWarehouseSnapshots(productId: string) {
     return this.afStore
     .collection('inventory-warehouse').ref
     .where('isActive', '==', true)
     .where('productIds', 'array-contains', productId).get();
+  }
+
+  queryProductFromWarehouseSnapshotsWithDateRange(productId: string, dateRange: SummaryReportDateRange) {
+    return this.afStore
+    .collection('inventory-warehouse').ref
+    .where('productIds', 'array-contains', productId)
+    .where(
+      'createdAt',
+      '>=',
+      dateRange.fromDate
+    )
+    .where(
+      'createdAt',
+      '<=',
+      dateRange.toDate
+      )
+    .orderBy('createdAt', 'desc').get();
+  }
+
+  queryProductFromWarehouseSnapshotsWithDate(productId: string, date: Date) {
+    return this.afStore
+    .collection('inventory-warehouse').ref
+    .where('productIds', 'array-contains', productId)
+    .where(
+      'createdAt',
+      '<',
+      date
+    )
+    .orderBy('createdAt', 'desc').get();
   }
 
   updateSnapshotAddProduct(target: InventorySnopshot, source: ProductInventoryItem[], products: ProductListItem[]) {

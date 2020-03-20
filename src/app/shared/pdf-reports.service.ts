@@ -34,8 +34,8 @@ export interface DataRangedSummaryReport {
 
 export interface ProductSummaryDataReport {
   product: ProductListItem;
-  outletSnapshots: OutletInventorySnapshot[];
-  warehouseSnapshots: WarehouseInventorySnapshot[];
+  outletSnapshots: DataRangedSummaryReport[];
+  warehouseSnapshots: DataRangedSummaryReport[];
 }
 
 export interface SummaryReportDateRange {
@@ -66,9 +66,9 @@ export class PdfReportsService {
     return this.docDefWrapper(twoDimentionContent, 'landscape');
   }
 
-  getProductSummaryDocDef(productSummaryDataReport: ProductSummaryDataReport[]) {
+  getProductSummaryDocDef(productSummaryDataReport: ProductSummaryDataReport[], dataRange: SummaryReportDateRange) {
     const twoDimentionContent = productSummaryDataReport.map((psd: ProductSummaryDataReport, index) => {
-      return [].concat(...this.productDescriptionLayout(psd, index), this.inventoryLocationDetailsLayout(psd));
+      return [].concat(...this.productDescriptionLayout(psd, index), this.inventoryLocationDetailsLayout(psd, dataRange));
     });
 
     return this.docDefWrapper(twoDimentionContent, 'landscape');
@@ -170,7 +170,7 @@ export class PdfReportsService {
       getProductName(),
       {text: psd.product.product.description, style: 'normalGray'},
       {
-        style: 'lgMarginBottom',
+        style: 'descriptionTable',
         table: {
           widths: [120, '*', '*', '*', '*', '*', '*', '*'],
           headerRows: 1,
@@ -303,7 +303,7 @@ export class PdfReportsService {
     });
   }
 
-  private inventoryLocationDetailsLayout(psd: ProductSummaryDataReport) {
+  private inventoryLocationDetailsLayout(psd: ProductSummaryDataReport, dateRange: SummaryReportDateRange) {
     const getOutletAddress = (outlet: OutletInventorySnapshot) => {
       if (outlet.outlet === undefined) { return ''; }
 
@@ -344,55 +344,89 @@ export class PdfReportsService {
       }
     };
 
-    const getVariations = (s: LocationInventorySnapshot) => {
-      const variantCount = s.snapshot.productInventory.map((pi: ProductInventoryItem) => {
-        const total = +pi.productVariations.map(pv => pv.count).reduce((a, b) => +a + +b, 0);
+    const getVariations = (start: LocationInventorySnapshot, end: LocationInventorySnapshot) => {
+      const variantCount = end.snapshot.productInventory.map((pi: ProductInventoryItem, index: number) => {
+
+        const totalStart = start !== undefined ? +start.snapshot.productInventory[index].productVariations.map(pv => pv.count).reduce((a, b) => +a + +b, 0) : 0;
+        const totalEnd = +pi.productVariations.map(pv => pv.count).reduce((a, b) => +a + +b, 0);
+
+        let startVariations = start !== undefined ? start.snapshot.productInventory[index].productVariations.map(pv => ({ text: pv.count, style: 'textRight' })) : [];
+            startVariations = startVariations.length ? startVariations : pi.productVariations.map(pv => ({ text: 0, style: 'textRight' }))
+        const endVariations = pi.productVariations.map(pv => ({ text: pv.count, style: 'textRight' }));
+
         return [{text: pi.reOrderPoint, style: 'textRight'}]
         .concat(
-          pi.productVariations.map(pv => ({ text: pv.count, style: 'textRight' })),
-          [{text: total, style: 'textRightBold'}]
+          startVariations,
+          [{text: totalStart, style: 'textRightBold'}], // start total
+          endVariations, // end
+          [{text: totalEnd, style: 'textRightBold'}] // end total
         );
+
       });
 
       return [
-        { text: getLocationName(s) },
-        { text: getOutletAddress(s as OutletInventorySnapshot) + getWarehouseAddress(s as WarehouseInventorySnapshot) },
-        { text: getLocationType(s) },
+        { text: getLocationName(end) },
+        { text: getOutletAddress(end as OutletInventorySnapshot) + getWarehouseAddress(end as WarehouseInventorySnapshot) },
+        { text: getLocationType(end) },
         ...variantCount[0]
       ];
     };
 
-    const outletRecords = psd.outletSnapshots.map((os: OutletInventorySnapshot) => {
-      return getVariations(os);
+    const outletRecords = psd.outletSnapshots.map((os: DataRangedSummaryReport) => {
+      const start = os.startSnapshot !== undefined ? os.startSnapshot as OutletInventorySnapshot : undefined;
+      const end = os.endSnapshot !== undefined ? os.endSnapshot as OutletInventorySnapshot : undefined;
+      return getVariations(start, end);
     });
 
-    const warehouseRecords = psd.warehouseSnapshots.map((ws: WarehouseInventorySnapshot) => {
-      return getVariations(ws);
+    const warehouseRecords = psd.warehouseSnapshots.map((ws: DataRangedSummaryReport) => {
+      const start = ws.startSnapshot !== undefined ? ws.startSnapshot as WarehouseInventorySnapshot : undefined;
+      const end = ws.endSnapshot !== undefined ? ws.endSnapshot as WarehouseInventorySnapshot : undefined;
+      return getVariations(start, end);
     });
 
-    const width = psd.product.product.variations.map(v => '*');
-    const size = (600 / (psd.product.product.variations.length + 2));
+    const width = [].concat(psd.product.product.variations.map(v => '*'), psd.product.product.variations.map(v => '*'));
+    const size = (600 / ((psd.product.product.variations.length * 2) + 2 ));
     const header = [
+      {text: 'Inventory Location', style: 'textCenterBold', colSpan:  4 },
+      {text: ''}, {text: ''}, {text: ''},
+      {text: new DatePipe('en-US').transform(dateRange.fromDate, 'longDate') , style: 'textCenterBold', colSpan: (psd.product.product.variations.length + 1) }, // start
+      ...psd.product.product.variations.map(v => {
+        return {text: ''};
+      }), // start
+      {text: new DatePipe('en-US').transform(dateRange.toDate, 'longDate'), style: 'textCenterBold', colSpan: (psd.product.product.variations.length + 1) }, // end
+      ...psd.product.product.variations.map(v => {
+        return {text: ''};
+      }) // end
+    ];
+    const subheader = [
       {text: 'Location', style: 'textCenterBold'},
       {text: 'Address', style: 'textCenterBold'},
       {text: 'Type', style: 'textCenterBold'},
       {text: 'Reorder Point', style: 'textCenterBold'},
 
-    ].concat(psd.product.product.variations.map(v => {
-      return {text: v.name, style: 'textCenterBold'};
-    })
-    , [{text: 'Total', style: 'textCenterBold'}]);
+    ].concat(
+      psd.product.product.variations.map(v => {
+        return {text: v.name, style: 'textCenterBold'};
+      }), // start
+      [{text: 'Total', style: 'textCenterBold'}], // end
+      psd.product.product.variations.map(v => {
+        return {text: v.name, style: 'textCenterBold'};
+      }), // end
+      [{text: 'Total', style: 'textCenterBold'}]// end
+    );
 
     const bodyContent = [
       header,
+      subheader,
       ...outletRecords,
       ...warehouseRecords
     ];
 
     return {
+      style: 'descriptionTable',
       table: {
-        widths: [size, '*', '*', '*', '*'].concat(width as any),
-        headerRows: 1,
+        widths: [size, '*', '*', '*', '*', '*'].concat(width as any),
+        headerRows: 2,
         body: bodyContent,
         layout: 'lightHorizontalLines'
       }
