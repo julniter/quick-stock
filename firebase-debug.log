@@ -1,0 +1,33 @@
+[debug] [2020-03-22T14:32:01.426Z] ----------------------------------------------------------------------
+[debug] [2020-03-22T14:32:01.427Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\JULIU742\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy
+[debug] [2020-03-22T14:32:01.428Z] CLI Version:   7.11.0
+[debug] [2020-03-22T14:32:01.428Z] Platform:      win32
+[debug] [2020-03-22T14:32:01.428Z] Node Version:  v12.13.0
+[debug] [2020-03-22T14:32:01.428Z] Time:          Sun Mar 22 2020 22:32:01 GMT+0800 (China Standard Time)
+[debug] [2020-03-22T14:32:01.428Z] ----------------------------------------------------------------------
+[debug] [2020-03-22T14:32:01.429Z] 
+[debug] [2020-03-22T14:32:01.435Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2020-03-22T14:32:01.435Z] > authorizing via signed-in user
+[debug] [2020-03-22T14:32:01.436Z] [iam] checking project quickstock-5bc62 for permissions ["firebase.projects.get","firebasedatabase.instances.update","firebasehosting.sites.update"]
+[debug] [2020-03-22T14:32:01.437Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2020-03-22T14:32:01.437Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2020-03-22T14:32:02.356Z] <<< HTTP RESPONSE 200
+[debug] [2020-03-22T14:32:02.363Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/quickstock-5bc62:testIamPermissions  
+
+[debug] [2020-03-22T14:32:03.859Z] <<< HTTP RESPONSE 200
+[debug] [2020-03-22T14:32:03.860Z] >>> HTTP REQUEST GET https://firebase.googleapis.com/v1beta1/projects/quickstock-5bc62  
+ 
+[debug] [2020-03-22T14:32:04.564Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Deploying to 'quickstock-5bc62'...
+[info] 
+[info] i  deploying database, hosting
+[info] i  database: checking rules syntax...
+[debug] [2020-03-22T14:32:04.570Z] >>> HTTP REQUEST PUT https://quickstock-5bc62.firebaseio.com/.settings/rules.json?dryRun=true  
+ {
+  "rules": {
+    ".read": "auth != null",
+    ".write": "auth != null"
+  }
+}

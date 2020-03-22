@@ -21,9 +21,9 @@ export const STYLES = {
   lgMarginBottom: { margin: [0, 0, 0, 15] },
   xlMarginBottom: { margin: [0, 0, 0, 20] },
   xxlMarginBottom: { margin: [0, 0, 0, 40] },
-  descriptionTable: { fontSize: 7, margin: [0, 0, 0, 15] },
-  breakdownTable: { fontSize: 7 },
-  totalTable: { fontSize: 7, margin: [0, 0, 0, 40] }
+  descriptionTable: { fontSize: 8, margin: [0, 0, 0, 15] },
+  breakdownTable: { fontSize: 5 },
+  totalTable: { fontSize: 5, margin: [0, 0, 0, 40] }
 };
 
 export interface DataRangedSummaryReport {
@@ -407,7 +407,7 @@ export class PdfReportsService {
     const width = [].concat(psd.product.product.variations.map(v => '*'), psd.product.product.variations.map(v => '*'));
     const size = (600 / ((psd.product.product.variations.length * 2) + 2 ));
     const header = [
-      {text: 'Inventory Location', style: 'textCenterBold', colSpan:  4 }, {text: ''}, {text: ''},
+      {text: 'Inventory Location', style: 'textCenterBold', colSpan:  3 }, {text: ''}, {text: ''},
       {text: new DatePipe('en-US').transform(dateRange.fromDate, 'longDate') , style: 'textCenterBold', colSpan: (psd.product.product.variations.length + 1) }, // start
       ...psd.product.product.variations.map(v => {
         return {text: ''};
