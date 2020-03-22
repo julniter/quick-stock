@@ -16,7 +16,7 @@ export class ReportsComponent {
           { title: 'Outlet Summary', cols: 4, rows: 1, routePath: ['./outlet-summary'], icon:'fa-chart-bar' },
           { title: 'Warehouse Summary', cols: 4, rows: 1, routePath: ['./warehouse-summary'], icon:'fa-chart-bar' },
           { title: 'Product Summary', cols: 4, rows: 1, routePath: ['./product-summary'], icon:'fa-chart-bar' },
-          { title: 'Top Products', cols: 4, rows: 1, routePath: ['./top-products'], icon:'fa-chart-line' }
+          //{ title: 'Top Products', cols: 4, rows: 1, routePath: ['./top-products'], icon:'fa-chart-line' }
         ];
       }
 
@@ -24,7 +24,7 @@ export class ReportsComponent {
         { title: 'Outlet Summary', cols: 1, rows: 1, routePath: ['./outlet-summary'], icon:'fa-chart-bar' },
         { title: 'Warehouse Summary', cols: 1, rows: 1, routePath: ['./warehouse-summary'], icon:'fa-chart-bar' },
         { title: 'Product Summary', cols: 1, rows: 1, routePath: ['./product-summary'], icon:'fa-chart-bar' },
-        { title: 'Top Products', cols: 1, rows: 1, routePath: ['./top-products'], icon:'fa-chart-line' }
+        //{ title: 'Top Products', cols: 1, rows: 1, routePath: ['./top-products'], icon:'fa-chart-line' }
       ];
     })
   );

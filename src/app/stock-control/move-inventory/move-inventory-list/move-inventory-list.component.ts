@@ -98,7 +98,7 @@ export class MoveInventoryListComponent implements AfterViewInit, OnInit, OnDest
 
   process(row: MoveInventorySnapshot) {
     const errorFn = error => {
-      console.log(error);
+      console.error(error);
     };
 
     const finallyFn = () => {
@@ -154,7 +154,7 @@ export class MoveInventoryListComponent implements AfterViewInit, OnInit, OnDest
 
   cancel(row: MoveInventorySnapshot) {
     const errorFn = error => {
-      console.log(error);
+      console.error(error);
     };
 
     const finallyFn = () => {

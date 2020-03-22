@@ -29,6 +29,8 @@ import { MoveInventorySnapshotStatusValuePipe } from './move-inventory-snapshot-
 import { MoveInventorySnapshotTypePipe } from './move-inventory-snapshot-type.pipe';
 import { ReceiveMovedDialogComponent } from './receive-moved-dialog/receive-moved-dialog.component';
 import { MatNativeDateModule } from '@angular/material';
+import { DeleteDialogComponent } from './components/delete-dialog/delete-dialog.component';
+import { environment } from 'src/environments/environment';
 
 @NgModule({
   declarations: [
@@ -53,21 +55,13 @@ import { MatNativeDateModule } from '@angular/material';
     InventorySnapshotStatusPipe,
     MoveInventorySnapshotStatusValuePipe,
     MoveInventorySnapshotTypePipe,
-    ReceiveMovedDialogComponent
+    ReceiveMovedDialogComponent,
+    DeleteDialogComponent
   ],
   imports: [
     CommonModule,
     MaterialModule,
-    NgxAuthFirebaseUIModule.forRoot({
-      apiKey: 'AIzaSyAflsLMrOEW9v7y7Y_6UgXDSI14-HVNk58',
-      authDomain: 'quickstock-5bc62.firebaseapp.com',
-      databaseURL: 'https://quickstock-5bc62.firebaseio.com',
-      projectId: 'quickstock-5bc62',
-      storageBucket: 'quickstock-5bc62.appspot.com',
-      messagingSenderId: '1029697272176',
-      appId: '1:1029697272176:web:90bf1532010c9f3e9737b5',
-      measurementId: 'G-K57QQC197E'
-    }),
+    NgxAuthFirebaseUIModule.forRoot(environment.firebaseConfig),
     NgxSpinnerModule,
     BarecodeScannerLivestreamModule,
     WebcamModule,
@@ -99,7 +93,8 @@ import { MatNativeDateModule } from '@angular/material';
     InventorySnapshotStatusPipe,
     MoveInventorySnapshotStatusValuePipe,
     MoveInventorySnapshotTypePipe,
-    MatNativeDateModule
+    MatNativeDateModule,
+    DeleteDialogComponent
   ],
   entryComponents: [
     VerifyDialogComponent,
@@ -109,7 +104,8 @@ import { MatNativeDateModule } from '@angular/material';
     ProcessDialogComponent,
     ReceiveDialogComponent,
     DeliverDialogComponent,
-    ReceiveMovedDialogComponent
+    ReceiveMovedDialogComponent,
+    DeleteDialogComponent
   ]
 })
 export class SharedModule { }

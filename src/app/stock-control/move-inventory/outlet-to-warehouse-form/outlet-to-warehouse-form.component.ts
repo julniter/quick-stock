@@ -199,7 +199,7 @@ export class OutletToWarehouseFormComponent implements OnInit {
 
   onSubmit() {
     const errorFn = error => {
-      console.log(error);
+      console.error(error);
     };
 
     const finallyFn = () => {

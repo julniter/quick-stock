@@ -42,10 +42,27 @@
           </mat-form-field>
         </div>
       </div>
+      <div class="row">
+        <div class="col">
+          <mat-form-field class="full-width">
+            <mat-label>Roles</mat-label>
+            <mat-select formControlName="roles" multiple>
+              <mat-select-trigger>
+                {{roles.value ? getRoleLabels() : 'Roles'}}
+              </mat-select-trigger>
+              <mat-option *ngFor="let role of roleList; let i = index" [value]="i">{{role}}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="employeeForm.controls['roles'].hasError('required')">
+              Roles are <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
     </mat-card-content>
     <mat-card-actions>
       <button mat-raised-button color="secondary" type="button" (click)="back()">Cancel</button>
       <button mat-raised-button color="primary" type="submit">Submit</button>
+      <button mat-raised-button color="primary" type="button" *ngIf="pageMode !== 0" (click)="deleteAccount()" title="Permanently delete account?"><i class="fa fa-trash"></i>&nbsp;Delete Account</button>
     </mat-card-actions>
   </mat-card>
   <ngx-spinner [name]="spinnerName"></ngx-spinner>

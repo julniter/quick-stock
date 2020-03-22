@@ -3,15 +3,18 @@
       [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
       [mode]="(isHandset$ | async) ? 'over' : 'side'"
       [opened]="(isHandset$ | async) === false">
-    <mat-toolbar>Quick Stock</mat-toolbar>
+    <mat-toolbar><a
+      mat-list-item href="#" [routerLink]="defaultLink" >Quick Stock</a>
+    </mat-toolbar>
     <mat-nav-list>
-      <a mat-list-item href="#" [routerLink]="['/dashboard']" routerLinkActive="active"><i class="fa fa-chart-bar"></i>&nbsp;Dashboard</a>
-      <a mat-list-item href="#" [routerLink]="['/customers']" routerLinkActive="active"><i class="fa fa-users"></i>&nbsp;Customers</a>
-      <a mat-list-item href="#" [routerLink]="['/sales']" routerLinkActive="active"><i class="fa fa-chart-line"></i>&nbsp;Sales</a>
-      <a mat-list-item href="#" [routerLink]="['/products']" routerLinkActive="active"><i class="fa fa-boxes"></i>&nbsp;Products</a>
-      <a mat-list-item href="#" [routerLink]="['/stock-control']" routerLinkActive="active"><i class="fa fa-boxes"></i>&nbsp;Stock Control</a>
-      <a mat-list-item href="#" [routerLink]="['/reports']" routerLinkActive="active"><i class="fa fa-chart-line"></i>&nbsp;Reports</a>
-      <a mat-list-item href="#" [routerLink]="['/setup']" routerLinkActive="active"><i class="fa fa-cog"></i>&nbsp;Setup</a>
+      <a mat-list-item href="#" [routerLink]="['/dashboard']"     *ngIf="hasRole('dashboard')"><i class="fa fa-chart-bar"></i>&nbsp;Dashboard</a>
+      <a mat-list-item href="#" [routerLink]="['/customers']"     *ngIf="hasRole('customers')"><i class="fa fa-users"></i>&nbsp;Customers</a>
+      <a mat-list-item href="#" [routerLink]="['/sales']"         *ngIf="hasRole('sales')"><i class="fa fa-chart-line"></i>&nbsp;Sales</a>
+      <a mat-list-item href="#" [routerLink]="['/products']"      *ngIf="hasRole('products')"><i class="fa fa-boxes"></i>&nbsp;Products</a>
+      <a mat-list-item href="#" [routerLink]="['/stock-control']" *ngIf="hasRole('stock-control')"><i class="fa fa-boxes"></i>&nbsp;Stock Control</a>
+      <a mat-list-item href="#" [routerLink]="['/reports']"       *ngIf="hasRole('reports')"><i class="fa fa-chart-line"></i>&nbsp;Reports</a>
+      <a mat-list-item href="#" [routerLink]="['/setup']"         *ngIf="hasRole('setup')"><i class="fa fa-cog"></i>&nbsp;Setup</a>
+      <a mat-list-item href="#" [routerLink]="['/authentication', 'logout']" *ngIf="displayLogout"><i class="fa fa-arrow-left"></i>&nbsp;Logout</a>
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
@@ -20,8 +23,7 @@
         type="button"
         aria-label="Toggle sidenav"
         mat-icon-button
-        (click)="drawer.toggle()"
-        *ngIf="isHandset$ | async">
+        (click)="drawer.toggle()">
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
       <span><a href="#" [routerLink]="[parentLink]" *ngIf="displayArrow"><i class="fas fa-angle-left"></i></a> {{ crumbs }}</span>

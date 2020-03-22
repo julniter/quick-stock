@@ -78,7 +78,7 @@ export class WarehouseDetailComponent implements OnInit {
       this.warehouseItem.warehouse = this.warehouseForm.value;
 
       const errorFn = error => {
-        console.log(error);
+        console.error(error);
       };
 
       const finallyFn = () => {

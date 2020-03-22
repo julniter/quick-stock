@@ -56,7 +56,7 @@ export class ProductBrandDetailComponent implements OnInit {
     this.productBrandItem.productBrand = this.productBrandForm.value;
 
     const errorFn = error => {
-      console.log(error);
+      console.error(error);
     };
 
     const finallyFn = () => {

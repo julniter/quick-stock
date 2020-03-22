@@ -195,14 +195,13 @@ export class ProductDetailComponent implements OnInit {
     }
 
     onSubmit() {
-      console.log(this.productForm);
       if (!this.productForm.valid) { return; }
 
       this.spinner.show(this.spinnerName);
       this.productItem.product = this.productForm.getRawValue();
 
       const errorFn = error => {
-        console.log(error);
+        console.error(error);
       };
 
       const finallyFn = () => {

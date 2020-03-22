@@ -59,7 +59,7 @@ export class WarehouseInventoryListComponent implements AfterViewInit, OnInit, O
 
   approve(warehouseInventorySnapshot: WarehouseInventorySnapshot) {
     const errorFn = error => {
-      console.log(error);
+      console.error(error);
     };
 
     const finallyFn = () => {
@@ -101,7 +101,7 @@ export class WarehouseInventoryListComponent implements AfterViewInit, OnInit, O
 
   reject(warehouseInventorySnapshot: WarehouseInventorySnapshot) {
     const errorFn = error => {
-      console.log(error);
+      console.error(error);
     };
 
     const finallyFn = () => {

@@ -75,7 +75,7 @@ export class ProductCategoryDetailComponent implements OnInit {
     this.productCategoryItem.productCategory = this.productCategoryForm.value;
 
     const errorFn = error => {
-      console.log(error);
+      console.error(error);
     };
 
     const finallyFn = () => {

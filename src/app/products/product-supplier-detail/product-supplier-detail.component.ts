@@ -80,7 +80,7 @@ export class ProductSupplierDetailComponent implements OnInit {
       this.productSupplierItem.productSupplier = this.productSupplierForm.value;
 
       const errorFn = error => {
-        console.log(error);
+        console.error(error);
       };
 
       const finallyFn = () => {

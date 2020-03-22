@@ -15,7 +15,6 @@ export class NavService {
     route.url.subscribe((url) => {
       const urlSegment = url[url.length - 1];
       this.selected = urlSegment.path.length ? urlSegment.path : this.default;
-      console.log(urlSegment);
     });
 
   }

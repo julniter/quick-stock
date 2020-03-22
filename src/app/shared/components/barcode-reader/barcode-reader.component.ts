@@ -66,7 +66,7 @@ export class BarcodeReaderComponent implements OnInit {
       },
       err => {
         if (err) {
-          console.log(err);
+          console.error(err);
           return;
         }
         console.log('Initialization finished. Ready to start');

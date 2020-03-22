@@ -80,7 +80,7 @@ export class CustomerDetailComponent implements OnInit {
       this.customerItem.customer = this.customerForm.value;
 
       const errorFn = error => {
-        console.log(error);
+        console.error(error);
       };
 
       const finallyFn = () => {

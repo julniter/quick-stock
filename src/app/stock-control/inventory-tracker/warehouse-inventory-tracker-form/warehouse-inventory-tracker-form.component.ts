@@ -38,8 +38,6 @@ export class WarehouseInventoryTrackerFormComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log(this.warehouseInventoryTrackerForm);
-
     if (this.warehouseInventoryTrackerForm.valid) {
       this.warehouseInventorySnapshot = null;
       this.spinner.show(this.spinnerName);

@@ -78,7 +78,8 @@ export class ProductBrandListDataSource extends DataSource<ProductBrandListItem>
     return data.sort((a, b) => {
       const isAsc = this.sort.direction === 'asc';
       switch (this.sort.active) {
-        case 'name': return compare(a.productBrand.name, b.productBrand.name, isAsc);
+        case 'name':
+          return compare(a.productBrand.name, b.productBrand.name, isAsc);
         default: return 0;
       }
     });

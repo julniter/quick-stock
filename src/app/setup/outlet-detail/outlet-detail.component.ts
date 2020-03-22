@@ -78,7 +78,7 @@ export class OutletDetailComponent implements OnInit {
       this.outletItem.outlet = this.outletForm.value;
 
       const errorFn = error => {
-        console.log(error);
+        console.error(error);
       };
 
       const finallyFn = () => {

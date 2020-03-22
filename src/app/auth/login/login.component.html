@@ -1,1 +1,23 @@
-<ngx-auth-firebaseui-login [providers]="[]" [createAccountButtonText]="''" dontHaveAnAccountText=""></ngx-auth-firebaseui-login>
+<mat-card *ngIf="!isLoggedIn">
+  <mat-card-content>
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <h2>Login into your Account</h2>
+      <mat-form-field class="full-width-input">
+        <input matInput placeholder="Email" formControlName="username">
+        <mat-error *ngIf="loginForm.controls['username'].hasError('required')">
+          Company is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="full-width-input">
+        <input matInput type="password" placeholder="Password" formControlName="password">
+        <mat-error *ngIf="loginForm.controls['password'].hasError('required')">
+          Company is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+      <div class="err-message">
+        <mat-error>{{ errorMessage }}</mat-error>
+      </div>
+      <button mat-raised-button color="primary" type="submit">Login</button>
+    </form>
+  </mat-card-content>
+</mat-card>

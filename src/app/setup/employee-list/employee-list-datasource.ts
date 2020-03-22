@@ -4,14 +4,45 @@ import { MatSort } from '@angular/material/sort';
 import { Observable, of as observableOf } from 'rxjs';
 import { FirebaseMetaData } from 'src/app/firebase.meta';
 import { SpinnerService } from 'src/app/shared/spinner.service';
-import { Outlet } from '../outlet-list/outlet-list-datasource';
 
+
+export function getEmployeeRoleList() {
+  const roleList = [];
+
+  for(let i = 0; i < 4; i++) {
+    roleList.push(getEployeeRoleLabel(i));
+  }
+
+  return roleList;
+}
+
+export function getEployeeRoleLabel(data: EmployeeRoles) {
+  switch (data) {
+    case EmployeeRoles.SalesOperation:
+      return 'Sales Operation';
+    case EmployeeRoles.OutletInventoryManager:
+      return 'Outlet Inventory Manager';
+    case EmployeeRoles.WarehouseInventoryManager:
+      return 'Warehouse Inventory Manager';
+    case EmployeeRoles.Admin:
+    default:
+      return 'Administrator';
+  }
+}
+
+export enum EmployeeRoles {
+  Admin,
+  SalesOperation,
+  OutletInventoryManager,
+  WarehouseInventoryManager
+}
 
 export interface Employee {
   firstName: string;
   lastName: string;
   emailAddress: string;
   password: string;
+  roles: EmployeeRoles[];
 }
 
 // TODO: Replace this with your own data model type

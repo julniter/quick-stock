@@ -60,7 +60,7 @@ export class PricingDetailComponent implements OnInit {
     this.pricingItem.pricing = this.pricingForm.value;
 
     const errorFn = error => {
-      console.log(error);
+      console.error(error);
     };
 
     const finallyFn = () => {

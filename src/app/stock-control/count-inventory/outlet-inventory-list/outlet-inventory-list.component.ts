@@ -59,7 +59,7 @@ export class OutletInventoryListComponent implements AfterViewInit, OnInit, OnDe
 
   approve(outletInventorySnapshot: OutletInventorySnapshot) {
     const errorFn = error => {
-      console.log(error);
+      console.error(error);
     };
 
     const finallyFn = () => {
@@ -101,7 +101,7 @@ export class OutletInventoryListComponent implements AfterViewInit, OnInit, OnDe
 
   reject(outletInventorySnapshot: OutletInventorySnapshot) {
     const errorFn = error => {
-      console.log(error);
+      console.error(error);
     };
 
     const finallyFn = () => {

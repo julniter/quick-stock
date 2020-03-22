@@ -56,7 +56,7 @@ export class ProductVariantDetailComponent implements OnInit {
     this.productVariantItem.productVariant = this.productVariantForm.value;
 
     const errorFn = error => {
-      console.log(error);
+      console.error(error);
     };
 
     const finallyFn = () => {

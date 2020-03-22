@@ -7,6 +7,8 @@ import { Subject } from 'rxjs';
 import { SpinnerService } from 'src/app/shared/spinner.service';
 import { Router } from '@angular/router';
 import { EmployeesService } from 'src/app/setup-employees.service';
+import { PageMode } from 'src/app/firebase.meta';
+
 
 @Component({
   selector: 'app-employee-list',
@@ -42,11 +44,12 @@ export class EmployeeListComponent implements AfterViewInit, OnInit, OnDestroy {
   view(employeeItem: EmployeeListItem) {
     this.router.navigate(
       [
-        'employees/',
+        'setup',
+        'employees',
         employeeItem.employee.firstName + ' ' + employeeItem.employee.lastName,
         'details'
       ],
-      { state: employeeItem }
+      { state: {item: employeeItem, pageMode: PageMode.Edit} }
     );
   }
 }

@@ -21,9 +21,9 @@ export const STYLES = {
   lgMarginBottom: { margin: [0, 0, 0, 15] },
   xlMarginBottom: { margin: [0, 0, 0, 20] },
   xxlMarginBottom: { margin: [0, 0, 0, 40] },
-  descriptionTable: { fontSize: 8, margin: [0, 0, 0, 15] },
-  breakdownTable: { fontSize: 8 },
-  totalTable: { fontSize: 8, margin: [0, 0, 0, 40] }
+  descriptionTable: { fontSize: 7, margin: [0, 0, 0, 15] },
+  breakdownTable: { fontSize: 7 },
+  totalTable: { fontSize: 7, margin: [0, 0, 0, 40] }
 };
 
 export interface DataRangedSummaryReport {
@@ -165,6 +165,25 @@ export class PdfReportsService {
     const getVariantValueText = (pi: ProductListItem) => {
       return pi.product.variants.map(v => v.variantValues).join(' / ');
     };
+    const getTotalProducts = (snapshot: DataRangedSummaryReport[]) => {
+      if (snapshot.length) { return 0; }
+
+      const total = 0 ;
+
+      snapshot.map(dr => {
+        if (dr.endSnapshot) {
+          if (dr.endSnapshot.snapshot.productInventory.length) {
+            dr.endSnapshot.snapshot.productInventory[0].productVariations.map(v => v.count).reduce((a, b) => +a + +b, total)
+          }
+        }
+      });
+
+      return total;
+    };
+
+    const warehouseTotal = getTotalProducts(psd.warehouseSnapshots);
+    const outletTotal = getTotalProducts(psd.outletSnapshots);
+    const grandTotal = warehouseTotal + outletTotal;
 
     return [
       getProductName(),
@@ -191,9 +210,9 @@ export class PdfReportsService {
             , { text: psd.product.product.type, style: 'textCenter'}
             , { text: getVariantText(psd.product), style: 'textCenter'}
             , { text: getVariantValueText(psd.product), style: 'textCenter'}
-            , { text: '4200', style: 'textCenter'}
-            , { text: '23400', style: 'textCenter'}
-            , { text: '27600', style: 'textCenter'}
+            , { text: outletTotal, style: 'textCenter'}
+            , { text: warehouseTotal, style: 'textCenter'}
+            , { text: grandTotal, style: 'textCenter'}
             ]
           ]
         },
@@ -209,7 +228,7 @@ export class PdfReportsService {
     const getVariantValueText = (pi: ProductInventoryItem) => {
       return pi.product.variants.map(v => v.variantValues).join(' / ');
     };
-    const getTotalProducts = (outletSnapshot: OutletInventorySnapshot, index: number) => {
+    const getTotalProducts = (outletSnapshot: LocationInventorySnapshot, index: number) => {
       if (outletSnapshot === undefined) { return 0; }
       const pi = outletSnapshot.snapshot.productInventory[index];
       if (pi === undefined) { return 0; }
@@ -217,7 +236,7 @@ export class PdfReportsService {
     };
     const startCount = (pi: ProductInventoryItem, index: number) => {
       if (snapshot.startSnapshot === undefined ) {  return 0; }
-      const outletSnapshot = snapshot.startSnapshot as OutletInventorySnapshot;
+      const outletSnapshot = snapshot.startSnapshot as LocationInventorySnapshot;
       const startPi = outletSnapshot.snapshot.productInventory.find(p => p.id === pi.id);
       if (startPi === undefined) { return 0; }
       return startPi.productVariations[index].count;
@@ -292,8 +311,8 @@ export class PdfReportsService {
             body: [
               ['', '', '',
                 { text: 'Total', style: 'textRightBold' },
-                { text: getTotalProducts((snapshot.startSnapshot as OutletInventorySnapshot), index) , style: 'textRightBold' },
-                { text: getTotalProducts((snapshot.endSnapshot as OutletInventorySnapshot), index) , style: 'textRightBold' }
+                { text: getTotalProducts((snapshot.startSnapshot as LocationInventorySnapshot), index) , style: 'textRightBold' },
+                { text: getTotalProducts((snapshot.endSnapshot as LocationInventorySnapshot), index) , style: 'textRightBold' }
               ]
             ]
           },
@@ -364,9 +383,10 @@ export class PdfReportsService {
 
       });
 
+      const name = (getLocationName(end) + ' ' + getOutletAddress(end as OutletInventorySnapshot) + getWarehouseAddress(end as WarehouseInventorySnapshot));
+
       return [
-        { text: getLocationName(end) },
-        { text: getOutletAddress(end as OutletInventorySnapshot) + getWarehouseAddress(end as WarehouseInventorySnapshot) },
+        { text: name },
         { text: getLocationType(end) },
         ...variantCount[0]
       ];
@@ -387,8 +407,7 @@ export class PdfReportsService {
     const width = [].concat(psd.product.product.variations.map(v => '*'), psd.product.product.variations.map(v => '*'));
     const size = (600 / ((psd.product.product.variations.length * 2) + 2 ));
     const header = [
-      {text: 'Inventory Location', style: 'textCenterBold', colSpan:  4 },
-      {text: ''}, {text: ''}, {text: ''},
+      {text: 'Inventory Location', style: 'textCenterBold', colSpan:  4 }, {text: ''}, {text: ''},
       {text: new DatePipe('en-US').transform(dateRange.fromDate, 'longDate') , style: 'textCenterBold', colSpan: (psd.product.product.variations.length + 1) }, // start
       ...psd.product.product.variations.map(v => {
         return {text: ''};
@@ -400,7 +419,6 @@ export class PdfReportsService {
     ];
     const subheader = [
       {text: 'Location', style: 'textCenterBold'},
-      {text: 'Address', style: 'textCenterBold'},
       {text: 'Type', style: 'textCenterBold'},
       {text: 'Reorder Point', style: 'textCenterBold'},
 
@@ -425,7 +443,7 @@ export class PdfReportsService {
     return {
       style: 'descriptionTable',
       table: {
-        widths: [size, '*', '*', '*', '*', '*'].concat(width as any),
+        widths: [size, '*', '*', '*', '*'].concat(width as any),
         headerRows: 2,
         body: bodyContent,
         layout: 'lightHorizontalLines'
